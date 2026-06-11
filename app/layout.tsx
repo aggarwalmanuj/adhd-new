@@ -25,9 +25,6 @@ export const metadata: Metadata = {
   },
   description:
     "A private program for executives, founders, and operators with ADHD-style brains. Systems built for your wiring, a room that gets it, and relief in four weeks.",
-  icons: {
-    icon: "/icon/favicon.png",
-  },
   openGraph: {
     title: "AIMERGE: find relief from ADHD in four weeks",
     description:
