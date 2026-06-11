@@ -1,0 +1,396 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Palette system — 12 palettes (6 pairs × 2 orientations).
+   Each palette defines 4 raw tokens; everything else is derived with
+   color-mix so the whole UI re-themes from one data attribute.
+   Kept in sync with lib/palettes.ts.
+--------------------------------------------------------------------------- */
+
+:root,
+[data-palette="big-stone"] {
+  --bg: #141d38;
+  --fg: #edeff5;
+  --accent: #fcdb32;
+  --accent-contrast: #141d38;
+  color-scheme: dark;
+}
+[data-palette="bright-sun"] {
+  --bg: #fcdb32;
+  --fg: #141d38;
+  --accent: #141d38;
+  --accent-contrast: #fcdb32;
+  color-scheme: light;
+}
+[data-palette="royal-blue"] {
+  --bg: #3447aa;
+  --fg: #f2eff8;
+  --accent: #fbeaeb;
+  --accent-contrast: #3447aa;
+  color-scheme: dark;
+}
+[data-palette="powder-pink"] {
+  --bg: #fbeaeb;
+  --fg: #252a52;
+  --accent: #3447aa;
+  --accent-contrast: #fbeaeb;
+  color-scheme: light;
+}
+[data-palette="deep-fir"] {
+  --bg: #163300;
+  --fg: #f0f6ea;
+  --accent: #9fe870;
+  --accent-contrast: #163300;
+  color-scheme: dark;
+}
+[data-palette="sulu"] {
+  --bg: #9fe870;
+  --fg: #163300;
+  --accent: #163300;
+  --accent-contrast: #9fe870;
+  color-scheme: light;
+}
+[data-palette="blue-whale"] {
+  --bg: #03363d;
+  --fg: #e9f1f0;
+  --accent: #bdd9d7;
+  --accent-contrast: #03363d;
+  color-scheme: dark;
+}
+[data-palette="jet-stream"] {
+  --bg: #bdd9d7;
+  --fg: #03363d;
+  --accent: #03363d;
+  --accent-contrast: #bdd9d7;
+  color-scheme: light;
+}
+[data-palette="black"] {
+  --bg: #000000;
+  --fg: #ededed;
+  --accent: #34e0a1;
+  --accent-contrast: #001a10;
+  color-scheme: dark;
+}
+[data-palette="turquoise"] {
+  --bg: #34e0a1;
+  --fg: #001a10;
+  --accent: #000000;
+  --accent-contrast: #34e0a1;
+  color-scheme: light;
+}
+[data-palette="periwinkle"] {
+  --bg: #6260ff;
+  --fg: #ffffff;
+  --accent: #e4e4ff;
+  --accent-contrast: #2f2da8;
+  color-scheme: dark;
+}
+[data-palette="lavender"] {
+  --bg: #e4e4ff;
+  --fg: #232270;
+  --accent: #6260ff;
+  --accent-contrast: #ffffff;
+  color-scheme: light;
+}
+
+/* The wordmark is white-on-transparent; invert it on light palettes */
+:root {
+  --logo-invert: 0;
+}
+[data-palette="bright-sun"],
+[data-palette="powder-pink"],
+[data-palette="sulu"],
+[data-palette="jet-stream"],
+[data-palette="turquoise"],
+[data-palette="lavender"] {
+  --logo-invert: 1;
+}
+.brand-logo {
+  filter: invert(var(--logo-invert));
+  transition: filter var(--dur-med) var(--ease-in-out);
+}
+
+:root {
+  /* Derived neutrals — one scale, mixed from fg into bg */
+  --surface: color-mix(in oklab, var(--fg) 4%, var(--bg));
+  --surface-2: color-mix(in oklab, var(--fg) 8%, var(--bg));
+  --border: color-mix(in oklab, var(--fg) 14%, transparent);
+  --border-strong: color-mix(in oklab, var(--fg) 26%, transparent);
+  --muted: color-mix(in oklab, var(--fg) 72%, var(--bg));
+  --faint: color-mix(in oklab, var(--fg) 55%, var(--bg));
+  --accent-soft: color-mix(in oklab, var(--accent) 14%, var(--bg));
+  --ring: var(--accent);
+
+  /* Motion language */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 160ms;
+  --dur-med: 360ms;
+  --dur-slow: 700ms;
+
+  /* Layered shadows (kept subtle; dark palettes rely more on borders) */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.06), 0 1px 1px rgb(0 0 0 / 0.04);
+  --shadow-md:
+    0 2px 4px rgb(0 0 0 / 0.05), 0 6px 16px rgb(0 0 0 / 0.07);
+  --shadow-lg:
+    0 4px 8px rgb(0 0 0 / 0.06), 0 12px 32px rgb(0 0 0 / 0.1);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-accent-soft: var(--accent-soft);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color var(--dur-med) var(--ease-in-out),
+    color var(--dur-med) var(--ease-in-out);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* Visible, high-contrast focus everywhere */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Fluid type scale */
+.text-display {
+  font-size: clamp(2.25rem, 1.3rem + 3.8vw, 3.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  text-wrap: balance;
+}
+.text-headline {
+  font-size: clamp(1.6rem, 1.15rem + 2vw, 2.6rem);
+  line-height: 1.12;
+  letter-spacing: -0.022em;
+  font-weight: 600;
+  text-wrap: balance;
+}
+.text-title {
+  font-size: clamp(1.2rem, 1.05rem + 0.6vw, 1.5rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+.text-body-lg {
+  font-size: clamp(1.05rem, 1rem + 0.35vw, 1.25rem);
+  line-height: 1.6;
+}
+.text-eyebrow {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------------------
+   Micro-interactions
+--------------------------------------------------------------------------- */
+
+/* Press feedback: confirms the click registered */
+.pressable {
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
+}
+.pressable:active {
+  transform: scale(0.97);
+}
+
+/* Hover lift: signals the card is interactive */
+.liftable {
+  transition:
+    transform 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out),
+    border-color 200ms var(--ease-out);
+}
+.liftable:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+}
+
+/* Scroll reveal: orchestrates section entrances; guides reading order */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Logo marquee: communicates breadth without consuming layout */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 120s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Modal + step transitions */
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes step-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes step-in-back {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.6); }
+  60% { transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.anim-overlay-in { animation: overlay-in var(--dur-med) var(--ease-out) both; }
+.anim-dialog-in { animation: dialog-in var(--dur-med) var(--ease-out) both; }
+.anim-step-in { animation: step-in 280ms var(--ease-out) both; }
+.anim-step-in-back { animation: step-in-back 280ms var(--ease-out) both; }
+.anim-pop-in { animation: pop-in 480ms var(--ease-out) both; }
+
+/* Skeleton shimmer for loading states */
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+.skeleton {
+  background: linear-gradient(
+    100deg,
+    var(--surface) 40%,
+    var(--surface-2) 50%,
+    var(--surface) 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+  border-radius: 0.5rem;
+}
+
+/* Progress bar fill */
+.progress-fill {
+  transition: width 400ms var(--ease-in-out);
+}
+
+/* Input focus glow: confirms which field is active */
+.field {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+.field:hover {
+  border-color: var(--border-strong);
+}
+.field:focus,
+.field:focus-within {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 25%, transparent);
+}
+
+/* Error shake: draws the eye to the live-region message */
+@keyframes nudge {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+.anim-nudge { animation: nudge 240ms var(--ease-in-out); }
+
+/* Skip link */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  transition: transform var(--dur-fast) var(--ease-out);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion: keep state changes, drop movement
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .marquee-track {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --border: color-mix(in oklab, var(--fg) 40%, transparent);
+    --border-strong: color-mix(in oklab, var(--fg) 60%, transparent);
+    --muted: var(--fg);
+  }
+}
