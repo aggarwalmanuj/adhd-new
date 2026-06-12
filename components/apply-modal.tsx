@@ -10,9 +10,9 @@ import {
 import { closeApplyModal, useApplyModalOpen } from "@/lib/apply-modal-store";
 import { getLeadAttribution, phCapture, phIdentify } from "@/lib/attribution";
 import { trackCustom, trackWhenReady } from "@/lib/fbpixel";
-import { REVENUE_RANGES, TRIED_OPTIONS } from "@/lib/waitlist-shared";
+import { BUDGET_OPTIONS, TRIED_OPTIONS, URGENCY_OPTIONS } from "@/lib/waitlist-shared";
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5;
 const CALENDLY_URL = process.env.NEXT_PUBLIC_CALENDLY_URL ?? "";
 
 type FormState = {
@@ -20,8 +20,9 @@ type FormState = {
   businessName: string;
   email: string;
   phone: string;
-  revenueRange: string;
+  budget: string;
   biggestProblem: string;
+  urgency: string;
   triedSoFar: string[];
 };
 
@@ -30,8 +31,9 @@ const EMPTY_FORM: FormState = {
   businessName: "",
   email: "",
   phone: "",
-  revenueRange: "",
+  budget: "",
   biggestProblem: "",
+  urgency: "",
   triedSoFar: [],
 };
 
@@ -47,8 +49,9 @@ function buildPayload(form: FormState, stage: "partial" | "complete", step: numb
     businessName: form.businessName.trim() || undefined,
     email: form.email.trim().toLowerCase(),
     phone: form.phone.trim() || undefined,
-    revenueRange: form.revenueRange || undefined,
+    budget: form.budget || undefined,
     biggestProblem: form.biggestProblem.trim() || undefined,
+    urgency: form.urgency || undefined,
     triedSoFar: form.triedSoFar.length ? form.triedSoFar : undefined,
     attribution: getLeadAttribution(),
   };
@@ -179,11 +182,16 @@ export function ApplyModal() {
   const validateStep = useCallback((): string => {
     if (step === 1) {
       if (!form.firstName.trim()) return "Please tell us your first name.";
+      if (!form.businessName.trim()) return "Please tell us your business name.";
       if (!isValidEmail(form.email)) return "Please enter a valid email address.";
+      if (!form.phone.trim()) return "Please add a phone number so we can reach you.";
     }
-    if (step === 2 && !form.revenueRange) return "Please pick the range that fits best.";
+    if (step === 2 && !form.budget) return "Please pick the option that fits best.";
     if (step === 3 && !form.biggestProblem.trim())
       return "A sentence or two is all we need.";
+    if (step === 4 && !form.urgency) return "Please pick the one that's true right now.";
+    if (step === 5 && form.triedSoFar.length === 0)
+      return "Please select at least one — even if it's just white-knuckling it.";
     return "";
   }, [step, form]);
 
@@ -403,16 +411,15 @@ export function ApplyModal() {
                       />
                     </label>
                     <label className="grid gap-1.5">
-                      <span className="text-sm font-medium">
-                        Business name{" "}
-                        <span className="font-normal text-faint">(optional)</span>
-                      </span>
+                      <span className="text-sm font-medium">Business name</span>
                       <input
                         className="field min-h-11 rounded-lg px-3.5 text-fg placeholder:text-faint"
                         type="text"
                         autoComplete="organization"
                         value={form.businessName}
                         onChange={(e) => set("businessName", e.target.value)}
+                        required
+                        aria-describedby={error ? errorId : undefined}
                       />
                     </label>
                     <label className="grid gap-1.5">
@@ -429,9 +436,7 @@ export function ApplyModal() {
                       />
                     </label>
                     <label className="grid gap-1.5">
-                      <span className="text-sm font-medium">
-                        Phone <span className="font-normal text-faint">(optional)</span>
-                      </span>
+                      <span className="text-sm font-medium">Phone</span>
                       <input
                         className="field min-h-11 rounded-lg px-3.5 text-fg placeholder:text-faint"
                         type="tel"
@@ -439,6 +444,8 @@ export function ApplyModal() {
                         inputMode="tel"
                         value={form.phone}
                         onChange={(e) => set("phone", e.target.value)}
+                        required
+                        aria-describedby={error ? errorId : undefined}
                       />
                     </label>
                   </div>
@@ -449,27 +456,27 @@ export function ApplyModal() {
                 <fieldset>
                   <legend>
                     <h2 ref={headingRef} tabIndex={-1} id={headingId} className="text-title outline-none">
-                      Where&apos;s your business today?
+                      How much are you ready to invest in solving this?
                     </h2>
                   </legend>
                   <p className="mt-1 text-sm text-muted">
-                    No judgement. It just helps us match you with the right cohort.
+                    The work is a four-week protocol. This helps us place you in the right track.
                   </p>
-                  <div className="mt-5 grid gap-2.5" role="radiogroup" aria-label="Monthly revenue">
-                    {REVENUE_RANGES.map((range) => (
+                  <div className="mt-5 grid gap-2.5" role="radiogroup" aria-label="Investment budget">
+                    {BUDGET_OPTIONS.map((option) => (
                       <label
-                        key={range}
-                        className={`field pressable flex min-h-12 cursor-pointer items-center gap-3 rounded-lg px-4 ${form.revenueRange === range ? "border-accent bg-accent-soft" : ""}`}
+                        key={option}
+                        className={`field pressable flex min-h-12 cursor-pointer items-center gap-3 rounded-lg px-4 ${form.budget === option ? "border-accent bg-accent-soft" : ""}`}
                       >
                         <input
                           type="radio"
-                          name="revenueRange"
-                          value={range}
-                          checked={form.revenueRange === range}
-                          onChange={() => set("revenueRange", range)}
+                          name="budget"
+                          value={option}
+                          checked={form.budget === option}
+                          onChange={() => set("budget", option)}
                           className="h-4 w-4 accent-accent"
                         />
-                        <span className="font-medium">{range}</span>
+                        <span className="font-medium">{option}</span>
                       </label>
                     ))}
                   </div>
@@ -501,6 +508,37 @@ export function ApplyModal() {
               )}
 
               {step === 4 && (
+                <fieldset>
+                  <legend>
+                    <h2 ref={headingRef} tabIndex={-1} id={headingId} className="text-title outline-none">
+                      How soon do you need this to change?
+                    </h2>
+                  </legend>
+                  <p className="mt-1 text-sm text-muted">
+                    Be honest — it helps us prioritise who we reach out to first.
+                  </p>
+                  <div className="mt-5 grid gap-2.5" role="radiogroup" aria-label="Urgency">
+                    {URGENCY_OPTIONS.map((option) => (
+                      <label
+                        key={option}
+                        className={`field pressable flex min-h-12 cursor-pointer items-center gap-3 rounded-lg px-4 ${form.urgency === option ? "border-accent bg-accent-soft" : ""}`}
+                      >
+                        <input
+                          type="radio"
+                          name="urgency"
+                          value={option}
+                          checked={form.urgency === option}
+                          onChange={() => set("urgency", option)}
+                          className="h-4 w-4 accent-accent"
+                        />
+                        <span className="font-medium">{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+
+              {step === 5 && (
                 <fieldset>
                   <legend>
                     <h2 ref={headingRef} tabIndex={-1} id={headingId} className="text-title outline-none">

@@ -3,6 +3,7 @@
 
 import posthog from "posthog-js";
 import { captureFirstTouchAttribution } from "@/lib/attribution";
+import { getConsent, onConsentChange } from "@/lib/consent";
 
 // Attribution is captured unconditionally — it must work even when PostHog
 // is off. (captureFirstTouchAttribution is idempotent and try/catch'd.)
@@ -11,12 +12,15 @@ captureFirstTouchAttribution();
 const token = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
 const enableDev = process.env.NEXT_PUBLIC_POSTHOG_ENABLE_DEV === "true";
 
-if (
-  token &&
-  typeof window !== "undefined" &&
-  // Dev clicks pollute prod funnels; offline dev machines spam "Failed to fetch".
-  (process.env.NODE_ENV === "production" || enableDev)
-) {
+function startPostHog(): void {
+  if (
+    !token ||
+    typeof window === "undefined" ||
+    // Dev clicks pollute prod funnels; offline dev machines spam "Failed to fetch".
+    (process.env.NODE_ENV !== "production" && !enableDev)
+  ) {
+    return;
+  }
   posthog.init(token, {
     // Own-origin reverse proxy (next.config rewrites) — defeats ad blockers
     // that drop *.posthog.com by hostname.
@@ -42,4 +46,17 @@ if (
       }
     },
   });
+}
+
+// GDPR: PostHog sets cookies/localStorage, so it only starts after explicit
+// consent — immediately for returning visitors who already accepted, or the
+// moment the banner's Accept is pressed.
+if (typeof window !== "undefined") {
+  if (getConsent() === "granted") {
+    startPostHog();
+  } else {
+    onConsentChange((value) => {
+      if (value === "granted") startPostHog();
+    });
+  }
 }

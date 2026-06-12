@@ -65,7 +65,7 @@ const FAQS = [
   },
   {
     q: "What stage should my business be at?",
-    a: "Most members are between first revenue and $50k/month. Pre-revenue founders with a clear offer are welcome; the application asks a few questions so we can place you in the right cohort.",
+    a: "Members are people who are growing — or who want to grow but feel something keeps getting in the way. What they share is the ability to invest $2,500–$10,000 in solving their ADHD situation, and the readiness to actually do the work. The application asks a few questions so we can place you in the right track.",
   },
   {
     q: "How much does it cost?",

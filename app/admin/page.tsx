@@ -4,6 +4,7 @@
 // from sessionStorage; any 401 auto-logs-out. No cookies, no JWT.
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { entriesToCsv } from "@/lib/waitlist-csv";
 import type { WaitlistEntry } from "@/lib/waitlist-shared";
 
 const PASSWORD_KEY = "hf-admin-password";
@@ -168,6 +169,22 @@ export default function AdminPage() {
       // handled
     }
   }, [authedFetch]);
+
+  // Per-entry download: the full entry is already on the client, so the CSV
+  // is built locally — same columns as the bulk export.
+  const handleDownloadEntry = useCallback((entry: WaitlistEntry) => {
+    const blob = new Blob([entriesToCsv([entry])], {
+      type: "text/csv;charset=utf-8",
+    });
+    const slug =
+      (entry.firstName || entry.email).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "entry";
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `lead-${slug}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, []);
 
   const handleDedupe = useCallback(async () => {
     if (!window.confirm("Merge duplicate rows sharing an email? This cannot be undone.")) {
@@ -373,9 +390,19 @@ export default function AdminPage() {
                 </span>
               </button>
               {isOpen ? (
-                <dl className="anim-step-in grid gap-x-8 gap-y-2.5 border-t border-line bg-surface px-5 py-4 text-sm sm:grid-cols-2">
+                <div className="anim-step-in border-t border-line bg-surface px-5 py-4">
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadEntry(entry)}
+                    className="pressable min-h-10 rounded-lg border border-line px-4 text-sm font-medium hover:bg-surface-2"
+                  >
+                    Download answers (CSV)
+                  </button>
+                  <dl className="mt-4 grid gap-x-8 gap-y-2.5 text-sm sm:grid-cols-2">
                   <Detail label="Phone" value={entry.phone} />
-                  <Detail label="Revenue" value={entry.revenueRange} />
+                  <Detail label="Budget" value={entry.budget} />
+                  <Detail label="Urgency" value={entry.urgency} />
+                  <Detail label="Revenue (legacy)" value={entry.revenueRange} />
                   <Detail label="Biggest problem" value={entry.biggestProblem} wide />
                   <Detail label="Tried so far" value={entry.triedSoFar?.join(", ")} wide />
                   <Detail label="Source" value={entry.source} wide />
@@ -389,7 +416,8 @@ export default function AdminPage() {
                   <Detail label="Calendly event" value={entry.calendlyEventUri} wide />
                   <Detail label="Created" value={new Date(entry.createdAt).toLocaleString()} />
                   <Detail label="Updated" value={new Date(entry.updatedAt).toLocaleString()} />
-                </dl>
+                  </dl>
+                </div>
               ) : null}
             </li>
           );

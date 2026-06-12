@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
-import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import { ApplyModal } from "@/components/apply-modal";
-import { FacebookPixelTracker } from "@/components/facebook-pixel";
-import { FB_PIXEL_ID, isValidPixelId } from "@/lib/fbpixel";
+import { CookieConsent } from "@/components/cookie-consent";
+import { FacebookPixel } from "@/components/facebook-pixel";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,8 +32,6 @@ export const metadata: Metadata = {
   },
 };
 
-const pixelEnabled = isValidPixelId(FB_PIXEL_ID);
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -56,35 +53,13 @@ export default function RootLayout({
         </a>
         {children}
         <ApplyModal />
-        {pixelEnabled ? (
-          <>
-            <Script id="fb-pixel" strategy="afterInteractive">
-              {`!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '${FB_PIXEL_ID}');
-fbq('track', 'PageView');`}
-            </Script>
-            <noscript>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                height="1"
-                width="1"
-                style={{ display: "none" }}
-                alt=""
-                src={`https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1`}
-              />
-            </noscript>
-            <Suspense fallback={null}>
-              <FacebookPixelTracker />
-            </Suspense>
-          </>
-        ) : null}
+        {/* Consent-gated: the pixel script is injected only after Accept.
+            The old <noscript> pixel fallback is gone on purpose — it cannot
+            be consent-gated, which GDPR requires. */}
+        <FacebookPixel />
+        <CookieConsent />
+        {/* Vercel Analytics is cookieless, so it runs without consent. */}
+        <Analytics />
       </body>
     </html>
   );

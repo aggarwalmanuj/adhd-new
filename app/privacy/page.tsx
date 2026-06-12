@@ -29,11 +29,14 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-title">Analytics &amp; cookies</h2>
             <p className="mt-3">
-              We use PostHog for product analytics and session replay (with
-              keyboard input masked) and the Meta Pixel for advertising
-              measurement. These tools use cookies and local storage to
-              distinguish visitors. We use this data to improve the site and
-              measure campaigns, never to sell your information.
+              With your consent, we use PostHog for product analytics and
+              session replay (with keyboard input masked) and the Meta Pixel
+              for advertising measurement. These tools use cookies and local
+              storage to distinguish visitors and only run after you accept
+              them in the cookie banner; declining keeps them off. We also use
+              Vercel Analytics, which is cookieless and collects no personal
+              data. We use this data to improve the site and measure
+              campaigns, never to sell your information.
             </p>
           </section>
           <section>

@@ -1,11 +1,27 @@
 // Shared between client and server: zod schemas + lead types.
 import { z } from "zod";
 
+/** Legacy: the revenue question was replaced by the budget question.
+ * Kept so stale client bundles and old documents stay valid. */
 export const REVENUE_RANGES = [
   "Pre-revenue",
   "$1k – $10k / month",
   "$10k – $50k / month",
   "$50k+ / month",
+] as const;
+
+export const BUDGET_OPTIONS = [
+  "Under $2,500",
+  "$2,500 – $10,000",
+  "$10,000+",
+  "I need to understand it first",
+] as const;
+
+export const URGENCY_OPTIONS = [
+  "It's urgent — this is costing me right now",
+  "Within this quarter",
+  "Soon, but I'm still exploring",
+  "Just curious for now",
 ] as const;
 
 export const TRIED_OPTIONS = [
@@ -44,12 +60,14 @@ export type Attribution = z.infer<typeof attributionSchema>;
 
 export const waitlistSubmissionSchema = z.object({
   stage: z.enum(["partial", "complete"]),
-  step: z.number().int().min(1).max(4),
+  step: z.number().int().min(1).max(5),
   firstName: z.string().trim().min(1).max(200),
   businessName: clipped(200).optional(),
   email: z.string().trim().toLowerCase().email().max(320),
   phone: clipped(50).optional(),
   revenueRange: z.enum(REVENUE_RANGES).optional(),
+  budget: z.enum(BUDGET_OPTIONS).optional(),
+  urgency: z.enum(URGENCY_OPTIONS).optional(),
   biggestProblem: clipped(5000).optional(),
   triedSoFar: z.array(z.enum(TRIED_OPTIONS)).max(TRIED_OPTIONS.length).optional(),
   source: clipped(500).optional(),
@@ -84,7 +102,10 @@ export type WaitlistEntry = {
   firstName?: string;
   businessName?: string;
   phone?: string;
+  /** Legacy field from the old revenue question; new leads carry `budget`. */
   revenueRange?: string;
+  budget?: string;
+  urgency?: string;
   biggestProblem?: string;
   triedSoFar?: string[];
   stage: "partial" | "complete";
