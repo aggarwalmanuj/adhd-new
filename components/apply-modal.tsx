@@ -236,6 +236,14 @@ export function ApplyModal() {
         return;
       }
       trackWhenReady("Lead", { content_name: "waitlist" });
+      // Standard Meta conversion event — fires the moment the success state
+      // ("You're on the list") is reached, i.e. only after the server confirms
+      // the lead was saved. trackWhenReady (not raw fbq) so it survives the
+      // async fbevents.js load and stays behind the same consent gate.
+      trackWhenReady("CompleteRegistration", {
+        content_name: "waitlist",
+        status: true,
+      });
       trackCustom("WaitlistJoined");
       phCapture("waitlist_submitted");
       phIdentify(form.email.trim().toLowerCase(), {
