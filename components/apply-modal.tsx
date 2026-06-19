@@ -243,6 +243,7 @@ export function ApplyModal() {
       trackWhenReady("CompleteRegistration", {
         content_name: "waitlist",
         status: true,
+        source: "adhd",
       });
       trackCustom("WaitlistJoined");
       phCapture("waitlist_submitted");
