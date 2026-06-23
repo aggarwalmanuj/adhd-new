@@ -94,8 +94,12 @@ export default function Home() {
               <Reveal delay={60}>
                 <h1 className="text-display mt-5">
                   Your ADHD brain knows exactly what it&apos;s capable of.
-                  Something keeps stopping it right before it lands.
                 </h1>
+              </Reveal>
+              <Reveal delay={90}>
+                <p className="text-display mt-3 text-muted">
+                  Something keeps stopping it right before it lands.
+                </p>
               </Reveal>
               <Reveal delay={120}>
                 <p className="text-title mt-6 text-accent">
@@ -149,7 +153,7 @@ export default function Home() {
             <div className="overflow-hidden rounded-2xl border border-line shadow-lg">
               <Image
                 src="/images/HeroSection.jpg"
-                alt=""
+                alt="A founder working with deep focus"
                 width={1600}
                 height={900}
                 className="h-64 w-full object-cover sm:h-80"
