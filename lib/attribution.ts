@@ -15,6 +15,8 @@ export type FirstTouch = {
   utmContent?: string;
   fbclid?: string;
   gclid?: string;
+  ttclid?: string;
+  msclkid?: string;
 };
 
 export type LeadAttribution = FirstTouch & {
@@ -43,6 +45,8 @@ export function captureFirstTouchAttribution(): void {
       utmContent: get("utm_content"),
       fbclid: get("fbclid"),
       gclid: get("gclid"),
+      ttclid: get("ttclid"),
+      msclkid: get("msclkid"),
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(touch));
   } catch {
@@ -65,16 +69,21 @@ export function getPostHogIds(): Pick<
   }
 }
 
+/** Read the persisted first-touch record (channel + click ids). Empty if none. */
+export function getStoredFirstTouch(): FirstTouch {
+  try {
+    if (typeof window === "undefined") return {};
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw) as FirstTouch;
+  } catch {
+    // ignore — corrupt/unavailable storage must never break the page.
+  }
+  return {};
+}
+
 /** Attached to every waitlist POST — partial and complete. */
 export function getLeadAttribution(): LeadAttribution {
-  let touch: FirstTouch = {};
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) touch = JSON.parse(raw) as FirstTouch;
-  } catch {
-    // ignore
-  }
-  return { ...touch, ...getPostHogIds() };
+  return { ...getStoredFirstTouch(), ...getPostHogIds() };
 }
 
 export function phCapture(event: string, props?: Record<string, unknown>): void {

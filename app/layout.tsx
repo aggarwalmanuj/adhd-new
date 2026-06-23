@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AIMERGE: find relief from ADHD in four weeks",
     description:
-      "Your ADHD brain knows exactly what it's capable of. Something keeps stopping it right before it lands. Join the waitlist.",
+      "Your ADHD brain knows exactly what it's capable of. Something keeps stopping it right before it lands. Get your Belief Score.",
     type: "website",
   },
 };

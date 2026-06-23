@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Reveal } from "@/components/reveal";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { WaitlistCta } from "@/components/waitlist-cta";
+import { ScorecardCta } from "@/components/scorecard-cta";
 
 const LOGOS = [
   { src: "/logos/ibm.png", alt: "IBM" },
@@ -65,11 +65,11 @@ const FAQS = [
   },
   {
     q: "What stage should my business be at?",
-    a: "Members are people who are growing — or who want to grow but feel something keeps getting in the way. What they share is the ability to invest $2,500–$10,000 in solving their ADHD situation, and the readiness to actually do the work. The application asks a few questions so we can place you in the right track.",
+    a: "Members are people who are growing — or who want to grow but feel something keeps getting in the way. What they share is the ability to invest $2,500–$10,000 in solving their ADHD situation, and the readiness to actually do the work. The Belief Score asks a few questions so we can place you in the right track.",
   },
   {
     q: "How much does it cost?",
-    a: "Pricing is shared with the waitlist before each cohort opens. Joining the waitlist is free and carries zero obligation.",
+    a: "Pricing is shared before each cohort opens. Getting your Belief Score is free and carries zero obligation.",
   },
   {
     q: "What's the paid clarity call?",
@@ -113,7 +113,7 @@ export default function Home() {
               </Reveal>
               <Reveal delay={240}>
                 <div className="mt-9 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
-                  <WaitlistCta size="lg">Join the waitlist</WaitlistCta>
+                  <ScorecardCta size="lg">Get your Belief Score</ScorecardCta>
                   <a
                     href="#program"
                     className="pressable inline-flex min-h-13 items-center rounded-full px-5 font-medium text-muted transition-colors hover:text-fg"
@@ -124,7 +124,7 @@ export default function Home() {
               </Reveal>
               <Reveal delay={300}>
                 <p className="mt-5 text-sm text-faint">
-                  Applications reviewed by hand. Limited cohort seats.
+                  Free and takes two minutes. No application, no waitlist.
                 </p>
               </Reveal>
             </div>
@@ -340,13 +340,13 @@ export default function Home() {
             </Reveal>
             <Reveal delay={80}>
               <p className="text-body-lg mx-auto mt-5 max-w-xl text-muted">
-                Join the waitlist in under two minutes. We read every
-                application ourselves.
+                Get your Belief Score in under two minutes. Free, with zero
+                obligation.
               </p>
             </Reveal>
             <Reveal delay={160}>
               <div className="mt-9">
-                <WaitlistCta size="lg">Join the waitlist</WaitlistCta>
+                <ScorecardCta size="lg">Get your Belief Score</ScorecardCta>
               </div>
             </Reveal>
           </div>

@@ -6,7 +6,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { WaitlistCta } from "@/components/waitlist-cta";
+import { ScorecardCta } from "@/components/scorecard-cta";
 
 const NAV = [
   { href: "#why", label: "Why" },
@@ -58,7 +58,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2.5">
-          <WaitlistCta>Join the waitlist</WaitlistCta>
+          <ScorecardCta>Get your Belief Score</ScorecardCta>
         </div>
       </div>
     </header>
