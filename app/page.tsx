@@ -94,8 +94,12 @@ export default function Home() {
               <Reveal delay={60}>
                 <h1 className="text-display mt-5">
                   Your ADHD brain knows exactly what it&apos;s capable of.
-                  Something keeps stopping it right before it lands.
                 </h1>
+              </Reveal>
+              <Reveal delay={90}>
+                <p className="text-display mt-3 text-muted">
+                  Something keeps stopping it right before it lands.
+                </p>
               </Reveal>
               <Reveal delay={120}>
                 <p className="text-title mt-6 text-accent">
@@ -149,7 +153,7 @@ export default function Home() {
             <div className="overflow-hidden rounded-2xl border border-line shadow-lg">
               <Image
                 src="/images/HeroSection.jpg"
-                alt=""
+                alt="A founder working with deep focus"
                 width={1600}
                 height={900}
                 className="h-64 w-full object-cover sm:h-80"
@@ -224,6 +228,14 @@ export default function Home() {
                 Stop renting other people&apos;s systems. Install your own.
               </h2>
             </Reveal>
+            <Reveal delay={90}>
+              <p className="text-body-lg mt-5 max-w-2xl text-muted">
+                This is ADHD coaching rebuilt around how your brain actually
+                works. You already know exactly what you&apos;re capable of —
+                these four pillars make that capability show up in the work,
+                week after week.
+              </p>
+            </Reveal>
             <div className="mt-12 grid gap-5 md:grid-cols-2">
               {PILLARS.map((pillar, i) => (
                 <Reveal key={pillar.step} delay={i * 50}>
@@ -289,6 +301,16 @@ export default function Home() {
                   <p>
                     AIMERGE is that scaffolding, productized: the systems, the
                     room, and the cadence he wishes existed twenty years ago.
+                  </p>
+                  <p>
+                    <a
+                      href="https://manujaggarwal.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-accent underline-offset-4 hover:underline"
+                    >
+                      More on Manuj&apos;s work at TetraNoodle →
+                    </a>
                   </p>
                 </div>
               </Reveal>
