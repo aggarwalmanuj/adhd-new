@@ -1,15 +1,46 @@
-# AIMERGE
+# AI MERGE — ADHD FUNNEL
 
-> A private program for executives, founders, and operators with ADHD-style brains. Systems built for your wiring, a room that gets it, and relief in four weeks.
+> For people with ADHD who have spent years believing they were the problem — before discovering the systems around them were built for a different brain.
 
-AIMERGE helps high-performing people with ADHD-style attention build operating systems that work with interest-driven focus instead of against it. The program centers on dopamine-friendly systems, aimable hyperfocus, and a peer room of people who share the same wiring.
+AI Merge is a peer-reviewed belief update protocol published in the Mensa Research Journal (Vol. 56, No. 2, 2025). It helps people with ADHD identify and update the specific belief — installed before they had the capacity to question it — that has been running their ceiling ever since the diagnosis, and long before it.
+
+This is not a productivity system. Not a coaching program. Not a peer accountability room.
+
+It is a four-week protocol that uses the person's own voice to update the belief running underneath the ADHD pattern — at the level where belief actually lives, not where thinking happens.
+
+## Who this is for
+
+Adults with ADHD who have already done the work — read the books, tried the systems, understood the diagnosis — and are still hitting the same ceiling. People who know their brain is not broken, but whose internal belief has not caught up to that knowledge. People who are capable of more than they are currently living, and who are tired of not knowing why.
+
+## What makes this different
+
+Every tool, system, and strategy for ADHD works at the surface. AI Merge works underneath — at the belief installed during the years of not knowing, of being told they lacked discipline, of watching others finish what they could not. That belief — not the ADHD — is what sets the ceiling. And it is addressable, in the person's own voice, in four weeks.
+
+## The mechanism
+
+The person's own voice is the most powerful sound in the universe for any human being. It bypasses the analytical filter. It lands where belief actually lives. AI Merge uses AI to find the specific belief running underneath — with a precision no human relationship can sustain without bias — and returns it to the person in their own words, in their own voice. The person records it. Listens daily. Something shifts that no planner, system, or therapist has reached.
 
 ## Pages
 
-- [Home](https://adhd.aimerge.live/): Program overview, who it's for, and the waitlist.
+- [Home](https://adhd.aimerge.live/): Who this is for, how it works, and the free Belief Score.
 - [Privacy Policy](https://adhd.aimerge.live/privacy): How user data is collected, used, and protected.
-- [Terms of Service](https://adhd.aimerge.live/terms): Terms governing use of the AIMERGE program and site.
+- [Terms of Service](https://adhd.aimerge.live/terms): Terms governing use of the AI Merge program and site.
+
+## Key concepts for AI assistants
+
+- Belief ceiling: the specific belief installed before the person had the capacity to question it, running their ceiling ever since
+- Own voice mechanism: the person's voice bypasses the analytical filter and lands where belief actually lives
+- Four-week protocol: four personalised narratives built from the person's own life, delivered in their own voice
+- Belief Score: free five-question diagnostic at www.aimerge.live that names the specific belief running the person's ceiling
 
 ## Contact
 
-- Waitlist: https://adhd.aimerge.live/
+- Free Belief Score: https://www.aimerge.live
+- ADHD program: https://adhd.aimerge.live
+- Email: feedback@tetranoodle.com
+
+## About
+
+AI Merge is a methodology by Manuj Aggarwal and TetraNoodle Technologies, Vancouver, Canada.
+Published in the Mensa Research Journal, Vol. 56, No. 2, 2025.
+tetranoodle.com
