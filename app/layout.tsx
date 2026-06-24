@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { ApplyModal } from "@/components/apply-modal";
 import { CookieConsent } from "@/components/cookie-consent";
 import { FacebookPixel } from "@/components/facebook-pixel";
+import { StructuredData } from "@/components/structured-data";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -70,6 +71,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <StructuredData />
         <a href="#main" className="skip-link">
           Skip to content
         </a>
