@@ -1,125 +1,45 @@
 @import "tailwindcss";
 
-/* ---------------------------------------------------------------------------
-   Palette system — 12 palettes (6 pairs × 2 orientations).
-   Each palette defines 4 raw tokens; everything else is derived with
-   color-mix so the whole UI re-themes from one data attribute.
-   Kept in sync with lib/palettes.ts.
---------------------------------------------------------------------------- */
+/* ===========================================================================
+   AI MERGE: Belief Score brand system.
+   The "Marine" theme: deep navy ground + ONE teal accent (--signal), used
+   sparingly. Editorial voice: Fraunces display + Inter UI. Exact tokens,
+   do not approximate. A light "Aurora" variant lives in [data-theme="aurora"].
+=========================================================================== */
 
 :root,
-[data-palette="big-stone"] {
-  --bg: #141d38;
-  --fg: #edeff5;
-  --accent: #fcdb32;
-  --accent-contrast: #141d38;
+[data-palette="marine"] {
+  /* Exact brand tokens */
+  --background: #0f2c3b;
+  --foreground: #a8c4d0;
+  --ink: #eaf0f4;
+  --card: #163a4d;
+  --popover: #163a4d;
+  --secondary: #194254;
+  --muted-surface: #1d4960;
+  --muted-foreground: #95b5c4;
+  --accent: #2a6b85;
+  --border: #245a73;
+  --input: #2c6b87;
+  --signal: #5fc5d4;
+  --destructive: #dc2626;
+  --glow: 95 197 212;
+  --shadow-ink: 5, 18, 26;
+  --radius: 0.75rem;
   color-scheme: dark;
-}
-[data-palette="bright-sun"] {
-  --bg: #fcdb32;
-  --fg: #141d38;
-  --accent: #141d38;
-  --accent-contrast: #fcdb32;
-  color-scheme: light;
-}
-[data-palette="royal-blue"] {
-  --bg: #3447aa;
-  --fg: #f2eff8;
-  --accent: #fbeaeb;
-  --accent-contrast: #3447aa;
-  color-scheme: dark;
-}
-[data-palette="powder-pink"] {
-  --bg: #fbeaeb;
-  --fg: #252a52;
-  --accent: #3447aa;
-  --accent-contrast: #fbeaeb;
-  color-scheme: light;
-}
-[data-palette="deep-fir"] {
-  --bg: #163300;
-  --fg: #f0f6ea;
-  --accent: #9fe870;
-  --accent-contrast: #163300;
-  color-scheme: dark;
-}
-[data-palette="sulu"] {
-  --bg: #9fe870;
-  --fg: #163300;
-  --accent: #163300;
-  --accent-contrast: #9fe870;
-  color-scheme: light;
-}
-[data-palette="blue-whale"] {
-  --bg: #03363d;
-  --fg: #e9f1f0;
-  --accent: #bdd9d7;
-  --accent-contrast: #03363d;
-  color-scheme: dark;
-}
-[data-palette="jet-stream"] {
-  --bg: #bdd9d7;
-  --fg: #03363d;
-  --accent: #03363d;
-  --accent-contrast: #bdd9d7;
-  color-scheme: light;
-}
-[data-palette="black"] {
-  --bg: #000000;
-  --fg: #ededed;
-  --accent: #34e0a1;
-  --accent-contrast: #001a10;
-  color-scheme: dark;
-}
-[data-palette="turquoise"] {
-  --bg: #34e0a1;
-  --fg: #001a10;
-  --accent: #000000;
-  --accent-contrast: #34e0a1;
-  color-scheme: light;
-}
-[data-palette="periwinkle"] {
-  --bg: #6260ff;
-  --fg: #ffffff;
-  --accent: #e4e4ff;
-  --accent-contrast: #2f2da8;
-  color-scheme: dark;
-}
-[data-palette="lavender"] {
-  --bg: #e4e4ff;
-  --fg: #232270;
-  --accent: #6260ff;
-  --accent-contrast: #ffffff;
-  color-scheme: light;
-}
 
-/* The wordmark is white-on-transparent; invert it on light palettes */
-:root {
-  --logo-invert: 0;
-}
-[data-palette="bright-sun"],
-[data-palette="powder-pink"],
-[data-palette="sulu"],
-[data-palette="jet-stream"],
-[data-palette="turquoise"],
-[data-palette="lavender"] {
-  --logo-invert: 1;
-}
-.brand-logo {
-  filter: invert(var(--logo-invert));
-  transition: filter var(--dur-med) var(--ease-in-out);
-}
-
-:root {
-  /* Derived neutrals — one scale, mixed from fg into bg */
-  --surface: color-mix(in oklab, var(--fg) 4%, var(--bg));
-  --surface-2: color-mix(in oklab, var(--fg) 8%, var(--bg));
-  --border: color-mix(in oklab, var(--fg) 14%, transparent);
-  --border-strong: color-mix(in oklab, var(--fg) 26%, transparent);
-  --muted: color-mix(in oklab, var(--fg) 72%, var(--bg));
-  --faint: color-mix(in oklab, var(--fg) 55%, var(--bg));
-  --accent-soft: color-mix(in oklab, var(--accent) 14%, var(--bg));
-  --ring: var(--accent);
+  /* Aliases bridging the exact names to the utility-token names the
+     components already use (bg-bg, text-fg, bg-surface, border-line, …). */
+  --bg: var(--background);
+  --fg: var(--ink);                  /* headings + primary text */
+  --accent-contrast: var(--background);
+  --surface: var(--card);
+  --surface-2: var(--secondary);
+  --border-strong: var(--input);
+  --muted: var(--foreground);        /* body copy */
+  --faint: var(--muted-foreground);  /* eyebrows, captions */
+  --accent-soft: color-mix(in srgb, var(--accent) 32%, var(--background));
+  --ring: var(--signal);
 
   /* Motion language */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -128,28 +48,53 @@
   --dur-med: 360ms;
   --dur-slow: 700ms;
 
-  /* Layered shadows (kept subtle; dark palettes rely more on borders) */
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.06), 0 1px 1px rgb(0 0 0 / 0.04);
-  --shadow-md:
-    0 2px 4px rgb(0 0 0 / 0.05), 0 6px 16px rgb(0 0 0 / 0.07);
-  --shadow-lg:
-    0 4px 8px rgb(0 0 0 / 0.06), 0 12px 32px rgb(0 0 0 / 0.1);
+  /* Shadows tuned to the navy ground (lean on borders + ink shadow) */
+  --shadow-sm: 0 1px 2px rgba(var(--shadow-ink), .35);
+  --shadow-md: 0 12px 30px -20px rgba(var(--shadow-ink), .45);
+  --shadow-lg: 0 22px 50px -28px rgba(var(--shadow-ink), .55);
+}
+
+/* Optional light section variant, same teal family. */
+[data-theme="aurora"] {
+  --background: #eaf0f4;
+  --foreground: #3e5b6a;
+  --ink: #0f2c3b;
+  --card: #ffffff;
+  --popover: #ffffff;
+  --secondary: #d5e0e7;
+  --muted-foreground: #557280;
+  --accent: #2a8f9e;
+  --border: #c1cfd8;
+  --input: #c1cfd8;
+  --signal: #2a8f9e;
+  --glow: 72 185 198;
+  --shadow-ink: 15, 44, 59;
+  color-scheme: light;
+}
+
+/* White wordmark sits on the navy ground, no inversion in Marine. */
+.brand-logo {
+  filter: none;
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-fg: var(--fg);
+  --color-ink: var(--ink);
   --color-accent: var(--accent);
   --color-accent-contrast: var(--accent-contrast);
   --color-accent-soft: var(--accent-soft);
+  --color-signal: var(--signal);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-card: var(--card);
   --color-line: var(--border);
   --color-line-strong: var(--border-strong);
   --color-muted: var(--muted);
   --color-faint: var(--faint);
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --radius-pill: 999px;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, serif;
 }
 
 /* ---------------------------------------------------------------------------
@@ -159,67 +104,211 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
+  /* Safety net against incidental horizontal scroll (glow/ken-burns bleed,
+     long tokens). `clip` does not establish a scroll container, so it never
+     breaks the sticky header the way `overflow-x: hidden` can. */
+  overflow-x: clip;
 }
 
 body {
-  background: var(--bg);
-  color: var(--fg);
+  background: var(--background);
+  color: var(--foreground);
   font-family: var(--font-sans);
+  line-height: 1.75;
   text-rendering: optimizeLegibility;
-  transition:
-    background-color var(--dur-med) var(--ease-in-out),
-    color var(--dur-med) var(--ease-in-out);
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--accent);
-  color: var(--accent-contrast);
+  background: var(--signal);
+  color: var(--background);
 }
 
-/* Visible, high-contrast focus everywhere */
+/* Visible, high-contrast teal focus everywhere */
 :focus-visible {
-  outline: 2px solid var(--ring);
+  outline: 2px solid var(--signal);
   outline-offset: 3px;
   border-radius: 2px;
 }
 
-/* Fluid type scale */
+/* ---------------------------------------------------------------------------
+   Typography: Fraunces display + italic emphasis, Inter for everything else
+--------------------------------------------------------------------------- */
+
 .text-display {
-  font-size: clamp(2.25rem, 1.3rem + 3.8vw, 3.9rem);
-  line-height: 1.08;
-  letter-spacing: -0.03em;
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-size: clamp(2.1rem, 1.45rem + 3.4vw, 5.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  color: var(--ink);
   text-wrap: balance;
+  overflow-wrap: break-word;
 }
 .text-headline {
-  font-size: clamp(1.6rem, 1.15rem + 2vw, 2.6rem);
-  line-height: 1.12;
-  letter-spacing: -0.022em;
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-size: clamp(1.7rem, 1.3rem + 2vw, 3.05rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--ink);
   text-wrap: balance;
+  overflow-wrap: break-word;
 }
 .text-title {
-  font-size: clamp(1.2rem, 1.05rem + 0.6vw, 1.5rem);
-  line-height: 1.25;
-  letter-spacing: -0.015em;
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 1.05rem + 0.7vw, 1.6rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+/* The signature move: a Fraunces italic emphasis line under a statement. */
+.text-emphasis {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
 }
 .text-body-lg {
-  font-size: clamp(1.05rem, 1rem + 0.35vw, 1.25rem);
-  line-height: 1.6;
+  font-size: clamp(1.05rem, 1rem + 0.35vw, 1.2rem);
+  line-height: 1.8;
 }
 .text-eyebrow {
-  font-size: 0.8125rem;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
+  color: var(--foreground);
+}
+
+/* ---------------------------------------------------------------------------
+   Buttons: pill, uppercase, wide tracking. Never wrap.
+--------------------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: clamp(0.7rem, 0.66rem + 0.18vw, 0.78rem);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.45s var(--ease-out);
+}
+.btn-lg {
+  padding: 1rem 2rem;
+}
+.btn:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+/* Primary: near-white pill, navy text; inverts to outline on hover. */
+.btn-primary {
+  background: var(--ink);
+  color: var(--background);
+  border: 1px solid var(--ink);
+}
+.btn-primary:hover {
+  background: transparent;
+  color: var(--ink);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 36px -22px rgba(var(--shadow-ink), .45);
+}
+
+/* Featured: the teal accent pill. Used sparingly. */
+.btn-signal {
+  background: var(--signal);
+  color: var(--background);
+  border: 1px solid var(--signal);
+}
+.btn-signal:hover {
+  background: transparent;
+  color: var(--signal);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 40px -20px rgba(var(--glow), .4);
+}
+
+/* Ghost: hairline outline that fills with ink on hover. */
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--ink) 40%, transparent);
+}
+.btn-ghost:hover {
+  background: var(--ink);
+  color: var(--background);
+  transform: translateY(-1px);
+}
+
+/* ---------------------------------------------------------------------------
+   Editorial details: chapter mark, hairline, hero glow, ken-burns
+--------------------------------------------------------------------------- */
+
+.chapter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.chapter-rule {
+  display: inline-block;
+  width: 1.75rem;
+  height: 1px;
+  background: var(--border);
+}
+.chapter-dot {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--signal);
+  animation: chapter-pulse 2.4s var(--ease-in-out) infinite;
+}
+@keyframes chapter-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(var(--glow), .5); }
+  70% { box-shadow: 0 0 0 0.5rem rgba(var(--glow), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--glow), 0); }
+}
+
+/* 1px divider, a positioned hairline, not a heavy border. */
+.hairline {
+  height: 1px;
+  background: var(--border);
+}
+
+/* Soft teal halo behind hero imagery. */
+.hero-glow {
+  position: absolute;
+  inset: -10%;
+  background: radial-gradient(circle at 30% 30%, rgba(var(--glow), .22), transparent 65%);
+  filter: blur(48px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes ken-burns {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+.ken-burns {
+  animation: ken-burns 14s var(--ease-in-out) infinite alternate;
 }
 
 /* ---------------------------------------------------------------------------
    Micro-interactions
 --------------------------------------------------------------------------- */
 
-/* Press feedback: confirms the click registered */
 .pressable {
   transition:
     transform var(--dur-fast) var(--ease-out),
@@ -231,20 +320,20 @@ body {
   transform: scale(0.97);
 }
 
-/* Hover lift: signals the card is interactive */
+/* Card lift on hover */
 .liftable {
   transition:
-    transform 200ms var(--ease-out),
-    box-shadow 200ms var(--ease-out),
-    border-color 200ms var(--ease-out);
+    transform 300ms var(--ease-out),
+    box-shadow 300ms var(--ease-out),
+    border-color 300ms var(--ease-out);
 }
 .liftable:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: var(--border-strong);
+  border-color: color-mix(in srgb, var(--foreground) 35%, transparent);
 }
 
-/* Scroll reveal: orchestrates section entrances; guides reading order */
+/* Scroll reveal: staggered section entrances */
 .reveal {
   opacity: 0;
   transform: translateY(14px);
@@ -258,7 +347,7 @@ body {
   transform: none;
 }
 
-/* Logo marquee: communicates breadth without consuming layout */
+/* Logo marquee */
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
@@ -298,7 +387,7 @@ body {
 .anim-step-in-back { animation: step-in-back 280ms var(--ease-out) both; }
 .anim-pop-in { animation: pop-in 480ms var(--ease-out) both; }
 
-/* Skeleton shimmer for loading states */
+/* Skeleton shimmer */
 @keyframes shimmer {
   from { background-position: 200% 0; }
   to { background-position: -200% 0; }
@@ -315,30 +404,35 @@ body {
   border-radius: 0.5rem;
 }
 
-/* Progress bar fill */
 .progress-fill {
   transition: width 400ms var(--ease-in-out);
 }
 
-/* Input focus glow: confirms which field is active */
+/* Input recipe */
 .field {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  width: 100%;
+  background: var(--background);
+  border: 1px solid color-mix(in srgb, var(--foreground) 25%, transparent);
+  border-radius: 4px;
+  color: var(--ink);
   transition:
     border-color var(--dur-fast) var(--ease-out),
     box-shadow var(--dur-fast) var(--ease-out);
 }
+.field::placeholder {
+  color: color-mix(in srgb, var(--foreground) 45%, transparent);
+}
 .field:hover {
-  border-color: var(--border-strong);
+  border-color: color-mix(in srgb, var(--foreground) 40%, transparent);
 }
 .field:focus,
 .field:focus-within {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 25%, transparent);
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--foreground) 12%, transparent);
 }
 
-/* Error shake: draws the eye to the live-region message */
+/* Error shake */
 @keyframes nudge {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-4px); }
@@ -354,8 +448,8 @@ body {
   z-index: 100;
   transform: translateY(-200%);
   transition: transform var(--dur-fast) var(--ease-out);
-  background: var(--accent);
-  color: var(--accent-contrast);
+  background: var(--signal);
+  color: var(--background);
   padding: 0.625rem 1rem;
   border-radius: 0.5rem;
   font-weight: 600;
@@ -382,15 +476,17 @@ body {
     opacity: 1;
     transform: none;
   }
-  .marquee-track {
+  .marquee-track,
+  .ken-burns,
+  .chapter-dot {
     animation: none;
   }
 }
 
 @media (prefers-contrast: more) {
   :root {
-    --border: color-mix(in oklab, var(--fg) 40%, transparent);
-    --border-strong: color-mix(in oklab, var(--fg) 60%, transparent);
-    --muted: var(--fg);
+    --border: color-mix(in srgb, var(--foreground) 50%, transparent);
+    --border-strong: color-mix(in srgb, var(--foreground) 70%, transparent);
+    --muted: var(--ink);
   }
 }

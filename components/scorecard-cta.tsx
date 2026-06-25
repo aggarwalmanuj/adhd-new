@@ -1,17 +1,20 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { buildScorecardUrl, SCORECARD_BASE_URL } from "@/lib/scorecard";
+import { getStoredFirstTouch } from "@/lib/attribution";
+import { trackCustom } from "@/lib/fbpixel";
+import { buildScorecardUrl, LP_SLUG, SCORECARD_BASE_URL } from "@/lib/scorecard";
 
 type ScorecardCtaProps = {
   children: React.ReactNode;
-  variant?: "primary" | "ghost";
+  /** "primary" = near-white ink pill, "signal" = teal accent pill (sparingly). */
+  variant?: "primary" | "signal" | "ghost";
   size?: "md" | "lg";
   className?: string;
 };
 
-// The URL depends on client-only state (localStorage). No external source ever
-// changes it after first read, so subscribe is a no-op.
+// The URL depends on client-only state (localStorage / cookies). Nothing
+// external changes it after first read, so subscribe is a no-op.
 const subscribe = () => () => {};
 
 export function ScorecardCta({
@@ -20,28 +23,42 @@ export function ScorecardCta({
   size = "md",
   className = "",
 }: ScorecardCtaProps) {
-  // SSR and the first hydration render emit the bare scorecard homepage (no
-  // mismatch, and a fast pre-hydration click still lands on the required entry
-  // point); the client snapshot then enriches the href with stored attribution
-  // + the stable visitor ref. Deliberately a same-tab anchor with NO
-  // rel="noreferrer": the scorecard reads the referrer as a secondary signal
-  // (lp/ref stay the source of truth).
+  // SSR and the first hydration render emit the bare entry point (no mismatch,
+  // and a fast pre-hydration click still lands correctly); the client snapshot
+  // then enriches the href with stored attribution + the stable visitor ref.
+  // Deliberately a same-tab anchor with NO rel="noreferrer": the scorecard reads
+  // the referrer as a secondary signal (lp/ref stay the source of truth).
   const href = useSyncExternalStore(
     subscribe,
     buildScorecardUrl,
     () => SCORECARD_BASE_URL
   );
 
-  const base =
-    "pressable inline-flex items-center justify-center gap-2 rounded-full font-semibold";
-  const sizing = size === "lg" ? "min-h-13 px-8 text-base" : "min-h-11 px-6 text-sm";
-  const look =
-    variant === "primary"
-      ? "bg-accent text-accent-contrast shadow-sm hover:shadow-md hover:opacity-95"
-      : "border border-line bg-surface text-fg hover:bg-surface-2";
+  // Funnel-visibility ping. A CUSTOM event, not a standard Lead/Purchase.
+  // Those fire on the scorecard and would double-count. Fire-and-forget so it
+  // never blocks the navigation that follows.
+  const handleClick = () => {
+    if (typeof window !== "undefined" && window.fbq) {
+      trackCustom("ScorecardClick", {
+        lp: LP_SLUG,
+        utm_campaign: getStoredFirstTouch().utmCampaign ?? "adhd-doorway",
+      });
+    }
+  };
+
+  const variantClass =
+    variant === "signal"
+      ? "btn-signal"
+      : variant === "ghost"
+        ? "btn-ghost"
+        : "btn-primary";
 
   return (
-    <a href={href} className={`${base} ${sizing} ${look} ${className}`}>
+    <a
+      href={href}
+      onClick={handleClick}
+      className={`btn ${variantClass} ${size === "lg" ? "btn-lg" : ""} ${className}`}
+    >
       {children}
       <svg
         width="14"
@@ -49,7 +66,6 @@ export function ScorecardCta({
         viewBox="0 0 14 14"
         fill="none"
         aria-hidden
-        className="transition-transform duration-200 group-hover:translate-x-0.5"
       >
         <path d="M1 7h11M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
       </svg>

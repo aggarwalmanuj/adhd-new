@@ -4,10 +4,10 @@ import Link from "next/link";
 // On-page section anchors — internal links that also give the footer a real
 // navigation structure instead of just two legal links.
 const EXPLORE = [
-  { href: "/#why", label: "Why it works" },
-  { href: "/#program", label: "The program" },
-  { href: "/#founder", label: "Your guide" },
-  { href: "/#faq", label: "FAQ" },
+  { href: "/#what", label: "How it works" },
+  { href: "/#experiences", label: "Stories" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/#for-you", label: "Is it for you?" },
 ];
 
 // Outbound links to the brand's own authoritative properties. These give the

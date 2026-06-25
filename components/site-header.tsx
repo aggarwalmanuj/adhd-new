@@ -9,10 +9,10 @@ import { useEffect, useState } from "react";
 import { ScorecardCta } from "@/components/scorecard-cta";
 
 const NAV = [
-  { href: "#why", label: "Why" },
-  { href: "#program", label: "Program" },
-  { href: "#founder", label: "Founder" },
-  { href: "#faq", label: "FAQ" },
+  { href: "#what", label: "How it works" },
+  { href: "#experiences", label: "Stories" },
+  { href: "#pricing", label: "Pricing" },
+  { href: "#for-you", label: "Is it for you?" },
 ];
 
 export function SiteHeader() {
@@ -34,14 +34,14 @@ export function SiteHeader() {
       }`}
     >
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex shrink-0 items-center">
           <Image
             src="/icon/logo.png"
             alt="AIMERGE"
             width={1274}
             height={179}
             priority
-            className="brand-logo h-5 w-auto"
+            className="brand-logo h-4 w-auto sm:h-5"
           />
         </Link>
 
@@ -57,8 +57,8 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2.5">
-          <ScorecardCta>Get your Belief Score</ScorecardCta>
+        <div className="flex shrink-0 items-center gap-2.5">
+          <ScorecardCta variant="signal">Belief Score</ScorecardCta>
         </div>
       </div>
     </header>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ApplyModal } from "@/components/apply-modal";
 import { CookieConsent } from "@/components/cookie-consent";
@@ -7,14 +7,22 @@ import { FacebookPixel } from "@/components/facebook-pixel";
 import { StructuredData } from "@/components/structured-data";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Inter: all UI, body, buttons, eyebrows, labels.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Fraunces: editorial display headlines (400) + italic emphasis (300 italic).
+// Loaded as a variable font with optical sizing + the SOFT axis.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["opsz", "SOFT"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -42,7 +50,7 @@ export const metadata: Metadata = {
         url: "/images/HeroSection.jpg",
         width: 1600,
         height: 1138,
-        alt: "AIMERGE — ADHD coaching for founders and executives",
+        alt: "AIMERGE. ADHD coaching for founders and executives",
       },
     ],
   },
@@ -50,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AIMERGE: find relief from ADHD in four weeks",
     description:
-      "Your ADHD brain knows exactly what it's capable of. Something keeps stopping it right before it lands. Join the waitlist.",
+      "Your ADHD brain knows exactly what it's capable of. Something keeps stopping it right before it lands. Get your Belief Score.",
     images: ["/images/HeroSection.jpg"],
   },
 };
@@ -63,12 +71,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      // Brand palette is fixed for launch; the switcher is parked in
-      // components/palette-switcher.tsx if theming ever comes back.
-      data-palette="lavender"
+      // Marine is THE brand theme (deep navy + one teal accent). The 12-palette
+      // switcher is retired; tokens live in globals.css.
+      data-palette="marine"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <StructuredData />
@@ -78,7 +86,7 @@ export default function RootLayout({
         {children}
         <ApplyModal />
         {/* Consent-gated: the pixel script is injected only after Accept.
-            The old <noscript> pixel fallback is gone on purpose — it cannot
+            The old <noscript> pixel fallback is gone on purpose: it cannot
             be consent-gated, which GDPR requires. */}
         <FacebookPixel />
         <CookieConsent />

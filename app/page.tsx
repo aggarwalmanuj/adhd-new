@@ -1,81 +1,115 @@
 import Image from "next/image";
 import { Reveal } from "@/components/reveal";
+import { ScorecardCta } from "@/components/scorecard-cta";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { ScorecardCta } from "@/components/scorecard-cta";
 
-const LOGOS = [
-  { src: "/logos/ibm.png", alt: "IBM" },
-  { src: "/logos/microsoft.png", alt: "Microsoft" },
-  { src: "/logos/pearson.png", alt: "Pearson" },
-  { src: "/logos/tmobile.png", alt: "T-Mobile" },
-  { src: "/logos/un.png", alt: "United Nations" },
+const MICROCOPY = "Free · Under 10 minutes · No credit card required";
+
+const WEEK_PARAGRAPHS = [
+  "It is Monday morning. You have a list. You know exactly what needs to happen. You sit down, and two hours later you have reorganised your desktop, watched three YouTube videos about productivity, and the list is untouched.",
+  "You are not lazy. You have never been lazy. You can hyperfocus for eight hours straight on the right thing. The problem is getting to the right thing.",
+  "You tell yourself: I just need a better system. A better routine. More accountability.",
+  "You have tried the systems. You have read the books. You can diagnose your own patterns perfectly. And something still keeps pulling you off track at exactly the wrong moment.",
 ];
 
-const SYMPTOMS = [
+const EXPERIENCES = [
   {
-    title: "47 open tabs, zero closed loops",
-    body: "You start brilliantly. Then a newer, shinier idea walks in and the half-built thing joins the graveyard.",
+    quote: "There's a stress part of my brain that has gone silent.",
+    name: "Nick H.",
+    detail: "Video Producer, ADHD",
   },
   {
-    title: "Hyperfocus you can't aim",
-    body: "When it locks in, you do a week's work in a day. The problem is you can't choose when, or on what.",
+    quote: "My heart was just light. I realised I'm actually blessed and that I love myself.",
+    name: "Vivian",
+    detail: "Entrepreneur, Marbella",
   },
   {
-    title: "Systems that fit someone else's brain",
-    body: "Every planner, framework, and morning routine was designed for linear thinkers. You're not one.",
+    quote: "I feel the change since last night. I feel enormous gratitude.",
+    name: "Fatima",
+    detail: "Entrepreneur, Marbella",
   },
   {
-    title: "Smart enough to know better",
-    body: "You've read the books. You can diagnose your own patterns perfectly. Insight was never the missing piece.",
-  },
-];
-
-const PILLARS = [
-  {
-    step: "01",
-    title: "Systems built for dopamine",
-    body: "Operating rhythms designed around interest-driven attention, not against it. Short loops, visible wins, friction removed before it stalls you.",
-  },
-  {
-    step: "02",
-    title: "A room that gets it",
-    body: "A vetted circle of founders with the same wiring. No explaining yourself, no masking. Just people who finish each other's chaos.",
-  },
-  {
-    step: "03",
-    title: "Accountability that sticks",
-    body: "Weekly working sprints, body-doubling sessions, and check-ins that catch the drift in days, not quarters.",
-  },
-  {
-    step: "04",
-    title: "AI as your external brain",
-    body: "Manuj's specialty: AI workflows that hold the boring parts (follow-ups, pipelines, admin) so your attention goes where it compounds.",
+    quote: "My mind started picking the right foods unconsciously, my habits aligned without force, and I found myself feeling calm in situations that would normally shake me.",
+    name: "Bansari R.",
+    detail: "Entrepreneur, Goa",
   },
 ];
 
-const FAQS = [
+const CHANGES = [
+  "The internal noise gets quieter. Not gone, but quieter.",
+  "The gap between knowing and doing starts to close.",
+  "Sleep improves.",
+  "Less preoccupied with what others think.",
+  "People around them begin responding differently, without any explanation.",
+];
+
+const TIERS = [
   {
-    q: "Do I need an ADHD diagnosis to join?",
-    a: "No. If the patterns on this page feel like your daily reality, you're who this is for. We care about how your brain works, not your paperwork.",
+    name: "Belief Score",
+    price: "Free",
+    body: "Five questions. Your score across four dimensions appears instantly. The pattern that has been running your results, named clearly for the first time.",
+    featured: true,
   },
   {
-    q: "Is this a course?",
-    a: "No, and that's deliberate. You've finished 4% of every course you've bought. This is a working program: live sprints, real accountability, and systems installed into your actual business.",
+    name: "Full Report",
+    price: "USD $47",
+    body: "Your exact answers reflected back with the mechanism underneath them visible. Concrete next moves specific to you, not generic advice.",
   },
   {
-    q: "What stage should my business be at?",
-    a: "Members are people who are growing — or who want to grow but feel something keeps getting in the way. What they share is the ability to invest $2,500–$10,000 in solving their ADHD situation, and the readiness to actually do the work. The Belief Score asks a few questions so we can place you in the right track.",
+    name: "Your Purpose Story",
+    price: "USD $497",
+    body: "Your first personalised narrative built from your life. Yours permanently. What you do with it is revealed when you begin.",
+    note: "Credited in full toward the Protocol if you upgrade within 30 days.",
   },
   {
-    q: "How much does it cost?",
-    a: "Pricing is shared before each cohort opens. Getting your Belief Score is free and carries zero obligation.",
+    name: "Four-Week Protocol",
+    price: "USD $1,997",
+    body: "Four personalised narratives, one per week. Purpose, Past, Future, Integration. Weekly check-ins. 28-day Signal Wall. Money-back guarantee: complete the intake, engage for 14 days, submit your midpoint reflection. If nothing has shifted, full refund.",
   },
   {
-    q: "What's the paid clarity call?",
-    a: "An optional 1:1 session with Manuj for people who don't want to wait: one hour, your single biggest bottleneck, and a working plan you can execute that week.",
+    name: "Elevated",
+    price: "USD $4,997",
+    body: "Everything in the Protocol, extended to eight weeks, professionally produced audio with carefully designed soundscapes, direct practitioner access throughout.",
   },
 ];
+
+const FIT_YES = [
+  "You know you are capable of more and something keeps getting in the way",
+  "You are willing to be honest about your patterns",
+  "You can commit to the process. It is not demanding, but it requires consistency",
+];
+
+const FIT_NO = [
+  "You are looking for a quick hack",
+  "You are in acute mental health crisis. Please seek clinical support first",
+  "You already know your story and are not ready to look at it differently",
+];
+
+function ChapterMark({
+  numeral,
+  children,
+}: {
+  numeral: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <p className="chapter text-eyebrow">
+      <span className="chapter-dot" aria-hidden />
+      <span>
+        {numeral} · {children}
+      </span>
+    </p>
+  );
+}
+
+function Check() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden className="mt-0.5 shrink-0 text-signal">
+      <path d="M4 10.5l4 4 8-9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export default function Home() {
   return (
@@ -84,292 +118,423 @@ export default function Home() {
       <main id="main" className="flex-1">
         {/* Hero */}
         <section className="relative overflow-hidden">
-          <div className="mx-auto grid w-full max-w-6xl items-center gap-14 px-5 pb-20 pt-16 sm:px-8 sm:pt-24 lg:grid-cols-[1.05fr_0.95fr] lg:pb-28">
-            <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+          <div className="mx-auto grid w-full max-w-7xl items-center gap-12 px-5 pb-20 pt-14 sm:px-8 sm:pt-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:pb-32">
+            <div className="flex min-w-0 flex-col items-center text-center lg:items-start lg:text-left">
               <Reveal>
-                <p className="text-eyebrow text-faint">
-                  For executives, founders, and operators with ADHD-style brains
+                <p className="chapter text-eyebrow">
+                  <span className="chapter-dot" aria-hidden />
+                  <span>AI Merge · The Belief Score</span>
                 </p>
               </Reveal>
-              <Reveal delay={60}>
-                <h1 className="text-display mt-5">
-                  Your ADHD brain knows exactly what it&apos;s capable of.
+              <Reveal delay={80}>
+                <h1 className="text-display mt-6 break-words">
+                  Your ADHD brain knows exactly what it&apos;s capable of.{" "}
+                  <span className="text-emphasis">
+                    Something keeps stopping it right before it lands.
+                  </span>
                 </h1>
               </Reveal>
-              <Reveal delay={90}>
-                <p className="text-display mt-3 text-muted">
-                  Something keeps stopping it right before it lands.
-                </p>
-              </Reveal>
-              <Reveal delay={120}>
-                <p className="text-title mt-6 text-accent">
-                  Find relief from ADHD in four weeks.
-                </p>
-              </Reveal>
-              <Reveal delay={180}>
-                <p className="mt-5 max-w-xl leading-relaxed text-muted">
-                  Research from the University of California San Francisco
-                  found 29% of entrepreneurs self-report ADHD. Six times the
-                  general population. You did not end up here by accident;
-                  every system you have been handed was simply built for a
-                  different brain.
+              <Reveal delay={160}>
+                <p className="text-body-lg mt-7 max-w-xl text-muted">
+                  The answer has been in your own voice all along. You just
+                  haven&apos;t heard it clearly yet.
                 </p>
               </Reveal>
               <Reveal delay={240}>
-                <div className="mt-9 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
-                  <ScorecardCta size="lg">Get your Belief Score</ScorecardCta>
-                  <a
-                    href="#program"
-                    className="pressable inline-flex min-h-13 items-center rounded-full px-5 font-medium text-muted transition-colors hover:text-fg"
-                  >
-                    See how it works ↓
+                <div className="mt-9 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:justify-start">
+                  <ScorecardCta variant="signal" size="lg">
+                    Get your Belief Score
+                  </ScorecardCta>
+                  <a href="#what" className="btn btn-ghost">
+                    What is AI Merge
                   </a>
                 </div>
               </Reveal>
-              <Reveal delay={300}>
-                <p className="mt-5 text-sm text-faint">
-                  Free and takes two minutes. No application, no waitlist.
-                </p>
+              <Reveal delay={320}>
+                <p className="mt-6 text-sm text-faint">{MICROCOPY}</p>
               </Reveal>
             </div>
-            <Reveal delay={200} className="relative hidden lg:block">
-              <div className="overflow-hidden rounded-2xl border border-line shadow-lg">
+            <Reveal delay={200} className="relative">
+              <div className="hero-glow" aria-hidden />
+              <div className="relative overflow-hidden rounded-2xl border border-line">
+                <div
+                  aria-hidden
+                  className="absolute inset-0 z-10 bg-linear-to-t from-bg/70 via-transparent to-transparent"
+                />
                 <Image
                   src="/images/HeroSection.jpg"
                   alt="A founder working with deep focus"
                   width={920}
                   height={1100}
                   priority
-                  className="h-130 w-full object-cover"
+                  className="ken-burns h-64 w-full object-cover sm:h-80 lg:h-136"
                 />
               </div>
-              <div
-                aria-hidden
-                className="absolute -bottom-8 left-1/2 -z-10 h-40 w-2/3 -translate-x-1/2 rounded-full bg-accent opacity-20 blur-3xl"
-              />
             </Reveal>
           </div>
-          <Reveal delay={120} className="mx-auto w-full max-w-5xl px-5 pb-16 sm:px-8 lg:hidden">
-            <div className="overflow-hidden rounded-2xl border border-line shadow-lg">
-              <Image
-                src="/images/HeroSection.jpg"
-                alt="A founder working with deep focus"
-                width={1600}
-                height={900}
-                className="h-64 w-full object-cover sm:h-80"
-              />
-            </div>
-          </Reveal>
         </section>
 
-        {/* Logo strip */}
-        <section aria-label="Experience" className="border-y border-line py-10">
-          <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
+        {/* Does this sound like your week? */}
+        <section id="week" className="border-t border-line bg-surface">
+          <div className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-32">
             <Reveal>
-              <p className="text-eyebrow text-center text-faint">
-                Led by a founder who has shipped with
-              </p>
+              <ChapterMark numeral="I">Sound familiar</ChapterMark>
             </Reveal>
-            <div className="marquee mt-7 overflow-hidden" aria-hidden>
-              {/* The animation slides -50%; both halves must be identical and
-                  each half wider than any viewport, so repeat the set 4× per half. */}
-              <div className="marquee-track flex w-max items-center gap-16 pr-16">
-                {Array.from({ length: 8 }, () => LOGOS).flat().map((logo, i) => (
-                  <Image
-                    key={`${logo.alt}-${i}`}
-                    src={logo.src}
-                    alt=""
-                    width={120}
-                    height={40}
-                    className="h-8 w-auto object-contain opacity-60 grayscale transition-opacity duration-200 hover:opacity-100"
-                  />
-                ))}
-              </div>
-            </div>
-            <ul className="sr-only">
-              {LOGOS.map((logo) => (
-                <li key={logo.alt}>{logo.alt}</li>
+            <Reveal delay={60}>
+              <h2 className="text-headline mt-5">Does this sound like your week?</h2>
+            </Reveal>
+            <div className="text-body-lg mt-8 space-y-5 text-muted">
+              {WEEK_PARAGRAPHS.map((para, i) => (
+                <Reveal key={i} delay={i * 40}>
+                  <p>{para}</p>
+                </Reveal>
               ))}
-            </ul>
+            </div>
+            <Reveal delay={120}>
+              <figure className="mt-10 border-l-2 border-signal pl-6">
+                <blockquote className="text-title">
+                  &ldquo;It shifted something within. It&apos;s something I&apos;m
+                  going to be reading over and over again.&rdquo;
+                </blockquote>
+                <figcaption className="mt-4 text-sm text-faint">
+                  Oliver · Real Estate, Marbella
+                </figcaption>
+              </figure>
+            </Reveal>
           </div>
         </section>
 
-        {/* Why / problem */}
-        <section id="why" className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
+        {/* What you are actually looking for */}
+        <section className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-32">
           <Reveal>
-            <p className="text-eyebrow text-faint">Sound familiar?</p>
+            <ChapterMark numeral="II">What you want</ChapterMark>
           </Reveal>
           <Reveal delay={60}>
-            <h2 className="text-headline mt-4 max-w-2xl">
-              You don&apos;t have a discipline problem. You have a design
-              problem.
-            </h2>
+            <h2 className="text-headline mt-5">What you are actually looking for</h2>
+          </Reveal>
+          <div className="text-body-lg mt-8 space-y-5 text-muted">
+            <Reveal>
+              <p>
+                Not another system. Not another app. Not someone telling you to
+                try harder.
+              </p>
+            </Reveal>
+            <Reveal delay={60}>
+              <p>
+                Something that helps you understand why the gap keeps appearing
+                between what you know you can do and what actually happens. And
+                something that closes it, not by adding more to your plate, but
+                by showing you what has been running underneath it all along.
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* What AI Merge is */}
+        <section id="what" className="border-t border-line bg-surface">
+          <div className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-32">
+            <Reveal>
+              <ChapterMark numeral="III">The mechanism</ChapterMark>
+            </Reveal>
+            <Reveal delay={60}>
+              <h2 className="text-headline mt-5">What AI Merge is</h2>
+            </Reveal>
+            <div className="text-body-lg mt-8 space-y-5 text-muted">
+              <Reveal>
+                <p>
+                  Not a coaching programme. Not a course. Not an accountability
+                  group.
+                </p>
+              </Reveal>
+              <Reveal delay={60}>
+                <p>
+                  AI Merge works at the level of the story running underneath
+                  your patterns. The one that was installed before you had words
+                  for it. The one that has been quietly shaping every decision,
+                  every half-finished project, every moment where you knew what
+                  to do and did something else instead.
+                </p>
+              </Reveal>
+              <Reveal delay={120}>
+                <p>
+                  We find that story. We give it back to you in the most
+                  powerful sound in the universe for any human being.
+                </p>
+              </Reveal>
+            </div>
+            <Reveal delay={160}>
+              <p className="text-display mt-8">
+                Your own <span className="text-emphasis">voice.</span>
+              </p>
+            </Reveal>
+            <Reveal delay={200}>
+              <p className="text-body-lg mt-8 text-muted">
+                What happens after that is something we reveal only once you
+                begin. What we can tell you: once you understand what we mean,
+                you will see immediately why nothing else has worked the way this
+                does.
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* What people experienced */}
+        <section id="experiences" className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 sm:py-32">
+          <Reveal>
+            <ChapterMark numeral="IV">Real words</ChapterMark>
+          </Reveal>
+          <Reveal delay={60}>
+            <h2 className="text-headline mt-5 max-w-2xl">What people experienced</h2>
           </Reveal>
           <ul className="mt-12 grid list-none gap-5 sm:grid-cols-2">
-            {SYMPTOMS.map((item, i) => (
-              <Reveal as="li" key={item.title} delay={i * 50}>
-                <div className="liftable h-full rounded-2xl border border-line bg-surface p-7">
-                  <h3 className="text-title">{item.title}</h3>
-                  <p className="mt-3 leading-relaxed text-muted">{item.body}</p>
-                </div>
+            {EXPERIENCES.map((item, i) => (
+              <Reveal as="li" key={item.name} delay={i * 50}>
+                <figure className="liftable flex h-full flex-col justify-between rounded-2xl border border-line bg-card p-8">
+                  <blockquote className="text-title">
+                    &ldquo;{item.quote}&rdquo;
+                  </blockquote>
+                  <figcaption className="mt-6 text-sm text-faint">
+                    {item.name} · {item.detail}
+                  </figcaption>
+                </figure>
               </Reveal>
             ))}
           </ul>
         </section>
 
-        {/* Program */}
-        <section id="program" className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
+        {/* What changes */}
+        <section className="border-t border-line bg-surface">
+          <div className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-32">
             <Reveal>
-              <p className="text-eyebrow text-faint">The program</p>
+              <ChapterMark numeral="V">What changes</ChapterMark>
             </Reveal>
             <Reveal delay={60}>
-              <h2 className="text-headline mt-4 max-w-2xl">
-                Stop renting other people&apos;s systems. Install your own.
-              </h2>
+              <h2 className="text-headline mt-5">What changes</h2>
             </Reveal>
-            <Reveal delay={90}>
-              <p className="text-body-lg mt-5 max-w-2xl text-muted">
-                This is ADHD coaching rebuilt around how your brain actually
-                works. You already know exactly what you&apos;re capable of —
-                these four pillars make that capability show up in the work,
-                week after week.
+            <Reveal delay={120}>
+              <p className="text-body-lg mt-6 text-muted">
+                We do not make clinical claims. Every person&apos;s experience is
+                different.
               </p>
             </Reveal>
-            <div className="mt-12 grid gap-5 md:grid-cols-2">
-              {PILLARS.map((pillar, i) => (
-                <Reveal key={pillar.step} delay={i * 50}>
-                  <div className="liftable h-full rounded-2xl border border-line bg-bg p-7">
-                    <span className="font-mono text-sm text-accent" aria-hidden>
-                      {pillar.step}
-                    </span>
-                    <h3 className="text-title mt-3">{pillar.title}</h3>
-                    <p className="mt-3 leading-relaxed text-muted">{pillar.body}</p>
+            <Reveal delay={160}>
+              <p className="mt-8 text-eyebrow text-faint">
+                What people consistently report
+              </p>
+            </Reveal>
+            <ul className="mt-6 grid list-none gap-4">
+              {CHANGES.map((item, i) => (
+                <Reveal as="li" key={item} delay={i * 40}>
+                  <div className="flex items-start gap-3">
+                    <Check />
+                    <span className="leading-relaxed text-muted">{item}</span>
                   </div>
                 </Reveal>
               ))}
-            </div>
-            <Reveal delay={120}>
-              <div className="mt-12 overflow-hidden rounded-2xl border border-line">
-                <Image
-                  src="/images/Meeting.jpg"
-                  alt="Founders working together in a session"
-                  width={1600}
-                  height={700}
-                  className="h-64 w-full object-cover sm:h-80"
-                />
-              </div>
-            </Reveal>
+            </ul>
           </div>
         </section>
 
-        {/* Founder */}
-        <section id="founder" className="mx-auto w-full max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
-          <div className="grid items-center gap-12 lg:grid-cols-[0.85fr_1.15fr]">
+        {/* How to start */}
+        <section className="mx-auto w-full max-w-2xl px-5 py-20 text-center sm:px-8 sm:py-32">
+          <Reveal>
+            <h2 className="text-headline">Get your free Belief Score</h2>
+          </Reveal>
+          <Reveal delay={80}>
+            <p className="text-body-lg mx-auto mt-5 max-w-xl text-muted">
+              Five questions. Under ten minutes. Your score appears instantly,
+              free. No credit card.
+            </p>
+          </Reveal>
+          <Reveal delay={160}>
+            <div className="mt-10 flex justify-center">
+              <ScorecardCta variant="signal" size="lg">
+                Get your Belief Score
+              </ScorecardCta>
+            </div>
+          </Reveal>
+        </section>
+
+        {/* What you receive at each level */}
+        <section id="pricing" className="border-t border-line bg-surface">
+          <div className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 sm:py-32">
             <Reveal>
-              <div className="overflow-hidden rounded-2xl border border-line shadow-md">
-                <Image
-                  src="/manuj/b76742c9-4955-439c-8a3e-e66d1b07fd3b.jpg"
-                  alt="Manuj Aggarwal"
-                  width={800}
-                  height={960}
-                  className="aspect-5/6 w-full object-cover"
-                />
-              </div>
+              <ChapterMark numeral="VI">What you receive</ChapterMark>
             </Reveal>
-            <div>
-              <Reveal>
-                <p className="text-eyebrow text-faint">Your guide</p>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-4">Manuj Aggarwal</h2>
-              </Reveal>
-              <Reveal delay={120}>
-                <div className="text-body-lg mt-6 space-y-5 text-muted">
-                  <p>
-                    Manuj built a 25-year career in technology with a brain
-                    that never sat still: from factory floor at minimum wage to
-                    shipping AI systems alongside teams at IBM, Microsoft,
-                    Pearson, T-Mobile, and the United Nations.
+            <Reveal delay={60}>
+              <h2 className="text-headline mt-5 max-w-2xl">
+                What you receive at each level
+              </h2>
+            </Reveal>
+            <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {TIERS.map((tier, i) => (
+                <Reveal key={tier.name} delay={i * 50}>
+                  <div
+                    className={`liftable flex h-full flex-col rounded-2xl border bg-card p-8 ${
+                      tier.featured ? "border-signal ring-1 ring-signal" : "border-line"
+                    }`}
+                  >
+                    {tier.featured ? (
+                      <span className="mb-4 inline-flex w-fit items-center rounded-full bg-signal px-3 py-1 text-eyebrow text-bg">
+                        Start here
+                      </span>
+                    ) : null}
+                    <div className="flex items-baseline justify-between gap-3">
+                      <h3 className="text-title">{tier.name}</h3>
+                      <span
+                        className={`shrink-0 font-semibold ${tier.featured ? "text-signal" : "text-fg"}`}
+                      >
+                        {tier.price}
+                      </span>
+                    </div>
+                    <p className="mt-3 leading-relaxed text-muted">{tier.body}</p>
+                    {tier.note ? (
+                      <p className="mt-4 rounded-lg bg-accent-soft px-3 py-2 text-sm text-fg">
+                        {tier.note}
+                      </p>
+                    ) : null}
+                  </div>
+                </Reveal>
+              ))}
+              <Reveal delay={TIERS.length * 50}>
+                <div className="flex h-full flex-col items-start justify-center rounded-2xl border border-dashed border-line p-8">
+                  <p className="text-muted">
+                    Start free. Every level credits toward the next when you go
+                    deeper.
                   </p>
-                  <p>
-                    Along the way he learned the lesson this whole program is
-                    built on: a fast, non-linear mind doesn&apos;t need more
-                    discipline. It needs infrastructure. The right scaffolding
-                    turns scattered into unstoppable.
-                  </p>
-                  <p>
-                    AIMERGE is that scaffolding, productized: the systems, the
-                    room, and the cadence he wishes existed twenty years ago.
-                  </p>
-                  <p>
-                    <a
-                      href="https://manujaggarwal.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium text-accent underline-offset-4 hover:underline"
-                    >
-                      More on Manuj&apos;s work at TetraNoodle →
-                    </a>
-                  </p>
+                  <div className="mt-6">
+                    <ScorecardCta variant="signal">Get your Belief Score</ScorecardCta>
+                  </div>
                 </div>
               </Reveal>
             </div>
           </div>
         </section>
 
-        {/* FAQ */}
-        <section id="faq" className="border-t border-line">
-          <div className="mx-auto w-full max-w-3xl px-5 py-20 sm:px-8 sm:py-28">
+        {/* Teams */}
+        <section className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-32">
+          <Reveal>
+            <ChapterMark numeral="VII">For teams</ChapterMark>
+          </Reveal>
+          <Reveal delay={60}>
+            <h2 className="text-headline mt-5">
+              Also available for teams and organisations
+            </h2>
+          </Reveal>
+          <div className="text-body-lg mt-8 space-y-5 text-muted">
             <Reveal>
-              <p className="text-eyebrow text-faint">FAQ</p>
+              <p>
+                AI Merge works for teams too. When the people on a team can
+                finally see themselves and each other clearly, without the
+                invisible stories shaping every conflict, every misalignment,
+                every conversation that goes sideways, everything changes.
+              </p>
             </Reveal>
             <Reveal delay={60}>
-              <h2 className="text-headline mt-4">Fair questions</h2>
+              <p>
+                The team edition uses the same mechanism. Different lens. Same
+                results.
+              </p>
             </Reveal>
-            <div className="mt-10 divide-y divide-line">
-              {FAQS.map((faq, i) => (
-                <Reveal key={faq.q} delay={i * 40}>
-                  <details className="group py-2">
-                    <summary className="flex min-h-13 cursor-pointer list-none items-center justify-between gap-4 rounded-lg py-3 font-medium [&::-webkit-details-marker]:hidden">
-                      {faq.q}
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 14 14"
-                        fill="none"
-                        aria-hidden
-                        className="shrink-0 text-faint transition-transform duration-200 group-open:rotate-45"
-                      >
-                        <path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-                      </svg>
-                    </summary>
-                    <p className="pb-5 leading-relaxed text-muted">{faq.a}</p>
-                  </details>
-                </Reveal>
-              ))}
+            <Reveal delay={120}>
+              <p className="text-emphasis text-lg">
+                Choose individual or team when you click below.
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* Is this for you? */}
+        <section id="for-you" className="border-t border-line bg-surface">
+          <div className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 sm:py-32">
+            <Reveal>
+              <ChapterMark numeral="VIII">Honest fit</ChapterMark>
+            </Reveal>
+            <Reveal delay={60}>
+              <h2 className="text-headline mt-5">Is this for you?</h2>
+            </Reveal>
+            <div className="mt-12 grid gap-5 md:grid-cols-2">
+              <Reveal>
+                <div className="h-full rounded-2xl border border-line bg-card p-8">
+                  <h3 className="text-title">Yes, if</h3>
+                  <ul className="mt-6 grid list-none gap-4">
+                    {FIT_YES.map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <Check />
+                        <span className="leading-relaxed text-muted">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+              <Reveal delay={80}>
+                <div className="h-full rounded-2xl border border-line bg-card p-8">
+                  <h3 className="text-title">Not for you if</h3>
+                  <ul className="mt-6 grid list-none gap-4">
+                    {FIT_NO.map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden className="mt-0.5 shrink-0 text-faint">
+                          <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                        </svg>
+                        <span className="leading-relaxed text-muted">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
             </div>
           </div>
         </section>
 
+        {/* Your data is safe */}
+        <section className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-32">
+          <Reveal>
+            <ChapterMark numeral="IX">Your data</ChapterMark>
+          </Reveal>
+          <Reveal delay={60}>
+            <h2 className="text-headline mt-5">Your data is safe</h2>
+          </Reveal>
+          <Reveal delay={120}>
+            <p className="text-body-lg mt-6 leading-relaxed text-muted">
+              Your information passes through our private systems. Selected team
+              members may review your narratives for quality assurance. Your data
+              is never shared or sold. Anonymised option available. Just ask.
+            </p>
+          </Reveal>
+          <Reveal delay={160}>
+            <a
+              href="mailto:feedback@tetranoodle.com"
+              className="mt-5 inline-block font-medium text-fg underline decoration-signal underline-offset-4 transition-colors hover:text-signal"
+            >
+              feedback@tetranoodle.com
+            </a>
+          </Reveal>
+        </section>
+
         {/* Final CTA */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-6xl px-5 py-20 text-center sm:px-8 sm:py-28">
+        <section className="border-t border-line">
+          <div className="mx-auto w-full max-w-4xl px-5 py-24 text-center sm:px-8 sm:py-32">
             <Reveal>
-              <h2 className="text-headline mx-auto max-w-2xl">
-                The next cohort is forming. Your brain is already fast enough.
+              <h2 className="text-display">
+                See yourself clearly.{" "}
+                <span className="text-emphasis">Build from that belief.</span>
               </h2>
             </Reveal>
-            <Reveal delay={80}>
-              <p className="text-body-lg mx-auto mt-5 max-w-xl text-muted">
-                Get your Belief Score in under two minutes. Free, with zero
-                obligation.
-              </p>
+            <Reveal delay={100}>
+              <div className="mt-10 flex justify-center">
+                <ScorecardCta variant="signal" size="lg">
+                  Get your Belief Score
+                </ScorecardCta>
+              </div>
             </Reveal>
             <Reveal delay={160}>
-              <div className="mt-9">
-                <ScorecardCta size="lg">Get your Belief Score</ScorecardCta>
-              </div>
+              <p className="mt-6 text-sm text-faint">{MICROCOPY}</p>
+            </Reveal>
+            <Reveal delay={220}>
+              <p className="mx-auto mt-12 max-w-xl text-xs leading-relaxed text-faint">
+                © Manuj Aggarwal &amp; TetraNoodle Technologies · Mensa Research
+                Journal, Vol. 56, No. 2, 2025
+              </p>
             </Reveal>
           </div>
         </section>
