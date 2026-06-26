@@ -6,6 +6,19 @@ import { SiteHeader } from "@/components/site-header";
 
 const MICROCOPY = "Free · Under 10 minutes · No credit card required";
 
+const TRUST_LOGOS = [
+  { src: "/logos/microsoft.png", alt: "Microsoft" },
+  { src: "/logos/ibm.png", alt: "IBM" },
+  { src: "/logos/tmobile.png", alt: "T-Mobile" },
+  { src: "/logos/pearson.png", alt: "Pearson" },
+  { src: "/logos/un.png", alt: "United Nations" },
+];
+
+const CREDENTIALS = [
+  { label: "Patents", value: "Four in human-AI decision systems" },
+  { label: "Published", value: "Mensa Research Journal" },
+];
+
 const WEEK_PARAGRAPHS = [
   "It is Monday morning. You have a list. You know exactly what needs to happen. You sit down, and two hours later you have reorganised your desktop, watched three YouTube videos about productivity, and the list is untouched.",
   "You are not lazy. You have never been lazy. You can hyperfocus for eight hours straight on the right thing. The problem is getting to the right thing.",
@@ -174,6 +187,57 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Trusted by */}
+        <section id="trusted-by" className="border-t border-line bg-surface">
+          <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-16">
+            <Reveal>
+              <p className="chapter text-eyebrow">
+                <span className="chapter-dot" aria-hidden />
+                <span>Trusted by</span>
+              </p>
+              <h2 className="text-headline mt-5">
+                The work composed{" "}
+                <span className="text-emphasis italic">behind the reading.</span>
+              </h2>
+            </Reveal>
+
+            <div>
+              <Reveal delay={80}>
+                <ul className="flex list-none flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:justify-between sm:gap-x-12">
+                  {TRUST_LOGOS.map((logo) => (
+                    <li
+                      key={logo.alt}
+                      className="relative h-9 w-24 opacity-70 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 sm:h-10 sm:w-28"
+                    >
+                      <Image
+                        src={logo.src}
+                        alt={logo.alt}
+                        fill
+                        sizes="(min-width: 640px) 112px, 96px"
+                        className="object-contain"
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+
+              <Reveal delay={140}>
+                <dl className="mt-12 grid grid-cols-1 gap-x-12 sm:grid-cols-2">
+                  {CREDENTIALS.map((c) => (
+                    <div
+                      key={c.label}
+                      className="flex items-baseline justify-between gap-4 border-t border-line py-4"
+                    >
+                      <dt className="text-eyebrow shrink-0 text-faint">{c.label}</dt>
+                      <dd className="text-right font-medium text-fg">{c.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
         {/* Does this sound like your week? */}
         <section id="week" className="border-t border-line bg-surface">
           <div className="mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 sm:py-32 lg:grid-cols-[1fr_0.85fr] lg:gap-16">
@@ -319,11 +383,11 @@ export default function Home() {
                   className="absolute inset-0 z-10 bg-linear-to-t from-bg/70 via-bg/10 to-transparent"
                 />
                 <Image
-                  src="/images/Voice.avif"
+                  src="/images/voice2.avif"
                   alt="A person listening with headphones, eyes closed, fully immersed in sound"
-                  width={6000}
-                  height={4000}
-                  className="h-80 w-full object-cover sm:h-96 lg:h-[36rem]"
+                  width={3977}
+                  height={5966}
+                  className="h-80 w-full object-cover object-top sm:h-96 lg:h-[36rem]"
                 />
                 <figcaption className="absolute inset-x-0 bottom-0 z-20 p-6 sm:p-7">
                   <p className="text-title text-fg">
