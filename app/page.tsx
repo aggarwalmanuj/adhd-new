@@ -175,12 +175,12 @@ export default function Home() {
                   className="absolute inset-0 z-10 bg-linear-to-t from-bg/70 via-transparent to-transparent"
                 />
                 <Image
-                  src="/images/HeroSection.jpg"
+                  src="/images/Hero.jpg"
                   alt="A founder working with deep focus"
-                  width={920}
-                  height={1100}
+                  width={3149}
+                  height={4724}
                   priority
-                  className="ken-burns h-64 w-full object-cover sm:h-80 lg:h-136"
+                  className="ken-burns h-72 w-full object-cover sm:h-96 lg:h-152"
                 />
               </div>
             </Reveal>
