@@ -4,6 +4,19 @@ import { ScorecardCta } from "@/components/scorecard-cta";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
+const TRUST_LOGOS = [
+  { src: "/logos/microsoft.png", alt: "Microsoft" },
+  { src: "/logos/ibm.png", alt: "IBM" },
+  { src: "/logos/tmobile.png", alt: "T-Mobile" },
+  { src: "/logos/pearson.png", alt: "Pearson" },
+  { src: "/logos/un.png", alt: "United Nations" },
+];
+
+const CREDENTIALS = [
+  { label: "Patents", value: "Four in human-AI decision systems" },
+  { label: "Published", value: "Mensa Research Journal" },
+];
+
 const WEEK_PARAGRAPHS = [
   "It is Monday morning. You have a list. You know exactly what needs to happen. You sit down, and two hours later you have reorganised your desktop, watched three YouTube videos about productivity, and the list is untouched.",
   "You are not lazy. You have never been lazy. You can hyperfocus for eight hours straight on the right thing. The problem is getting to the right thing.",
@@ -141,118 +154,226 @@ export default function Home() {
                   className="absolute inset-0 z-10 bg-linear-to-t from-bg/70 via-transparent to-transparent"
                 />
                 <Image
-                  src="/images/HeroSection.jpg"
+                  src="/images/Hero.jpg"
                   alt="A founder working with deep focus"
-                  width={920}
-                  height={1100}
+                  width={3149}
+                  height={4724}
                   priority
-                  className="ken-burns h-64 w-full object-cover sm:h-80 lg:h-136"
+                  className="ken-burns h-72 w-full object-cover sm:h-96 lg:h-152"
                 />
               </div>
             </Reveal>
           </div>
         </section>
 
+        {/* Trusted by */}
+        <section id="trusted-by" className="border-t border-line bg-surface">
+          <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-16">
+            <Reveal>
+              <p className="chapter text-eyebrow">
+                <span className="chapter-dot" aria-hidden />
+                <span>Trusted by</span>
+              </p>
+              <h2 className="text-headline mt-5">
+                The work composed{" "}
+                <span className="text-emphasis italic">behind the reading.</span>
+              </h2>
+            </Reveal>
+
+            <div>
+              <Reveal delay={80}>
+                <ul className="flex list-none flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:justify-between sm:gap-x-12">
+                  {TRUST_LOGOS.map((logo) => (
+                    <li
+                      key={logo.alt}
+                      className="relative h-9 w-24 opacity-70 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 sm:h-10 sm:w-28"
+                    >
+                      <Image
+                        src={logo.src}
+                        alt={logo.alt}
+                        fill
+                        sizes="(min-width: 640px) 112px, 96px"
+                        className="object-contain"
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+
+              <Reveal delay={140}>
+                <dl className="mt-12 grid grid-cols-1 gap-x-12 sm:grid-cols-2">
+                  {CREDENTIALS.map((c) => (
+                    <div
+                      key={c.label}
+                      className="flex items-baseline justify-between gap-4 border-t border-line py-4"
+                    >
+                      <dt className="text-eyebrow shrink-0 text-faint">{c.label}</dt>
+                      <dd className="text-right font-medium text-fg">{c.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
         {/* Does this sound like your week? */}
         <section id="week" className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-32">
-            <Reveal>
-              <ChapterMark numeral="I">Sound familiar</ChapterMark>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="text-headline mt-5">Does this sound like your week?</h2>
-            </Reveal>
-            <div className="text-body-lg mt-8 space-y-5 text-muted">
-              {WEEK_PARAGRAPHS.map((para, i) => (
-                <Reveal key={i} delay={i * 40}>
-                  <p>{para}</p>
-                </Reveal>
-              ))}
+          <div className="mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 sm:py-32 lg:grid-cols-[1fr_0.85fr] lg:gap-16">
+            <div className="min-w-0">
+              <Reveal>
+                <ChapterMark numeral="I">Sound familiar</ChapterMark>
+              </Reveal>
+              <Reveal delay={60}>
+                <h2 className="text-headline mt-5">Does this sound like your week?</h2>
+              </Reveal>
+              <div className="text-body-lg mt-8 space-y-5 text-muted">
+                {WEEK_PARAGRAPHS.map((para, i) => (
+                  <Reveal key={i} delay={i * 40}>
+                    <p>{para}</p>
+                  </Reveal>
+                ))}
+              </div>
+              <Reveal delay={120}>
+                <figure className="mt-10 border-l-2 border-signal pl-6">
+                  <blockquote className="text-title">
+                    &ldquo;It shifted something within. It&apos;s something I&apos;m
+                    going to be reading over and over again.&rdquo;
+                  </blockquote>
+                  <figcaption className="mt-4 text-sm text-faint">
+                    Oliver · Real Estate, Marbella
+                  </figcaption>
+                </figure>
+              </Reveal>
             </div>
-            <Reveal delay={120}>
-              <figure className="mt-10 border-l-2 border-signal pl-6">
-                <blockquote className="text-title">
-                  &ldquo;It shifted something within. It&apos;s something I&apos;m
-                  going to be reading over and over again.&rdquo;
-                </blockquote>
-                <figcaption className="mt-4 text-sm text-faint">
-                  Oliver · Real Estate, Marbella
-                </figcaption>
-              </figure>
+            <Reveal delay={100} className="relative">
+              <div className="relative overflow-hidden rounded-2xl border border-line">
+                <div
+                  aria-hidden
+                  className="absolute inset-0 z-10 bg-linear-to-t from-bg/60 via-transparent to-transparent"
+                />
+                <Image
+                  src="/images/Week.jpg"
+                  alt="A person overwhelmed at their desk, staring at a laptop"
+                  width={933}
+                  height={1400}
+                  className="h-72 w-full object-cover sm:h-96 lg:h-[34rem]"
+                />
+              </div>
             </Reveal>
           </div>
         </section>
 
         {/* What you are actually looking for */}
-        <section className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-32">
-          <Reveal>
-            <ChapterMark numeral="II">What you want</ChapterMark>
+        <section className="mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 sm:py-32 lg:grid-cols-[0.9fr_1fr] lg:gap-16">
+          <Reveal delay={100} className="relative order-last lg:order-first">
+            <div className="relative overflow-hidden rounded-2xl border border-line">
+              <div
+                aria-hidden
+                className="absolute inset-0 z-10 bg-linear-to-t from-bg/50 via-transparent to-transparent"
+              />
+              <Image
+                src="/images/Looking.avif"
+                alt="A person pausing at a window, reflecting"
+                width={6000}
+                height={4000}
+                className="h-64 w-full object-cover sm:h-80 lg:h-[26rem]"
+              />
+            </div>
           </Reveal>
-          <Reveal delay={60}>
-            <h2 className="text-headline mt-5">What you are actually looking for</h2>
-          </Reveal>
-          <div className="text-body-lg mt-8 space-y-5 text-muted">
+          <div className="min-w-0">
             <Reveal>
-              <p>
-                Not another system. Not another app. Not someone telling you to
-                try harder.
-              </p>
+              <ChapterMark numeral="II">What you want</ChapterMark>
             </Reveal>
             <Reveal delay={60}>
-              <p>
-                Something that helps you understand why the gap keeps appearing
-                between what you know you can do and what actually happens. And
-                something that closes it, not by adding more to your plate, but
-                by showing you what has been running underneath it all along.
-              </p>
+              <h2 className="text-headline mt-5">What you are actually looking for</h2>
             </Reveal>
+            <div className="text-body-lg mt-8 space-y-5 text-muted">
+              <Reveal>
+                <p>
+                  Not another system. Not another app. Not someone telling you to
+                  try harder.
+                </p>
+              </Reveal>
+              <Reveal delay={60}>
+                <p>
+                  Something that helps you understand why the gap keeps appearing
+                  between what you know you can do and what actually happens. And
+                  something that closes it, not by adding more to your plate, but
+                  by showing you what has been running underneath it all along.
+                </p>
+              </Reveal>
+            </div>
           </div>
         </section>
 
         {/* What AI Merge is */}
         <section id="what" className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-32">
-            <Reveal>
-              <ChapterMark numeral="III">The mechanism</ChapterMark>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="text-headline mt-5">What AI Merge is</h2>
-            </Reveal>
-            <div className="text-body-lg mt-8 space-y-5 text-muted">
+          <div className="mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 sm:py-32 lg:grid-cols-[1fr_0.8fr] lg:gap-16">
+            <div className="min-w-0">
               <Reveal>
-                <p>
-                  Not a coaching programme. Not a course. Not an accountability
-                  group.
-                </p>
+                <ChapterMark numeral="III">The mechanism</ChapterMark>
               </Reveal>
               <Reveal delay={60}>
-                <p>
-                  AI Merge works at the level of the story running underneath
-                  your patterns. The one that was installed before you had words
-                  for it. The one that has been quietly shaping every decision,
-                  every half-finished project, every moment where you knew what
-                  to do and did something else instead.
+                <h2 className="text-headline mt-5">What AI Merge is</h2>
+              </Reveal>
+              <div className="text-body-lg mt-8 space-y-5 text-muted">
+                <Reveal>
+                  <p>
+                    Not a coaching programme. Not a course. Not an accountability
+                    group.
+                  </p>
+                </Reveal>
+                <Reveal delay={60}>
+                  <p>
+                    AI Merge works at the level of the story running underneath
+                    your patterns. The one that was installed before you had words
+                    for it. The one that has been quietly shaping every decision,
+                    every half-finished project, every moment where you knew what
+                    to do and did something else instead.
+                  </p>
+                </Reveal>
+                <Reveal delay={120}>
+                  <p>
+                    We find that story. We give it back to you in the most
+                    powerful sound in the universe for any human being.
+                  </p>
+                </Reveal>
+              </div>
+              <Reveal delay={160}>
+                <p className="text-display mt-8">
+                  Your own <span className="text-emphasis">voice.</span>
                 </p>
               </Reveal>
-              <Reveal delay={120}>
-                <p>
-                  We find that story. We give it back to you in the most
-                  powerful sound in the universe for any human being.
+              <Reveal delay={200}>
+                <p className="text-body-lg mt-8 text-muted">
+                  What happens after that is something we reveal only once you
+                  begin. What we can tell you: once you understand what we mean,
+                  you will see immediately why nothing else has worked the way this
+                  does.
                 </p>
               </Reveal>
             </div>
-            <Reveal delay={160}>
-              <p className="text-display mt-8">
-                Your own <span className="text-emphasis">voice.</span>
-              </p>
-            </Reveal>
-            <Reveal delay={200}>
-              <p className="text-body-lg mt-8 text-muted">
-                What happens after that is something we reveal only once you
-                begin. What we can tell you: once you understand what we mean,
-                you will see immediately why nothing else has worked the way this
-                does.
-              </p>
+            <Reveal delay={100} className="relative">
+              <div className="hero-glow" aria-hidden />
+              <div className="relative overflow-hidden rounded-2xl border border-line">
+                <div
+                  aria-hidden
+                  className="absolute inset-0 z-10 bg-linear-to-t from-bg/70 via-bg/10 to-transparent"
+                />
+                <Image
+                  src="/images/voice2.avif"
+                  alt="A person listening with headphones, eyes closed, fully immersed in sound"
+                  width={3977}
+                  height={5966}
+                  className="h-80 w-full object-cover object-top sm:h-96 lg:h-[36rem]"
+                />
+                <figcaption className="absolute inset-x-0 bottom-0 z-20 p-6 sm:p-7">
+                  <p className="text-title text-fg">
+                    Your story, delivered in your own voice.
+                  </p>
+                </figcaption>
+              </div>
             </Reveal>
           </div>
         </section>
