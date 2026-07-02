@@ -11,7 +11,6 @@ import { ScorecardCta } from "@/components/scorecard-cta";
 const NAV = [
   { href: "#what", label: "How it works" },
   { href: "#experiences", label: "Stories" },
-  { href: "#pricing", label: "Pricing" },
   { href: "#for-you", label: "Is it for you?" },
 ];
 

@@ -4,8 +4,6 @@ import { ScorecardCta } from "@/components/scorecard-cta";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
-const MICROCOPY = "Free · Under 10 minutes · No credit card required";
-
 const WEEK_PARAGRAPHS = [
   "It is Monday morning. You have a list. You know exactly what needs to happen. You sit down, and two hours later you have reorganised your desktop, watched three YouTube videos about productivity, and the list is untouched.",
   "You are not lazy. You have never been lazy. You can hyperfocus for eight hours straight on the right thing. The problem is getting to the right thing.",
@@ -44,36 +42,6 @@ const CHANGES = [
   "People around them begin responding differently, without any explanation.",
 ];
 
-const TIERS = [
-  {
-    name: "Belief Score",
-    price: "Free",
-    body: "Five questions. Your score across four dimensions appears instantly. The pattern that has been running your results, named clearly for the first time.",
-    featured: true,
-  },
-  {
-    name: "Full Report",
-    price: "USD $47",
-    body: "Your exact answers reflected back with the mechanism underneath them visible. Concrete next moves specific to you, not generic advice.",
-  },
-  {
-    name: "Your Purpose Story",
-    price: "USD $497",
-    body: "Your first personalised narrative built from your life. Yours permanently. What you do with it is revealed when you begin.",
-    note: "Credited in full toward the Protocol if you upgrade within 30 days.",
-  },
-  {
-    name: "Four-Week Protocol",
-    price: "USD $1,997",
-    body: "Four personalised narratives, one per week. Purpose, Past, Future, Integration. Weekly check-ins. 28-day Signal Wall. Money-back guarantee: complete the intake, engage for 14 days, submit your midpoint reflection. If nothing has shifted, full refund.",
-  },
-  {
-    name: "Elevated",
-    price: "USD $4,997",
-    body: "Everything in the Protocol, extended to eight weeks, professionally produced audio with carefully designed soundscapes, direct practitioner access throughout.",
-  },
-];
-
 const FIT_YES = [
   "You know you are capable of more and something keeps getting in the way",
   "You are willing to be honest about your patterns",
@@ -108,6 +76,17 @@ function Check() {
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden className="mt-0.5 shrink-0 text-signal">
       <path d="M4 10.5l4 4 8-9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
+  );
+}
+
+// Reassurance shown directly beneath every primary CTA: the Belief Score is
+// free, and there is no pricing or payment on this page.
+function FreeMicro({ className = "" }: { className?: string }) {
+  return (
+    <p className={`text-base ${className}`}>
+      <span className="font-semibold text-signal">The Belief Score is 100% free.</span>{" "}
+      <span className="text-faint">No credit card required · Under 10 minutes.</span>
+    </p>
   );
 }
 
@@ -151,7 +130,7 @@ export default function Home() {
                 </div>
               </Reveal>
               <Reveal delay={320}>
-                <p className="mt-6 text-sm text-faint">{MICROCOPY}</p>
+                <FreeMicro className="mt-6" />
               </Reveal>
             </div>
             <Reveal delay={200} className="relative">
@@ -336,85 +315,34 @@ export default function Home() {
         </section>
 
         {/* How to start */}
-        <section className="mx-auto w-full max-w-2xl px-5 py-20 text-center sm:px-8 sm:py-32">
-          <Reveal>
-            <h2 className="text-headline">Get your free Belief Score</h2>
-          </Reveal>
-          <Reveal delay={80}>
-            <p className="text-body-lg mx-auto mt-5 max-w-xl text-muted">
-              Five questions. Under ten minutes. Your score appears instantly,
-              free. No credit card.
-            </p>
-          </Reveal>
-          <Reveal delay={160}>
-            <div className="mt-10 flex justify-center">
-              <ScorecardCta variant="signal" size="lg">
-                Get your Belief Score
-              </ScorecardCta>
-            </div>
-          </Reveal>
-        </section>
-
-        {/* What you receive at each level */}
-        <section id="pricing" className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 sm:py-32">
+        <section className="border-y border-line">
+          <div className="mx-auto w-full max-w-2xl px-5 py-20 text-center sm:px-8 sm:py-32">
             <Reveal>
-              <ChapterMark numeral="VI">What you receive</ChapterMark>
+              <h2 className="text-headline">Get your free Belief Score</h2>
             </Reveal>
-            <Reveal delay={60}>
-              <h2 className="text-headline mt-5 max-w-2xl">
-                What you receive at each level
-              </h2>
+            <Reveal delay={80}>
+              <p className="text-body-lg mx-auto mt-5 max-w-xl text-muted">
+                Five questions. Under ten minutes. Your score appears instantly.
+                Absolutely free.
+              </p>
             </Reveal>
-            <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {TIERS.map((tier, i) => (
-                <Reveal key={tier.name} delay={i * 50}>
-                  <div
-                    className={`liftable flex h-full flex-col rounded-2xl border bg-card p-8 ${
-                      tier.featured ? "border-signal ring-1 ring-signal" : "border-line"
-                    }`}
-                  >
-                    {tier.featured ? (
-                      <span className="mb-4 inline-flex w-fit items-center rounded-full bg-signal px-3 py-1 text-eyebrow text-bg">
-                        Start here
-                      </span>
-                    ) : null}
-                    <div className="flex items-baseline justify-between gap-3">
-                      <h3 className="text-title">{tier.name}</h3>
-                      <span
-                        className={`shrink-0 font-semibold ${tier.featured ? "text-signal" : "text-fg"}`}
-                      >
-                        {tier.price}
-                      </span>
-                    </div>
-                    <p className="mt-3 leading-relaxed text-muted">{tier.body}</p>
-                    {tier.note ? (
-                      <p className="mt-4 rounded-lg bg-accent-soft px-3 py-2 text-sm text-fg">
-                        {tier.note}
-                      </p>
-                    ) : null}
-                  </div>
-                </Reveal>
-              ))}
-              <Reveal delay={TIERS.length * 50}>
-                <div className="flex h-full flex-col items-start justify-center rounded-2xl border border-dashed border-line p-8">
-                  <p className="text-muted">
-                    Start free. Every level credits toward the next when you go
-                    deeper.
-                  </p>
-                  <div className="mt-6">
-                    <ScorecardCta variant="signal">Get your Belief Score</ScorecardCta>
-                  </div>
-                </div>
-              </Reveal>
-            </div>
+            <Reveal delay={160}>
+              <div className="mt-10 flex justify-center">
+                <ScorecardCta variant="signal" size="lg">
+                  Get your Belief Score
+                </ScorecardCta>
+              </div>
+            </Reveal>
+            <Reveal delay={220}>
+              <FreeMicro className="mt-5" />
+            </Reveal>
           </div>
         </section>
 
         {/* Teams */}
         <section className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-32">
           <Reveal>
-            <ChapterMark numeral="VII">For teams</ChapterMark>
+            <ChapterMark numeral="VI">For teams</ChapterMark>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-headline mt-5">
@@ -448,7 +376,7 @@ export default function Home() {
         <section id="for-you" className="border-t border-line bg-surface">
           <div className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 sm:py-32">
             <Reveal>
-              <ChapterMark numeral="VIII">Honest fit</ChapterMark>
+              <ChapterMark numeral="VII">Honest fit</ChapterMark>
             </Reveal>
             <Reveal delay={60}>
               <h2 className="text-headline mt-5">Is this for you?</h2>
@@ -489,7 +417,7 @@ export default function Home() {
         {/* Your data is safe */}
         <section className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-32">
           <Reveal>
-            <ChapterMark numeral="IX">Your data</ChapterMark>
+            <ChapterMark numeral="VIII">Your data</ChapterMark>
           </Reveal>
           <Reveal delay={60}>
             <h2 className="text-headline mt-5">Your data is safe</h2>
@@ -528,7 +456,7 @@ export default function Home() {
               </div>
             </Reveal>
             <Reveal delay={160}>
-              <p className="mt-6 text-sm text-faint">{MICROCOPY}</p>
+              <FreeMicro className="mt-6" />
             </Reveal>
             <Reveal delay={220}>
               <p className="mx-auto mt-12 max-w-xl text-xs leading-relaxed text-faint">

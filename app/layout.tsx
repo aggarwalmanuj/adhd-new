@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ApplyModal } from "@/components/apply-modal";
@@ -24,6 +24,14 @@ const fraunces = Fraunces({
   axes: ["opsz", "SOFT"],
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Do NOT set maximumScale/userScalable=no: blocking pinch-zoom is an
+  // accessibility failure and hurts the Lighthouse a11y score.
+  themeColor: "#0f2c3b",
+};
 
 export const metadata: Metadata = {
   // Canonical origin for the deployed site. Canonical/OG/Twitter URLs below

@@ -114,9 +114,20 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  /* Base copy runs a notch larger than the 16px default: the audience skews
+     older, so comfortable reading size is a conversion lever, not just polish. */
+  font-size: 1.0625rem;
   line-height: 1.75;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Never let a form control render below 16px: iOS auto-zooms the viewport on
+   focus otherwise, which reads as a broken mobile page. */
+input,
+textarea,
+select {
+  font-size: max(1rem, 16px);
 }
 
 ::selection {
@@ -174,7 +185,7 @@ body {
   color: var(--foreground);
 }
 .text-body-lg {
-  font-size: clamp(1.05rem, 1rem + 0.35vw, 1.2rem);
+  font-size: clamp(1.12rem, 1.02rem + 0.45vw, 1.3rem);
   line-height: 1.8;
 }
 .text-eyebrow {

@@ -1,12 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 
-// On-page section anchors — internal links that also give the footer a real
+// On-page section anchors: internal links that also give the footer a real
 // navigation structure instead of just two legal links.
 const EXPLORE = [
   { href: "/#what", label: "How it works" },
   { href: "/#experiences", label: "Stories" },
-  { href: "/#pricing", label: "Pricing" },
   { href: "/#for-you", label: "Is it for you?" },
 ];
 
@@ -43,7 +42,7 @@ export function SiteFooter() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="text-muted transition-colors hover:text-fg"
+                  className="inline-block py-1 text-muted transition-colors hover:text-fg"
                 >
                   {item.label}
                 </Link>
@@ -61,7 +60,7 @@ export function SiteFooter() {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted transition-colors hover:text-fg"
+                  className="inline-block py-1 text-muted transition-colors hover:text-fg"
                 >
                   {item.label}
                 </a>
@@ -78,10 +77,10 @@ export function SiteFooter() {
             Technologies, Vancouver, Canada.
           </p>
           <nav aria-label="Legal" className="flex items-center gap-5 text-sm">
-            <Link href="/privacy" className="text-muted transition-colors hover:text-fg">
+            <Link href="/privacy" className="inline-block py-1 text-muted transition-colors hover:text-fg">
               Privacy
             </Link>
-            <Link href="/terms" className="text-muted transition-colors hover:text-fg">
+            <Link href="/terms" className="inline-block py-1 text-muted transition-colors hover:text-fg">
               Terms
             </Link>
           </nav>
