@@ -38,36 +38,36 @@ export const metadata: Metadata = {
   // resolve against this, so it must match the domain we want indexed.
   metadataBase: new URL("https://adhd.aimerge.live"),
   title: {
-    default: "AIMERGE: ADHD Coaching for Founders & Entrepreneurs",
-    template: "%s · AIMERGE",
+    default: "Free ADHD Belief Score · AI Merge",
+    template: "%s · AI Merge",
   },
   description:
-    "A private program for executives, founders, and operators with ADHD-style brains. Systems built for your wiring, a room that gets it, and relief in four weeks.",
+    "You may understand your ADHD. But what has the repeated pattern taught you to believe about yourself? Get your free, personalized ADHD Belief Score. No credit card. Not a diagnosis.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "AIMERGE: find relief from ADHD in four weeks",
+    title: "Free ADHD Belief Score · AI Merge",
     description:
-      "Your ADHD brain knows exactly what it's capable of. Something keeps stopping it right before it lands. Get your Belief Score.",
+      "See what one repeated ADHD pattern may have taught you to believe about yourself. Free, personalized, built from your own words. Not a diagnosis.",
     type: "website",
     url: "/",
-    siteName: "AIMERGE",
+    siteName: "AI Merge",
     images: [
       {
-        url: "/images/HeroSection.jpg",
-        width: 1600,
-        height: 1138,
-        alt: "AIMERGE. ADHD coaching for founders and executives",
+        url: "/video/vsl-poster.jpg",
+        width: 1280,
+        height: 720,
+        alt: "Manuj Aggarwal introducing the free ADHD Belief Score",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AIMERGE: find relief from ADHD in four weeks",
+    title: "Free ADHD Belief Score · AI Merge",
     description:
-      "Your ADHD brain knows exactly what it's capable of. Something keeps stopping it right before it lands. Get your Belief Score.",
-    images: ["/images/HeroSection.jpg"],
+      "See what one repeated ADHD pattern may have taught you to believe about yourself. Free, personalized, built from your own words. Not a diagnosis.",
+    images: ["/video/vsl-poster.jpg"],
   },
 };
 

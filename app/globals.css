@@ -308,6 +308,34 @@ select {
   z-index: -1;
 }
 
+/* Floating annotation chips around the hero VSL (reference-layout detail).
+   Inverted (near-white on navy) so they pop against both page and video. */
+.vsl-chip {
+  align-items: center;
+  padding: 0.6rem 1.15rem;
+  border-radius: 999px;
+  background: var(--ink);
+  box-shadow: var(--shadow-lg);
+  color: var(--background);
+  font-size: 0.84rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Compact credibility chips under the hero VSL. */
+.cred-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card) 60%, transparent);
+  color: var(--foreground);
+  font-size: 0.84rem;
+  font-weight: 500;
+}
+
 @keyframes ken-burns {
   from { transform: scale(1); }
   to { transform: scale(1.08); }
@@ -441,6 +469,73 @@ select {
   outline: none;
   border-color: var(--ink);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+/* Quoted example language inside map stages / the sample result panel. */
+.map-stage-body blockquote {
+  border-left: 2px solid var(--signal);
+  padding-left: 0.85rem;
+  color: var(--ink);
+}
+
+/* The reinforcing-loop chain: reads as one sequence, wraps gracefully. */
+.loop-chain {
+  color: var(--ink);
+  line-height: 2;
+}
+.loop-chain span {
+  color: var(--signal);
+}
+
+/* ---------------------------------------------------------------------------
+   FAQ accordion (native <details>, exclusive-open via the name attribute)
+--------------------------------------------------------------------------- */
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--card);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.faq-item + .faq-item {
+  margin-top: 0.75rem;
+}
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.4rem;
+  min-height: 44px; /* mobile tap-target floor */
+  cursor: pointer;
+  list-style: none;
+  font-weight: 500;
+  color: var(--ink);
+}
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-item summary::after {
+  content: "";
+  flex-shrink: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-right: 1.5px solid var(--muted-foreground);
+  border-bottom: 1.5px solid var(--muted-foreground);
+  transform: rotate(45deg);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.faq-item[open] summary::after {
+  transform: rotate(225deg);
+}
+.faq-item[open] {
+  border-color: color-mix(in srgb, var(--signal) 45%, var(--border));
+}
+.faq-body {
+  padding: 0 1.4rem 1.25rem;
+  color: var(--foreground);
+}
+.faq-body > * + * {
+  margin-top: 0.75rem;
 }
 
 /* Error shake */

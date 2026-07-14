@@ -8,12 +8,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ScorecardCta } from "@/components/scorecard-cta";
 
-const NAV = [
-  { href: "#what", label: "How it works" },
-  { href: "#experiences", label: "Stories" },
-  { href: "#for-you", label: "Is it for you?" },
-];
-
+// Doorway page: no nav menu. The doc's hero spec forbids navigation that
+// consumes meaningful height or leaks visitors away from the single CTA.
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
 
@@ -44,20 +40,12 @@ export function SiteHeader() {
           />
         </Link>
 
-        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
-          {NAV.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="rounded-full px-3.5 py-2 text-sm font-medium text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-
         <div className="flex shrink-0 items-center gap-2.5">
-          <ScorecardCta variant="signal">Belief Score</ScorecardCta>
+          <ScorecardCta variant="signal" location="header">
+            {/* Long label overflows a 360px viewport next to the logo. */}
+            <span className="hidden sm:inline">Free Belief Score</span>
+            <span className="sm:hidden">Belief Score</span>
+          </ScorecardCta>
         </div>
       </div>
     </header>

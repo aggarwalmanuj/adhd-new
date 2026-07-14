@@ -63,6 +63,9 @@ export const ROUTE_EVENT_MAP: Record<string, string> = {
   "/": "Landing",
   "/privacy": "PrivacyPolicy",
   "/terms": "TermsOfService",
+  "/ai-data-disclosure": "AiDataDisclosure",
+  "/medical-disclaimer": "MedicalDisclaimer",
+  "/accessibility": "Accessibility",
 };
 
 /** Normalize before lookup — un-normalized paths ("/privacy/") silently miss. */

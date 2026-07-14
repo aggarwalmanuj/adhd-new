@@ -31,7 +31,7 @@ const graph = {
       logo: `${SITE}/icon/logo.png`,
       email: "feedback@tetranoodle.com",
       description:
-        "A private ADHD coaching program for executives, founders, and operators with ADHD-style brains.",
+        "AI Merge offers the free ADHD Belief Score: a personalized, reflective Pattern-to-Belief Map built from a participant's own words. Educational and reflective; not a diagnosis.",
       founder: { "@id": `${SITE}/#manuj` },
       parentOrganization: {
         "@type": "Organization",
@@ -63,6 +63,74 @@ const graph = {
       name: "AIMERGE",
       publisher: { "@id": `${SITE}/#organization` },
       inLanguage: "en",
+    },
+    {
+      // Mirrors the visible "Essential Questions" accordion 1:1 — Google
+      // penalizes FAQ markup that diverges from on-page content.
+      "@type": "FAQPage",
+      "@id": `${SITE}/#faq`,
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "Does the ADHD Belief Score claim belief causes ADHD?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No. ADHD is a real neurodevelopmental condition. The ADHD Belief Score examines whether a belief has become attached to one repeated ADHD experience. It does not claim that belief causes ADHD or explains every ADHD difficulty.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Is this an ADHD diagnosis?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No. The ADHD Belief Score does not determine whether you have ADHD. It is an educational and reflective tool. It does not provide diagnosis, medical care, treatment, psychotherapy, or crisis support.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Is technology deciding what is true about me?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No. The technology helps organize patterns in the information you choose to provide. It does not independently know your history and does not define who you are. The result is a possible interpretation for you to examine; you remain the authority on what fits.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "What if my ADHD Belief Score feels inaccurate?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Treat it as a hypothesis. Keep what fits. Correct, refine, or reject what does not. The result is intended to support reflection, not replace your judgment.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "What happens with the information I provide?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Your answers are used to generate your personalized ADHD Belief Score. Selected team members may review limited information for quality assurance, safety, or support, according to the published Privacy Policy. Your information is not sold.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Is the complete ADHD Belief Score really free?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. You receive your complete free ADHD Belief Score before any paid offer is presented. No credit card is required. Afterward, you may be offered an optional paid next step.",
+          },
+        },
+      ],
+    },
+    {
+      "@type": "VideoObject",
+      "@id": `${SITE}/#vsl`,
+      name: "AI Merge ADHD Belief Score introduction",
+      description:
+        "Manuj Aggarwal explains what the free ADHD Belief Score examines: what one repeated ADHD pattern may have taught you to believe about yourself.",
+      contentUrl: `${SITE}/video/vsl-adhd-v1.mp4`,
+      thumbnailUrl: `${SITE}/video/vsl-poster.jpg`,
+      // TODO(launch): set to the real publish date of the final VSL cut.
+      uploadDate: "2026-07-14",
+      duration: "PT6M21S",
     },
     {
       "@type": "ScholarlyArticle",

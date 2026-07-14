@@ -1,12 +1,15 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { trackEvent, type CtaLocation } from "@/lib/analytics";
 import { getStoredFirstTouch } from "@/lib/attribution";
 import { trackCustom } from "@/lib/fbpixel";
 import { buildScorecardUrl, LP_SLUG, SCORECARD_BASE_URL } from "@/lib/scorecard";
 
 type ScorecardCtaProps = {
   children: React.ReactNode;
+  /** Which page block this CTA sits in — required for funnel attribution. */
+  location: CtaLocation;
   /** "primary" = near-white ink pill, "signal" = teal accent pill (sparingly). */
   variant?: "primary" | "signal" | "ghost";
   size?: "md" | "lg";
@@ -19,6 +22,7 @@ const subscribe = () => () => {};
 
 export function ScorecardCta({
   children,
+  location,
   variant = "primary",
   size = "md",
   className = "",
@@ -34,13 +38,17 @@ export function ScorecardCta({
     () => SCORECARD_BASE_URL
   );
 
-  // Funnel-visibility ping. A CUSTOM event, not a standard Lead/Purchase.
-  // Those fire on the scorecard and would double-count. Fire-and-forget so it
+  // Funnel-visibility ping. cta_click (with location) is the doc-specified
+  // funnel event; ScorecardClick is kept as the legacy Meta custom event that
+  // existing ad optimization reads. Neither is a standard Lead/Purchase —
+  // those fire on the scorecard and would double-count. Fire-and-forget so it
   // never blocks the navigation that follows.
   const handleClick = () => {
+    trackEvent("cta_click", { location });
     if (typeof window !== "undefined" && window.fbq) {
       trackCustom("ScorecardClick", {
         lp: LP_SLUG,
+        location,
         utm_campaign: getStoredFirstTouch().utmCampaign ?? "adhd-doorway",
       });
     }
@@ -57,6 +65,7 @@ export function ScorecardCta({
     <a
       href={href}
       onClick={handleClick}
+      data-cta-location={location}
       className={`btn ${variantClass} ${size === "lg" ? "btn-lg" : ""} ${className}`}
     >
       {children}

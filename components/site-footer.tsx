@@ -1,89 +1,61 @@
 import Image from "next/image";
 import Link from "next/link";
 
-// On-page section anchors: internal links that also give the footer a real
-// navigation structure instead of just two legal links.
-const EXPLORE = [
-  { href: "/#what", label: "How it works" },
-  { href: "/#experiences", label: "Stories" },
-  { href: "/#for-you", label: "Is it for you?" },
-];
-
-// Outbound links to the brand's own authoritative properties. These give the
-// page real external links and reinforce the entity graph in structured-data.tsx.
-const ELSEWHERE = [
-  { href: "https://www.aimerge.live", label: "Free Belief Score" },
-  { href: "https://tetranoodle.com", label: "TetraNoodle Technologies" },
-  { href: "https://manujaggarwal.com", label: "About Manuj Aggarwal" },
+// Block 14: footer and legal.
+const LEGAL = [
+  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/terms", label: "Terms of Use" },
+  { href: "/ai-data-disclosure", label: "AI and Data Disclosure" },
+  { href: "/medical-disclaimer", label: "Medical Disclaimer" },
+  { href: "/accessibility", label: "Accessibility" },
 ];
 
 export function SiteFooter() {
   return (
     <footer className="border-t border-line">
-      <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 py-12 sm:px-8 md:grid-cols-[1.5fr_1fr_1fr]">
-        <div>
-          <Image
-            src="/icon/logo.png"
-            alt="AIMERGE"
-            width={1274}
-            height={179}
-            className="brand-logo h-4 w-auto"
-          />
-          <p className="mt-3 max-w-xs text-sm text-faint">
-            ADHD coaching for founders and executives. Built for brains that
-            move fast.
-          </p>
-        </div>
+      <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-6 px-5 py-14 text-center sm:px-8">
+        <Image
+          src="/icon/logo.png"
+          alt="AI Merge"
+          width={1274}
+          height={179}
+          className="brand-logo h-4 w-auto"
+        />
+        <p className="text-title">
+          See the pattern. Decide what fits.{" "}
+          <span className="text-emphasis">Build new evidence.</span>
+        </p>
 
-        <nav aria-label="Explore">
-          <p className="text-eyebrow text-faint">Explore</p>
-          <ul className="mt-4 space-y-2.5 text-sm">
-            {EXPLORE.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="inline-block py-1 text-muted transition-colors hover:text-fg"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <nav aria-label="Elsewhere">
-          <p className="text-eyebrow text-faint">More from AIMERGE</p>
-          <ul className="mt-4 space-y-2.5 text-sm">
-            {ELSEWHERE.map((item) => (
-              <li key={item.href}>
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block py-1 text-muted transition-colors hover:text-fg"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+        <nav aria-label="Legal" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
+          {LEGAL.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="inline-block py-1 text-muted transition-colors hover:text-fg"
+            >
+              {item.label}
+            </Link>
+          ))}
+          <a
+            href="mailto:feedback@tetranoodle.com"
+            className="inline-block py-1 text-muted transition-colors hover:text-fg"
+          >
+            Contact
+          </a>
         </nav>
       </div>
 
       <div className="border-t border-line">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-3 px-5 py-6 sm:flex-row sm:items-center sm:px-8">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-2 px-5 py-6 text-center sm:px-8">
           <p className="text-sm text-faint">
-            © {new Date().getFullYear()} AIMERGE. A methodology by TetraNoodle
-            Technologies, Vancouver, Canada.
+            © {new Date().getFullYear()} TetraNoodle Technologies. All rights
+            reserved.
           </p>
-          <nav aria-label="Legal" className="flex items-center gap-5 text-sm">
-            <Link href="/privacy" className="inline-block py-1 text-muted transition-colors hover:text-fg">
-              Privacy
-            </Link>
-            <Link href="/terms" className="inline-block py-1 text-muted transition-colors hover:text-fg">
-              Terms
-            </Link>
-          </nav>
+          <p className="max-w-2xl text-xs leading-relaxed text-faint">
+            AI Merge is proprietary intellectual property created by Manuj
+            Aggarwal and published in the{" "}
+            <em>Mensa Research Journal</em>.
+          </p>
         </div>
       </div>
     </footer>
