@@ -5,6 +5,7 @@ import { Reveal } from "@/components/reveal";
 import { ScorecardCta } from "@/components/scorecard-cta";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { TestimonialReel } from "@/components/testimonial-reel";
 import { VslPlayer } from "@/components/vsl-player";
 import type { CtaLocation } from "@/lib/analytics";
 
@@ -28,28 +29,42 @@ const HERO_CRED_CHIPS = [
   "Founder & CIO, TetraNoodle Technologies",
 ];
 
-/* Block 04: one broadly relevant ADHD loop, told in short lines. */
-const RECOGNITION_LINES = [
-  "The cursor blinks.",
-  "The work matters.",
-  "You may even know exactly how to do it.",
-  "Then something smaller asks for your attention.",
-  "A message.",
-  "A new tab.",
-  "A quick search.",
-  "A smaller task that suddenly feels easier to finish.",
-];
-
-const RECOGNITION_AFTER = [
-  "The important task remains open.",
-  "The day moves.",
-  "The deadline gets closer.",
-  "Eventually the pressure becomes impossible to ignore.",
-  "Now you move.",
-  "You focus.",
-  "You finish.",
-  "Sometimes you produce excellent work.",
-  "And because the work gets done, urgency receives the credit.",
+/* Block 04: one broadly relevant ADHD loop, told in short lines and grouped
+   into three beats so the narrative reads as a structured sequence. Lines
+   prefixed with "> " render as highlighted inner-voice quotes. */
+const RECOGNITION_ACTS = [
+  {
+    label: "The Pull",
+    lines: [
+      "The cursor blinks.",
+      "The work matters.",
+      "You may even know exactly how to do it.",
+      "Then something smaller asks for your attention.",
+      "A message. A new tab. A quick search.",
+      "A smaller task that suddenly feels easier to finish.",
+    ],
+  },
+  {
+    label: "The Wait",
+    lines: [
+      "You tell yourself:",
+      "> “I still have time.”",
+      "The important task remains open.",
+      "The day moves. The deadline gets closer.",
+      "Eventually the pressure becomes impossible to ignore.",
+    ],
+  },
+  {
+    label: "The Rescue",
+    lines: [
+      "Now you move. You focus. You finish.",
+      "Sometimes you produce excellent work.",
+      "And because the work gets done, urgency receives the credit.",
+      "Your mind records:",
+      "> “Pressure is what makes me perform.”",
+      "So the next task waits for pressure again.",
+    ],
+  },
 ];
 
 /* Block 05 */
@@ -282,11 +297,11 @@ const HOW_STEPS = [
 ];
 
 const MAP_DELIVERABLES = [
-  "the repeated moment;",
-  "a possible belief;",
-  "the reinforcing loop;",
-  "the moment to watch;",
-  "the next evidence.",
+  "The repeated moment",
+  "A possible belief",
+  "The reinforcing loop",
+  "The moment to watch",
+  "The next evidence",
 ];
 
 function ChapterMark({ children }: { children: React.ReactNode }) {
@@ -461,50 +476,54 @@ export default function Home() {
 
         {/* ============ Block 04 · Recognition and revelation ============ */}
         <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-xl px-5 py-20 sm:px-8 sm:py-28">
-            <Reveal>
-              <ChapterMark>Sound familiar</ChapterMark>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="text-headline mt-5">
-                The Task Is Open. You Know What Needs to Happen.
-              </h2>
-            </Reveal>
-
-            <div className="text-body-lg mt-9 space-y-4 text-muted">
-              {RECOGNITION_LINES.map((line, i) => (
-                <Reveal key={line} delay={i * 30}>
-                  <p>{line}</p>
-                </Reveal>
-              ))}
-              <Reveal delay={120}>
-                <p>You tell yourself:</p>
+          <div className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-28">
+            <div className="text-center">
+              <Reveal>
+                <p className="chapter justify-center text-eyebrow">
+                  <span className="chapter-dot" aria-hidden />
+                  <span>Sound familiar</span>
+                </p>
               </Reveal>
-              <Reveal delay={140}>
-                <blockquote className="border-l-2 border-line pl-5 text-fg">
-                  &ldquo;I still have time.&rdquo;
-                </blockquote>
-              </Reveal>
-              {RECOGNITION_AFTER.map((line, i) => (
-                <Reveal key={line} delay={i * 30}>
-                  <p>{line}</p>
-                </Reveal>
-              ))}
-              <Reveal delay={100}>
-                <p>Your mind records:</p>
-              </Reveal>
-              <Reveal delay={120}>
-                <blockquote className="border-l-2 border-line pl-5 text-fg">
-                  &ldquo;Pressure is what makes me perform.&rdquo;
-                </blockquote>
-              </Reveal>
-              <Reveal delay={140}>
-                <p>So the next task waits for pressure again.</p>
+              <Reveal delay={60}>
+                <h2 className="text-headline mt-5">
+                  The Task Is Open. You Know What Needs to Happen.
+                </h2>
               </Reveal>
             </div>
 
+            {/* The loop, in three labeled beats along an editorial rail
+                (the doc's Block 04 spec asks for narrow reading width and
+                no cards). */}
+            <div className="mx-auto mt-12 max-w-xl space-y-10">
+              {RECOGNITION_ACTS.map((act, i) => (
+                <Reveal key={act.label} delay={i * 80}>
+                  <div className="border-l border-line pl-6 sm:pl-8">
+                    <p className="text-eyebrow text-signal">
+                      {String(i + 1).padStart(2, "0")} · {act.label}
+                    </p>
+                    <div className="mt-4 space-y-2.5">
+                      {act.lines.map((line) =>
+                        line.startsWith("> ") ? (
+                          <blockquote
+                            key={line}
+                            className="text-title -ml-6 border-l-2 border-signal py-1 pl-[calc(1.5rem-2px)] sm:-ml-8 sm:pl-[calc(2rem-2px)]"
+                          >
+                            {line.slice(2)}
+                          </blockquote>
+                        ) : (
+                          <p key={line} className="text-lg leading-relaxed text-muted">
+                            {line}
+                          </p>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+
             <Reveal delay={100}>
-              <p className="text-headline mt-12">
+              <p className="text-headline mt-14 text-center">
                 The deadline may not only be forcing action.{" "}
                 <span className="text-emphasis">
                   It may be teaching you that urgency is the only version of
@@ -513,25 +532,16 @@ export default function Home() {
               </p>
             </Reveal>
 
-            <div className="text-body-lg mt-10 space-y-4 text-muted">
-              <Reveal>
-                <p>That does not mean you are lazy.</p>
-              </Reveal>
-              <Reveal delay={40}>
-                <p>
-                  It does not mean you lack intelligence, motivation, or
-                  ambition.
-                </p>
-              </Reveal>
-              <Reveal delay={80}>
-                <p>
-                  It may mean that one repeated ADHD experience has gradually
-                  become a belief about who you are and how you work.
-                </p>
-              </Reveal>
-            </div>
+            <Reveal delay={140}>
+              <p className="text-body-lg mx-auto mt-8 max-w-xl text-center text-muted">
+                That does not mean you are lazy. It does not mean you lack
+                intelligence, motivation, or ambition. It may mean that one
+                repeated ADHD experience has gradually become a belief about
+                who you are and how you work.
+              </p>
+            </Reveal>
 
-            <Reveal delay={120}>
+            <Reveal delay={180}>
               <CtaBlock location="recognition" className="mt-12" />
             </Reveal>
           </div>
@@ -547,25 +557,33 @@ export default function Home() {
               Patterns That Were Hard to See Can Now Be Examined More Clearly
             </h2>
           </Reveal>
-          <div className="text-body-lg mt-9 space-y-4 text-muted">
-            <Reveal>
-              <p>Repeated experiences are often remembered separately.</p>
-            </Reveal>
+          <Reveal delay={100}>
+            <p className="text-body-lg mt-9 text-muted">
+              Repeated experiences are often remembered separately.
+            </p>
+          </Reveal>
+
+          {/* The isolated events, shown as isolated fragments. */}
+          <ul className="mt-6 grid list-none gap-3 sm:grid-cols-2">
             {ISOLATED_EVENTS.map((line, i) => (
-              <Reveal key={line} delay={i * 40}>
-                <p className="text-fg">{line}</p>
+              <Reveal as="li" key={line} delay={i * 50}>
+                <div className="flex h-full items-center gap-3 rounded-xl border border-line bg-card px-5 py-4">
+                  <span className="list-dot shrink-0" aria-hidden />
+                  <span className="font-medium text-fg">{line}</span>
+                </div>
               </Reveal>
             ))}
-            <Reveal delay={80}>
-              <p>Each event may feel isolated.</p>
-            </Reveal>
-            <Reveal delay={100}>
+          </ul>
+
+          <div className="text-body-lg mt-8 space-y-4 text-muted">
+            <Reveal>
               <p>
-                But when the language, sequence, response, and conclusion are
-                viewed together, a larger pattern may become visible.
+                Each event may feel isolated. But when the language, sequence,
+                response, and conclusion are viewed together, a larger pattern
+                may become visible.
               </p>
             </Reveal>
-            <Reveal delay={120}>
+            <Reveal delay={60}>
               <p>
                 Technology can now help organize those connections with more
                 consistency and precision. Not to tell you who you are. Not to
@@ -577,14 +595,14 @@ export default function Home() {
             {REFLECT_ITEMS.map((item, i) => (
               <Reveal as="li" key={item} delay={i * 40}>
                 <div className="flex items-start gap-3">
-                  <span className="chapter-dot mt-2.5 shrink-0" aria-hidden />
+                  <span className="list-dot mt-2.5 shrink-0" aria-hidden />
                   <span className="text-body-lg text-muted">{item}</span>
                 </div>
               </Reveal>
             ))}
           </ul>
           <Reveal delay={140}>
-            <p className="text-title mt-10 leading-relaxed">
+            <p className="text-title mt-10 border-l-2 border-signal pl-6 leading-relaxed">
               The technology helps reveal the pattern.{" "}
               <span className="text-emphasis">You decide what it means.</span>{" "}
               Your actions create the evidence that matters.
@@ -814,10 +832,10 @@ export default function Home() {
                   className="absolute inset-0 z-10 bg-linear-to-t from-bg/60 via-transparent to-transparent"
                 />
                 <Image
-                  src="/manuj/JHEMastermind-2.jpg"
+                  src="/manuj/closeup.jpg"
                   alt="Manuj Aggarwal, creator of AI Merge"
-                  width={3570}
-                  height={5352}
+                  width={2200}
+                  height={2933}
                   className="h-96 w-full object-cover object-top lg:h-136"
                 />
               </div>
@@ -881,7 +899,7 @@ export default function Home() {
                   <ul className="mt-4 grid list-none gap-2.5 sm:grid-cols-2">
                     {CREDENTIALS.map((c) => (
                       <li key={c} className="flex items-start gap-2.5 text-sm text-muted">
-                        <span className="chapter-dot mt-1.5 shrink-0" aria-hidden />
+                        <span className="list-dot mt-1.5 shrink-0" aria-hidden />
                         {c}
                       </li>
                     ))}
@@ -936,6 +954,16 @@ export default function Home() {
               <h2 className="text-headline mt-5">
                 What Participants Have Noticed Through AI Merge
               </h2>
+            </Reveal>
+            <Reveal delay={100}>
+              <p className="text-body-lg mt-5 max-w-xl text-muted">
+                Real participants, in their own words. Tap any clip to listen.
+              </p>
+            </Reveal>
+            <Reveal delay={140}>
+              <div className="mt-10">
+                <TestimonialReel />
+              </div>
             </Reveal>
             <ul className="mt-12 grid list-none gap-5 sm:grid-cols-2">
               {PARTICIPANT_PROOF.map((item, i) => (
@@ -1257,11 +1285,10 @@ export default function Home() {
               </p>
             </Reveal>
             <Reveal delay={120}>
-              <ul className="mx-auto mt-6 inline-grid list-none gap-2 text-left">
+              <ul className="mx-auto mt-8 flex max-w-xl list-none flex-wrap items-center justify-center gap-3">
                 {MAP_DELIVERABLES.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <span className="chapter-dot mt-2.5 shrink-0" aria-hidden />
-                    <span className="text-body-lg text-muted">{item}</span>
+                  <li key={item} className="cred-chip">
+                    {item}
                   </li>
                 ))}
               </ul>

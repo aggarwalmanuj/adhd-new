@@ -471,6 +471,28 @@ select {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--foreground) 12%, transparent);
 }
 
+/* Static list marker: the chapter-dot's pulse is reserved for section marks;
+   list bullets stay still. */
+.list-dot {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--signal);
+  opacity: 0.85;
+}
+
+/* Testimonial reel: snap scrolling with the scrollbar hidden (arrows +
+   swipe are the affordance). */
+.reel-scroller {
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.reel-scroller::-webkit-scrollbar {
+  display: none;
+}
+
 /* Quoted example language inside map stages / the sample result panel. */
 .map-stage-body blockquote {
   border-left: 2px solid var(--signal);
