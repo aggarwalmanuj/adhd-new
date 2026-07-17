@@ -36,7 +36,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-title">No professional advice</h2>
             <p className="mt-3">
-              AIMERGE provides business education and community. Nothing on
+              AIMERGE provides educational and reflective tools. Nothing on
               this site is medical, legal, or financial advice, and nothing here
               diagnoses or treats ADHD or any other condition. Talk to a
               qualified professional for that.

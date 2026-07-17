@@ -361,6 +361,16 @@ export default function Home() {
                 </span>
               </h1>
             </Reveal>
+            {/* Offer clarity (management review): one concrete sentence on
+                what the free score returns, so the score is unmistakably the
+                product being offered here. */}
+            <Reveal delay={120}>
+              <p className="text-body-lg mx-auto mt-6 max-w-2xl text-muted">
+                Answer a short guided reflection and see the belief your
+                repeated ADHD pattern may be reinforcing, and the moment where
+                a different response can begin.
+              </p>
+            </Reveal>
           </div>
 
           <div className="mx-auto w-full max-w-4xl px-5 sm:px-8">
@@ -827,15 +837,12 @@ export default function Home() {
           <div className="grid items-start gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
             <Reveal className="relative">
               <div className="relative overflow-hidden rounded-2xl border border-line">
-                <div
-                  aria-hidden
-                  className="absolute inset-0 z-10 bg-linear-to-t from-bg/60 via-transparent to-transparent"
-                />
                 <Image
                   src="/manuj/closeup.jpg"
                   alt="Manuj Aggarwal, creator of AI Merge"
-                  width={2200}
-                  height={2933}
+                  width={1400}
+                  height={1867}
+                  sizes="(min-width: 1024px) 430px, 100vw"
                   className="h-96 w-full object-cover object-top lg:h-136"
                 />
               </div>
@@ -957,7 +964,8 @@ export default function Home() {
             </Reveal>
             <Reveal delay={100}>
               <p className="text-body-lg mt-5 max-w-xl text-muted">
-                Real participants, in their own words. Tap any clip to listen.
+                Experiences reported by AI Merge participants, in their own
+                words. Tap any clip to listen.
               </p>
             </Reveal>
             <Reveal delay={140}>
@@ -981,8 +989,9 @@ export default function Home() {
             </ul>
             <Reveal delay={120}>
               <p className="mt-8 text-sm leading-relaxed text-faint">
-                Individual experiences vary. These comments reflect personal
-                experiences with AI Merge and do not guarantee that another
+                Individual experiences vary. These accounts reflect personal
+                experiences with the full AI Merge experience, not the free
+                ADHD Belief Score, and do not guarantee that another
                 participant will experience the same result.
               </p>
             </Reveal>

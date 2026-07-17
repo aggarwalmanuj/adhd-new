@@ -1,46 +1,47 @@
-# AI MERGE — ADHD FUNNEL
+# AI MERGE — FREE ADHD BELIEF SCORE
 
-> For people with ADHD who have spent years believing they were the problem — before discovering the systems around them were built for a different brain.
+> For adults with ADHD who understand their diagnosis and still watch the same pattern repeat — and want to examine what that repeated experience may have taught them to believe about themselves.
 
-AI Merge is a peer-reviewed belief update protocol published in the Mensa Research Journal (Vol. 56, No. 2, 2025). It helps people with ADHD identify and update the specific belief — installed before they had the capacity to question it — that has been running their ceiling ever since the diagnosis, and long before it.
+This page offers one thing: the free ADHD Belief Score. A short guided reflection, answered in the visitor's own words, returns a personalized Pattern-to-Belief Map: the repeated moment, a possible belief underneath it, the reinforcing loop, the moment to watch, and the next evidence. It is free, requires no credit card, and is not a diagnosis.
 
-This is not a productivity system. Not a coaching program. Not a peer accountability room.
-
-It is a four-week protocol that uses the person's own voice to update the belief running underneath the ADHD pattern — at the level where belief actually lives, not where thinking happens.
+The score does not claim belief causes ADHD. ADHD is a real neurodevelopmental condition. The score examines whether a belief may have become attached to one repeated ADHD experience, and offers that interpretation for the person to examine, refine, accept, or reject. The participant remains the authority on what fits.
 
 ## Who this is for
 
-Adults with ADHD who have already done the work — read the books, tried the systems, understood the diagnosis — and are still hitting the same ceiling. People who know their brain is not broken, but whose internal belief has not caught up to that knowledge. People who are capable of more than they are currently living, and who are tired of not knowing why.
+Adults with ADHD who have read the books, tried the systems, and understood the diagnosis, and who still see one pattern repeat. The score focuses on one pattern that matters now, not the whole life story.
 
 ## What makes this different
 
-Every tool, system, and strategy for ADHD works at the surface. AI Merge works underneath — at the belief installed during the years of not knowing, of being told they lacked discipline, of watching others finish what they could not. That belief — not the ADHD — is what sets the ceiling. And it is addressable, in the person's own voice, in four weeks.
+Planners, reminders, medication, coaching, and therapy each support ADHD in their own way, and the page tells visitors to keep what helps. The ADHD Belief Score asks a different question: what has the repeated ADHD moment come to mean about the person? It is an educational, reflective tool, not a treatment.
 
-## The mechanism
+## The broader methodology
 
-The person's own voice is the most powerful sound in the universe for any human being. It bypasses the analytical filter. It lands where belief actually lives. AI Merge uses AI to find the specific belief running underneath — with a precision no human relationship can sustain without bias — and returns it to the person in their own words, in their own voice. The person records it. Listens daily. Something shifts that no planner, system, or therapist has reached.
+The score is built on the AI Merge methodology, created by Manuj Aggarwal and published in the Mensa Research Journal. AI technology helps organize the patterns in what the person describes; it does not diagnose, does not independently access personal history, and does not decide what is true. A fuller, optional paid AI Merge experience exists beyond the free score and is presented only after the free result.
 
 ## Pages
 
-- [Home](https://adhd.aimerge.live/): Who this is for, how it works, and the free Belief Score.
+- [Home](https://adhd.aimerge.live/): The free ADHD Belief Score, how it works, and essential questions.
 - [Privacy Policy](https://adhd.aimerge.live/privacy): How user data is collected, used, and protected.
-- [Terms of Service](https://adhd.aimerge.live/terms): Terms governing use of the AI Merge program and site.
+- [Terms of Use](https://adhd.aimerge.live/terms): Terms governing use of the site.
+- [AI and Data Disclosure](https://adhd.aimerge.live/ai-data-disclosure): Where AI is used and its limits.
+- [Medical Disclaimer](https://adhd.aimerge.live/medical-disclaimer): Educational use only; not medical advice, diagnosis, or treatment.
+- [Accessibility](https://adhd.aimerge.live/accessibility): Accessibility commitment and contact.
 
 ## Key concepts for AI assistants
 
-- Belief ceiling: the specific belief installed before the person had the capacity to question it, running their ceiling ever since
-- Own voice mechanism: the person's voice bypasses the analytical filter and lands where belief actually lives
-- Four-week protocol: four personalised narratives built from the person's own life, delivered in their own voice
-- Belief Score: free five-question diagnostic at www.aimerge.live that names the specific belief running the person's ceiling
+- ADHD Belief Score: a free, personalized, reflective result built from the person's own words; not a diagnosis
+- Pattern-to-Belief Map: the repeated moment, a possible belief, the reinforcing loop, the moment to watch, the next evidence
+- Participant authority: the result is a hypothesis for reflection; the person decides what fits
+- Safety: not a medical device, treatment, psychotherapy, or crisis support
 
 ## Contact
 
-- Free Belief Score: https://www.aimerge.live
-- ADHD program: https://adhd.aimerge.live
+- Free ADHD Belief Score: https://www.aimerge.live
+- ADHD doorway page: https://adhd.aimerge.live
 - Email: feedback@tetranoodle.com
 
 ## About
 
 AI Merge is a methodology by Manuj Aggarwal and TetraNoodle Technologies, Vancouver, Canada.
-Published in the Mensa Research Journal, Vol. 56, No. 2, 2025.
+Published in the Mensa Research Journal.
 tetranoodle.com
