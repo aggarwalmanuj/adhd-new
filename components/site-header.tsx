@@ -22,10 +22,10 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-30 transition-[background-color,border-color,backdrop-filter] duration-300 ${
+      className={`sticky top-0 z-30 border-b transition-[background-color,border-color,backdrop-filter] duration-250 ease-[cubic-bezier(0.22,0.61,0.36,1)] ${
         scrolled
-          ? "border-b border-line bg-bg/80 backdrop-blur-md"
-          : "border-b border-transparent"
+          ? "border-(--border-soft) bg-bg/75 backdrop-blur-lg"
+          : "border-transparent"
       }`}
     >
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
@@ -41,11 +41,13 @@ export function SiteHeader() {
         </Link>
 
         <div className="flex shrink-0 items-center gap-2.5">
-          <ScorecardCta variant="signal" location="header">
-            {/* Long label overflows a 360px viewport next to the logo. */}
-            <span className="hidden sm:inline">Free Belief Score</span>
-            <span className="sm:hidden">Belief Score</span>
-          </ScorecardCta>
+          <span className="cta-halo">
+            <ScorecardCta variant="signal" location="header">
+              {/* Long label overflows a 360px viewport next to the logo. */}
+              <span className="hidden sm:inline">Free Belief Score</span>
+              <span className="sm:hidden">Belief Score</span>
+            </ScorecardCta>
+          </span>
         </div>
       </div>
     </header>

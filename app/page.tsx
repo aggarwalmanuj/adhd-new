@@ -327,14 +327,17 @@ function CtaBlock({
 }) {
   return (
     <div className={`flex flex-col items-center gap-4 ${className}`}>
-      <ScorecardCta
-        variant="signal"
-        size="lg"
-        location={location}
-        className="w-full min-h-11 sm:w-auto"
-      >
-        {label}
-      </ScorecardCta>
+      {/* Wrapper hosts the ambient light behind the button — see .cta-halo. */}
+      <span className="cta-halo w-full sm:w-auto">
+        <ScorecardCta
+          variant="signal"
+          size="lg"
+          location={location}
+          className="w-full min-h-11 sm:w-auto"
+        >
+          {label}
+        </ScorecardCta>
+      </span>
       <p className="text-center text-sm text-faint">{microcopy}</p>
     </div>
   );
@@ -345,15 +348,21 @@ export default function Home() {
     <>
       <SiteHeader />
       <LandingAnalytics />
-      <main id="main" className="flex-1">
+      <main id="main" className="relative flex-1">
+        {/* Ambient lighting layers. Both are inert, non-interactive, and sit
+            on z-index -1 behind all content — see globals.css for the model. */}
+        <div className="ambient-field" aria-hidden />
+        <div className="page-vignette" aria-hidden />
+
         {/* ================= Block 01 · Hero ================= */}
         <section id="hero" className="relative overflow-hidden">
-          <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-16 pt-12 text-center sm:px-8 sm:pt-16">
+          <div className="spotlight-hero" aria-hidden />
+          <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-18 pt-12 text-center sm:px-8 sm:pt-16">
             <Reveal>
               <p className="cred-chip">AI Merge · Free ADHD Belief Score</p>
             </Reveal>
             <Reveal delay={80}>
-              <h1 className="text-display mt-7">
+              <h1 className="text-display mt-8">
                 You may understand your ADHD.{" "}
                 <span className="text-emphasis">
                   But what has the same repeated pattern taught you to believe
@@ -365,7 +374,7 @@ export default function Home() {
                 what the free score returns, so the score is unmistakably the
                 product being offered here. */}
             <Reveal delay={120}>
-              <p className="text-body-lg mx-auto mt-6 max-w-2xl text-muted">
+              <p className="text-body-lg mx-auto mt-7 max-w-2xl text-muted">
                 Answer a short guided reflection and see the belief your
                 repeated ADHD pattern may be reinforcing, and the moment where
                 a different response can begin.
@@ -417,7 +426,7 @@ export default function Home() {
                 recognition before a proof quote ships here. */}
             <Reveal delay={120}>
               <figure className="mx-auto mt-8 max-w-2xl">
-                <div className="overflow-hidden rounded-2xl border border-line shadow-lg">
+                <div className="media-frame overflow-hidden rounded-2xl">
                   <Image
                     src="/take/reportsummary.png"
                     alt="A real AI Merge result screen showing an overall score with four scored dimensions and a peer benchmark"
@@ -681,7 +690,7 @@ export default function Home() {
 
           <Reveal delay={100}>
             <figure className="mx-auto mt-12 max-w-4xl">
-              <div className="overflow-hidden rounded-2xl border border-line shadow-lg">
+              <div className="media-frame overflow-hidden rounded-2xl">
                 <Image
                   src="/take/question.png"
                   alt="The guided reflection interface: a question asking you to describe a specific situation in your own words, with a free-text answer box"
