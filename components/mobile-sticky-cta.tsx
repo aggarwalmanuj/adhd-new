@@ -30,14 +30,16 @@ export function MobileStickyCta() {
       }`}
       style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
     >
-      <ScorecardCta
-        variant="signal"
-        size="lg"
-        location="mobile_sticky"
-        className={`w-full min-h-11 ${visible ? "" : "pointer-events-none"}`}
-      >
-        Get My ADHD Belief Score
-      </ScorecardCta>
+      <span className="cta-halo w-full">
+        <ScorecardCta
+          variant="signal"
+          size="lg"
+          location="mobile_sticky"
+          className={`w-full min-h-11 ${visible ? "" : "pointer-events-none"}`}
+        >
+          Get My ADHD Belief Score
+        </ScorecardCta>
+      </span>
     </div>
   );
 }

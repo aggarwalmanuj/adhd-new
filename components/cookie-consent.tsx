@@ -27,11 +27,13 @@ export function CookieConsent() {
   return (
     <section
       aria-label="Cookie consent"
-      className="anim-dialog-in fixed inset-x-0 bottom-0 z-40 p-4 sm:bottom-5 sm:left-5 sm:right-auto sm:max-w-sm sm:p-0"
+      className="anim-dialog-in fixed inset-x-0 bottom-0 z-40 p-4 sm:bottom-5 sm:left-5 sm:right-auto sm:max-w-xs sm:p-0"
     >
-      <div className="rounded-2xl border border-line bg-bg p-5 shadow-2xl">
-        <h2 className="text-sm font-semibold">Cookies, briefly</h2>
-        <p className="mt-1.5 text-sm leading-relaxed text-muted">
+      {/* Consent is required, not persuasive — it stays legible but sits back
+          so it never competes with the hero CTA for attention. */}
+      <div className="rounded-2xl border border-(--border-soft) bg-bg/75 p-4 shadow-(--elev-1) backdrop-blur-lg">
+        <h2 className="text-xs font-semibold">Cookies, briefly</h2>
+        <p className="mt-1.5 text-xs leading-relaxed text-faint">
           We use cookies for analytics and to measure our ads. Accept to help
           us improve the site, or decline and we&apos;ll only use what&apos;s
           strictly necessary.{" "}
@@ -42,18 +44,18 @@ export function CookieConsent() {
             Privacy policy
           </Link>
         </p>
-        <div className="mt-4 flex gap-2.5">
+        <div className="mt-3.5 flex gap-2">
           <button
             type="button"
             onClick={() => setConsent("granted")}
-            className="pressable inline-flex min-h-11 flex-1 items-center justify-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-contrast hover:opacity-90"
+            className="pressable inline-flex min-h-11 flex-1 items-center justify-center rounded-lg bg-accent px-4 text-sm font-semibold text-accent-contrast hover:brightness-110 hover:shadow-(--elev-1)"
           >
             Accept
           </button>
           <button
             type="button"
             onClick={() => setConsent("denied")}
-            className="pressable inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-line bg-surface px-4 text-sm font-medium hover:bg-surface-2"
+            className="pressable inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-(--border-soft) bg-surface/70 px-4 text-sm font-medium hover:border-line hover:bg-surface-2"
           >
             Decline
           </button>

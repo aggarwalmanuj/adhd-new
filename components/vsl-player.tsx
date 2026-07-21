@@ -94,7 +94,7 @@ export function VslPlayer() {
   };
 
   return (
-    <div className="relative">
+    <div className="vsl-stage relative">
       {/* Annotation chips float outside the frame on large screens only. */}
       {CHIPS.map((chip) => (
         <span
@@ -107,7 +107,7 @@ export function VslPlayer() {
       ))}
 
       <div className="hero-glow" aria-hidden />
-      <div className="relative overflow-hidden rounded-2xl border border-line bg-surface shadow-lg">
+      <div className="vsl-frame relative overflow-hidden rounded-2xl bg-surface">
         <video
           ref={videoRef}
           className="aspect-video w-full"
