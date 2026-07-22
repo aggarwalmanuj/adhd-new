@@ -1,8 +1,11 @@
 import Image from "next/image";
+import { FaqItem } from "@/components/faq-item";
 import { LandingAnalytics } from "@/components/landing-analytics";
 import { MobileStickyCta } from "@/components/mobile-sticky-cta";
 import { Reveal } from "@/components/reveal";
+import { ScoreVisual } from "@/components/score-visual";
 import { ScorecardCta } from "@/components/scorecard-cta";
+import { SectionViewTracker } from "@/components/section-view-tracker";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { TestimonialReel } from "@/components/testimonial-reel";
@@ -27,6 +30,42 @@ const HERO_CRED_CHIPS = [
   "Four patents held by the creator",
   "Published in the Mensa Research Journal",
   "Founder & CIO, TetraNoodle Technologies",
+];
+
+/* Block 01B: what the visitor receives — input, time, output, cost — stated
+   without hedges. This is the block the page previously failed to answer.
+   TODO(launch): the score/dimension/benchmark wording must match the live
+   result screen exactly before ship. */
+const WHAT_YOU_GET = [
+  {
+    key: "input",
+    body: (
+      <>
+        Answer <span className="font-medium text-fg">5 questions</span> about
+        one ADHD pattern, in your own words &mdash; messy answers welcome
+      </>
+    ),
+  },
+  {
+    key: "output",
+    body: (
+      <>
+        Instantly receive your{" "}
+        <span className="font-medium text-fg">ADHD Belief Score</span> &mdash;
+        your score (0&ndash;100), four scored dimensions, and how you compare
+        with others carrying the same kind of pattern
+      </>
+    ),
+  },
+  {
+    key: "map",
+    body: (
+      <>
+        Plus your pattern reflected back in your own words: the repeated moment,
+        the belief underneath it, and the exact moment to watch for
+      </>
+    ),
+  },
 ];
 
 /* Block 04: one broadly relevant ADHD loop, told in short lines and grouped
@@ -73,13 +112,6 @@ const ISOLATED_EVENTS = [
   "A forgotten detail.",
   "A burst of last-minute focus.",
   "A system abandoned after a few days.",
-];
-
-const REFLECT_ITEMS = [
-  "what keeps happening;",
-  "what you do next;",
-  "what the experience may have come to mean;",
-  "how the same conclusion may keep being reinforced.",
 ];
 
 /* Block 06: the five stages of the Pattern-to-Belief Map. */
@@ -207,6 +239,19 @@ const PROCESS_STEPS = [
   },
 ];
 
+/* Block 07: the illustrative result leads with the score itself — a product
+   named "Score" has to look like a score wherever it is demonstrated.
+   TODO(launch): confirm the dial value, band label, and dimension values render
+   exactly as the live product does before ship. */
+const EXAMPLE_SCORE = 44;
+const EXAMPLE_BAND = "Illustrative";
+const EXAMPLE_DIMENSIONS = [
+  { label: "Direction Clarity", value: 58 },
+  { label: "Identity Alignment", value: 29 },
+  { label: "Decision Readiness", value: 46 },
+  { label: "Energy Alignment", value: 43 },
+];
+
 /* Block 07: the example result panel, styled like a product result. */
 const EXAMPLE_RESULT = [
   {
@@ -284,11 +329,11 @@ const HOW_STEPS = [
   },
   {
     title: "Describe What Happens",
-    body: "Complete a short guided reflection in your own words. There is no perfect wording. Messy answers are allowed.",
+    body: "Complete 5 short questions in your own words — about 10 minutes. There is no perfect wording. Messy answers are allowed.",
   },
   {
-    title: "Receive Your Pattern-to-Belief Map",
-    body: "See the repeated moment, a possible belief, the reinforcing loop, the moment to watch, and the next evidence.",
+    title: "Receive Your ADHD Belief Score",
+    body: "Your score, four dimensions, peer benchmark, and your Pattern-to-Belief Map.",
   },
   {
     title: "Decide What Fits",
@@ -296,13 +341,23 @@ const HOW_STEPS = [
   },
 ];
 
-const MAP_DELIVERABLES = [
-  "The repeated moment",
-  "A possible belief",
+/* Block 13: the full-page reader meets the complete artifact spec at the moment
+   of decision. The last thing read before the button is the artifact, not the
+   philosophy.
+   TODO(launch): confirm the peer-benchmark wording matches the live result. */
+const FINAL_DELIVERABLES = [
+  "Your score (0–100), four scored dimensions, and a peer benchmark",
+  "The repeated moment, and the belief underneath it",
   "The reinforcing loop",
-  "The moment to watch",
-  "The next evidence",
+  "The moment to watch — and the next evidence",
 ];
+
+/* Zone A microcopy. The four highest-attention words under every primary CTA
+   carry the artifact spec — input, time, cost — not a caveat. "Not a diagnosis"
+   is not deleted: its permanent home is the Block 12 FAQ.
+   TODO(launch): verify "About 10 minutes" against the live median completion
+   time before ship; the same figure appears in Blocks 01B, 03, 06, 12, and 13. */
+const CTA_MICROCOPY = "Free · 5 questions · About 10 minutes · No credit card";
 
 function ChapterMark({ children }: { children: React.ReactNode }) {
   return (
@@ -317,7 +372,7 @@ function ChapterMark({ children }: { children: React.ReactNode }) {
 function CtaBlock({
   location,
   label = "Get Your Free ADHD Belief Score",
-  microcopy = "Free · Personalized · No credit card · Not a diagnosis",
+  microcopy = CTA_MICROCOPY,
   className = "",
 }: {
   location: CtaLocation;
@@ -408,6 +463,57 @@ export default function Home() {
           </Reveal>
         </section>
 
+        {/* ================= Block 01B · What you'll get =================
+            The artifact spec: input, time, output, cost, answered within one
+            thumb-scroll of the hero CTA. Zone A — no hedges belong in this
+            block; every caveat has a home in the Block 12 FAQ. */}
+        <section className="border-t border-line">
+          <div className="mx-auto w-full max-w-3xl px-5 py-14 sm:px-8">
+            <SectionViewTracker event="whatyouget_view" />
+            <Reveal>
+              <h2 className="text-headline">
+                What you&rsquo;ll get &mdash; free, in about 10 minutes
+              </h2>
+            </Reveal>
+            <ul className="mt-8 grid list-none gap-4">
+              {WHAT_YOU_GET.map((item, i) => (
+                <Reveal as="li" key={item.key} delay={i * 60}>
+                  <div className="flex items-start gap-3">
+                    <span className="list-dot mt-3 shrink-0" aria-hidden />
+                    <p className="text-body-lg text-muted">{item.body}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </ul>
+
+            {/* The proof sits beside the claim it proves (moved here from the
+                Block 02 early-proof strip).
+                TODO(launch): replace with a consented, mobile-cropped capture
+                of the current result screen. */}
+            <Reveal delay={120}>
+              <figure className="mx-auto mt-10 max-w-2xl">
+                <div className="media-frame overflow-hidden rounded-2xl">
+                  <Image
+                    src="/take/reportsummary.png"
+                    alt="An actual ADHD Belief Score result: an overall score with four scored dimensions and a peer benchmark"
+                    width={1792}
+                    height={815}
+                    className="w-full"
+                    sizes="(min-width: 768px) 672px, 100vw"
+                  />
+                </div>
+                <figcaption className="mt-3 text-center text-sm text-faint">
+                  An actual ADHD Belief Score result.
+                </figcaption>
+              </figure>
+            </Reveal>
+
+            <Reveal delay={160}>
+              <CtaBlock location="what_you_get" className="mt-10" />
+            </Reveal>
+          </div>
+        </section>
+
         {/* ================= Block 02 · Early proof strip ================= */}
         <section className="border-y border-line bg-surface">
           <div className="mx-auto w-full max-w-3xl px-5 py-14 text-center sm:px-8">
@@ -422,25 +528,11 @@ export default function Home() {
                 creator · Built from real participant language
               </p>
             </Reveal>
-            {/* Awaiting an exact, approved participant statement about pattern
-                recognition before a proof quote ships here. */}
-            <Reveal delay={120}>
-              <figure className="mx-auto mt-8 max-w-2xl">
-                <div className="media-frame overflow-hidden rounded-2xl">
-                  <Image
-                    src="/take/reportsummary.png"
-                    alt="A real AI Merge result screen showing an overall score with four scored dimensions and a peer benchmark"
-                    width={1792}
-                    height={815}
-                    className="w-full"
-                    sizes="(min-width: 768px) 672px, 100vw"
-                  />
-                </div>
-                <figcaption className="mt-3 text-sm text-faint">
-                  A real result screen from the live AI Merge assessment.
-                </figcaption>
-              </figure>
-            </Reveal>
+            {/* The result screenshot now lives in Block 01B, beside the claim
+                it proves. What remains here is the credibility strip and, when
+                one is approved, a single participant quote about pattern
+                recognition. Awaiting an exact, approved statement — ship
+                without the quote rather than invent specificity. */}
           </div>
         </section>
 
@@ -489,6 +581,14 @@ export default function Home() {
             <p className="text-body-lg mt-9 text-muted">
               You do not have to agree with the result. You only have to decide
               whether the pattern it reflects feels worth examining.
+            </p>
+          </Reveal>
+          {/* Concrete re-anchor: the philosophical beat has to land on the
+              artifact and on the visitor's sovereignty over it. */}
+          <Reveal delay={240}>
+            <p className="text-body-lg mt-6 font-medium text-fg">
+              The score takes about 10 minutes. What you do with the result
+              stays entirely yours.
             </p>
           </Reveal>
         </section>
@@ -576,14 +676,8 @@ export default function Home() {
               Patterns That Were Hard to See Can Now Be Examined More Clearly
             </h2>
           </Reveal>
-          <Reveal delay={100}>
-            <p className="text-body-lg mt-9 text-muted">
-              Repeated experiences are often remembered separately.
-            </p>
-          </Reveal>
-
           {/* The isolated events, shown as isolated fragments. */}
-          <ul className="mt-6 grid list-none gap-3 sm:grid-cols-2">
+          <ul className="mt-9 grid list-none gap-3 sm:grid-cols-2">
             {ISOLATED_EVENTS.map((line, i) => (
               <Reveal as="li" key={line} delay={i * 50}>
                 <div className="flex h-full items-center gap-3 rounded-xl border border-line bg-card px-5 py-4">
@@ -594,32 +688,18 @@ export default function Home() {
             ))}
           </ul>
 
+          {/* One paragraph, no hedges: the three closing lines below carry all
+              of this block's epistemic humility. */}
           <div className="text-body-lg mt-8 space-y-4 text-muted">
             <Reveal>
               <p>
-                Each event may feel isolated. But when the language, sequence,
-                response, and conclusion are viewed together, a larger pattern
-                may become visible.
-              </p>
-            </Reveal>
-            <Reveal delay={60}>
-              <p>
-                Technology can now help organize those connections with more
-                consistency and precision. Not to tell you who you are. Not to
-                replace your judgment. To help reflect:
+                Each event feels isolated. Viewed together &mdash; the language,
+                the sequence, the response, the conclusion &mdash; a larger
+                pattern becomes visible. Technology can now help organize those
+                connections with consistency and precision.
               </p>
             </Reveal>
           </div>
-          <ul className="mt-6 grid list-none gap-3">
-            {REFLECT_ITEMS.map((item, i) => (
-              <Reveal as="li" key={item} delay={i * 40}>
-                <div className="flex items-start gap-3">
-                  <span className="list-dot mt-2.5 shrink-0" aria-hidden />
-                  <span className="text-body-lg text-muted">{item}</span>
-                </div>
-              </Reveal>
-            ))}
-          </ul>
           <Reveal delay={140}>
             <p className="text-title mt-10 border-l-2 border-signal pl-6 leading-relaxed">
               The technology helps reveal the pattern.{" "}
@@ -636,15 +716,21 @@ export default function Home() {
               <Reveal>
                 <ChapterMark>The mechanism</ChapterMark>
               </Reveal>
+              {/* One product name per sentence: the Score is the product, the
+                  Map is introduced once, as what the Score contains. */}
               <Reveal delay={60}>
                 <h2 className="text-headline mt-5">
-                  Your ADHD Belief Score Creates a Pattern-to-Belief Map
+                  What&rsquo;s Inside Your ADHD Belief Score
                 </h2>
               </Reveal>
               <Reveal delay={120}>
                 <p className="text-body-lg mt-6 text-muted">
-                  Instead of giving you another general ADHD profile, the score
-                  focuses on one pattern that matters now.
+                  Your score includes a{" "}
+                  <span className="font-medium text-fg">
+                    Pattern-to-Belief Map
+                  </span>{" "}
+                  &mdash; a five-part breakdown of the one pattern that matters
+                  now, built from your own words:
                 </p>
               </Reveal>
             </div>
@@ -666,11 +752,7 @@ export default function Home() {
             </ol>
 
             <Reveal delay={120}>
-              <CtaBlock
-                location="score_definition"
-                microcopy="Short guided reflection · Personalized result · No credit card"
-                className="mt-14"
-              />
+              <CtaBlock location="score_definition" className="mt-14" />
             </Reveal>
           </div>
         </section>
@@ -749,7 +831,15 @@ export default function Home() {
                     Illustrative example
                   </span>
                 </div>
-                <dl className="mt-7 space-y-6">
+                {/* The score leads; the prose reads beneath it. */}
+                <div className="mt-7">
+                  <ScoreVisual
+                    score={EXAMPLE_SCORE}
+                    band={EXAMPLE_BAND}
+                    dimensions={EXAMPLE_DIMENSIONS}
+                  />
+                </div>
+                <dl className="mt-8 space-y-6 border-t border-line pt-7">
                   {EXAMPLE_RESULT.map((row) => (
                     <div
                       key={row.label}
@@ -767,16 +857,12 @@ export default function Home() {
           </div>
 
           <div className="mx-auto mt-14 max-w-2xl text-center">
+            {/* Ownership, not a take-back. The "Illustrative example" caption
+                on the panel above carries the honesty; the non-prediction point
+                has its permanent home in the Block 12 FAQ. */}
             <Reveal>
               <p className="text-title">
-                Your result will be created from your own words.
-              </p>
-            </Reveal>
-            <Reveal delay={60}>
-              <p className="text-body-lg mt-4 text-muted">
-                This example does not predict what your score will say. Your
-                result is a reflection for you to examine, refine, accept, or
-                reject.
+                Yours will be built from your own words.
               </p>
             </Reveal>
             <Reveal delay={120}>
@@ -861,8 +947,14 @@ export default function Home() {
               <Reveal>
                 <ChapterMark>The person behind it</ChapterMark>
               </Reveal>
+              {/* The page sells the Score, so the founder headline names the
+                  Score. AI Merge appears once in the body below, as pedigree —
+                  the brand is revealed by climbing the funnel, not announced at
+                  the door. */}
               <Reveal delay={60}>
-                <h2 className="text-headline mt-5">Why I Created AI Merge</h2>
+                <h2 className="text-headline mt-5">
+                  Why I Built the Belief Score
+                </h2>
               </Reveal>
               <Reveal delay={100}>
                 <blockquote className="text-emphasis mt-7 text-xl leading-relaxed">
@@ -892,8 +984,10 @@ export default function Home() {
                   <p>
                     Understanding ADHD gave me language for the pattern. It did
                     not automatically reveal the belief that had formed around
-                    the pattern. That gap became part of the reason I created
-                    AI Merge.
+                    the pattern. That gap is why I built the Belief Score
+                    &mdash; on <span className="font-medium text-fg">AI Merge</span>,
+                    a methodology I created and published in the{" "}
+                    <em>Mensa Research Journal</em>.
                   </p>
                 </Reveal>
                 <Reveal delay={120}>
@@ -1114,112 +1208,89 @@ export default function Home() {
               </Reveal>
               <Reveal delay={80}>
                 <div className="mt-10">
-                  <details className="faq-item" name="faq">
-                    <summary>
-                      Does the ADHD Belief Score claim belief causes ADHD?
-                    </summary>
-                    <div className="faq-body">
-                      <p>No. ADHD is a real neurodevelopmental condition.</p>
-                      <p>
-                        The ADHD Belief Score examines whether a belief has
-                        become attached to one repeated ADHD experience. It
-                        does not claim that belief causes ADHD or explains
-                        every ADHD difficulty.
-                      </p>
-                    </div>
-                  </details>
+                  {/* Permanent home of "Not a diagnosis," relocated from the
+                      hero CTA microcopy. */}
+                  <FaqItem question="Is this an ADHD diagnosis?">
+                    <p>
+                      No. The ADHD Belief Score does not determine whether you
+                      have ADHD.
+                    </p>
+                    <p>
+                      It is an educational and reflective tool. It does not
+                      provide diagnosis, medical care, treatment,
+                      psychotherapy, or crisis support.
+                    </p>
+                  </FaqItem>
 
-                  <details className="faq-item" name="faq">
-                    <summary>Is this an ADHD diagnosis?</summary>
-                    <div className="faq-body">
-                      <p>
-                        No. The ADHD Belief Score does not determine whether
-                        you have ADHD.
-                      </p>
-                      <p>
-                        It is an educational and reflective tool. It does not
-                        provide diagnosis, medical care, treatment,
-                        psychotherapy, or crisis support.
-                      </p>
-                    </div>
-                  </details>
+                  <FaqItem question="Does the ADHD Belief Score claim belief causes ADHD?">
+                    <p>No. ADHD is a real neurodevelopmental condition.</p>
+                    <p>
+                      The ADHD Belief Score examines whether a belief has become
+                      attached to one repeated ADHD experience. It does not
+                      claim that belief causes ADHD or explains every ADHD
+                      difficulty.
+                    </p>
+                  </FaqItem>
 
-                  <details className="faq-item" name="faq">
-                    <summary>
-                      Is technology deciding what is true about me?
-                    </summary>
-                    <div className="faq-body">
-                      <p>
-                        No. The technology helps organize patterns in the
-                        information you choose to provide. It does not
-                        independently know your history. It does not define who
-                        you are.
-                      </p>
-                      <p>
-                        The result is a possible interpretation for you to
-                        examine. You remain the authority on what fits.
-                      </p>
-                    </div>
-                  </details>
+                  {/* Permanent home of the non-prediction point, relocated
+                      from the Block 07 example result. */}
+                  <FaqItem question="What if my ADHD Belief Score feels inaccurate?">
+                    <p>
+                      Treat it as a hypothesis. Keep what fits. Correct, refine,
+                      or reject what does not.
+                    </p>
+                    <p>
+                      The example result shown on this page does not predict
+                      what your score will say. Your result is a reflection for
+                      you to examine, refine, accept, or reject.
+                    </p>
+                    <p>
+                      The result is intended to support reflection, not replace
+                      your judgment.
+                    </p>
+                  </FaqItem>
 
-                  <details className="faq-item" name="faq">
-                    <summary>
-                      What if my ADHD Belief Score feels inaccurate?
-                    </summary>
-                    <div className="faq-body">
-                      <p>
-                        Treat it as a hypothesis. Keep what fits. Correct,
-                        refine, or reject what does not.
-                      </p>
-                      <p>
-                        The result is intended to support reflection, not
-                        replace your judgment.
-                      </p>
-                    </div>
-                  </details>
+                  <FaqItem question="Is technology deciding what is true about me?">
+                    <p>
+                      No. The technology helps organize patterns in the
+                      information you choose to provide. It does not
+                      independently know your history. It does not define who
+                      you are.
+                    </p>
+                    <p>
+                      The result is a possible interpretation for you to
+                      examine. You remain the authority on what fits.
+                    </p>
+                  </FaqItem>
 
-                  <details className="faq-item" name="faq">
-                    <summary>
-                      What happens with the information I provide?
-                    </summary>
-                    <div className="faq-body">
-                      {/* TODO(launch): verify against current operating
-                          practice, Privacy Policy, AI and Data Disclosure,
-                          vendor configuration, retention and model-training
-                          policy. */}
-                      <p>
-                        Your answers are used to generate your personalized
-                        ADHD Belief Score. Selected team members may review
-                        limited information for quality assurance, safety, or
-                        support, according to the published Privacy Policy.
-                      </p>
-                      <p>Your information is not sold.</p>
-                    </div>
-                  </details>
+                  <FaqItem question="What happens with the information I provide?">
+                    {/* TODO(launch): verify against current operating
+                        practice, Privacy Policy, AI and Data Disclosure,
+                        vendor configuration, retention and model-training
+                        policy. */}
+                    <p>
+                      Your answers are used to generate your personalized ADHD
+                      Belief Score. Selected team members may review limited
+                      information for quality assurance, safety, or support,
+                      according to the published Privacy Policy.
+                    </p>
+                    <p>Your information is not sold.</p>
+                  </FaqItem>
 
-                  <details className="faq-item" name="faq">
-                    <summary>
-                      Is the complete ADHD Belief Score really free?
-                    </summary>
-                    <div className="faq-body">
-                      <p>
-                        Yes. You receive your complete free ADHD Belief Score
-                        before any paid offer is presented. No credit card is
-                        required.
-                      </p>
-                      <p>
-                        Afterward, you may be offered an optional paid next
-                        step designed to help you work with the result more
-                        deliberately. The paid next step is optional.
-                      </p>
-                    </div>
-                  </details>
+                  <FaqItem question="Is the complete ADHD Belief Score really free?">
+                    <p>
+                      Yes. You receive your complete free ADHD Belief Score
+                      before any paid offer is presented. No credit card is
+                      required.
+                    </p>
+                    <p>
+                      Afterward, you may be offered an optional paid next step
+                      designed to help you work with the result more
+                      deliberately. The paid next step is optional.
+                    </p>
+                  </FaqItem>
 
-                  <details className="faq-item" name="faq">
-                    <summary>
-                      View research, privacy, technology, and safety details
-                    </summary>
-                    <div className="faq-body">
+                  <FaqItem question="View research, privacy, technology, and safety details">
                       <h3 className="text-title">Research Foundation</h3>
                       <p>
                         Research across psychology, learning, expectations,
@@ -1276,8 +1347,7 @@ export default function Home() {
                         services or an appropriate crisis-support service
                         immediately.
                       </p>
-                    </div>
-                  </details>
+                  </FaqItem>
                 </div>
               </Reveal>
             </div>
@@ -1297,16 +1367,22 @@ export default function Home() {
             </Reveal>
             <Reveal delay={80}>
               <p className="text-body-lg mt-8 text-muted">
-                Choose one repeated ADHD pattern. Describe what happens in your
-                own words. Receive your personalized Pattern-to-Belief Map
-                showing:
+                <span className="font-medium text-fg">
+                  Free, in about 10 minutes:
+                </span>{" "}
+                answer{" "}
+                <span className="font-medium text-fg">5 questions</span> about
+                one repeated ADHD pattern, in your own words &mdash; and
+                instantly receive your{" "}
+                <span className="font-medium text-fg">ADHD Belief Score</span>:
               </p>
             </Reveal>
             <Reveal delay={120}>
-              <ul className="mx-auto mt-8 flex max-w-xl list-none flex-wrap items-center justify-center gap-3">
-                {MAP_DELIVERABLES.map((item) => (
-                  <li key={item} className="cred-chip">
-                    {item}
+              <ul className="mx-auto mt-8 grid max-w-xl list-none gap-3 text-left">
+                {FINAL_DELIVERABLES.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span className="list-dot mt-2.5 shrink-0" aria-hidden />
+                    <span className="text-body-lg text-muted">{item}</span>
                   </li>
                 ))}
               </ul>

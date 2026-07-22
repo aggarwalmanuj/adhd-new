@@ -807,6 +807,51 @@ select {
   color: var(--ink);
 }
 
+/* ---------------------------------------------------------------------------
+   Score visual: the 0-100 dial + scored dimension bars, matching how the live
+   product renders a result. --score is set inline (0-100).
+--------------------------------------------------------------------------- */
+.score-dial {
+  --score: 0;
+  width: 6.5rem;
+  height: 6.5rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: conic-gradient(
+    var(--signal) calc(var(--score) * 1%),
+    var(--muted-surface) 0
+  );
+  box-shadow: var(--elev-1);
+}
+.score-dial-inner {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 999px;
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.score-bar {
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--muted-surface);
+  overflow: hidden;
+}
+.score-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--signal);
+}
+
 /* The reinforcing-loop chain: reads as one sequence, wraps gracefully. */
 .loop-chain {
   color: var(--ink);
