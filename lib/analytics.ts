@@ -11,6 +11,7 @@ import { LP_SLUG } from "./scorecard";
 export type CtaLocation =
   | "header"
   | "hero"
+  | "what_you_get"
   | "recognition"
   | "score_definition"
   | "sample_result"

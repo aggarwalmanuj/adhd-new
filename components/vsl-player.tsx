@@ -31,8 +31,11 @@ const CHIPS = [
     text: "Free · No credit card",
     className: "right-0 top-[44%] translate-x-1/2",
   },
+  // Zone A: the chips around the hero player carry the artifact spec, never a
+  // caveat. "Not a diagnosis" used to sit here — it now lives only in the
+  // Block 12 FAQ, which is its permanent home.
   {
-    text: "Not a diagnosis. You decide what fits.",
+    text: "5 questions · One ADHD pattern",
     className: "bottom-[12%] left-0 -translate-x-1/2",
   },
 ] as const;
