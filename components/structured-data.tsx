@@ -3,7 +3,8 @@
 // graph — so the few links the site does earn are attributed to a recognised
 // organisation rather than an anonymous URL. @id values are shared across the
 // graph so the nodes reference each other.
-const SITE = "https://adhd.aimerge.live";
+import { SITE_URL as SITE } from "@/lib/site";
+// (SITE is the shared canonical origin; @id values below are built from it.)
 
 // Same-entity profiles. Add the brand's public X / YouTube URLs here as they go
 // live — each one strengthens entity recognition.

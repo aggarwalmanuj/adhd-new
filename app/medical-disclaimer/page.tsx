@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Medical Disclaimer",
   description:
     "The ADHD Belief Score is an educational, reflective tool. It is not medical advice, diagnosis, treatment, or crisis support.",
+  // Self-referencing canonical. Without this the page inherits the root
+  // layout's canonical ("/") and tells Google this page IS the homepage.
+  alternates: { canonical: "/medical-disclaimer" },
 };
 
 export default function MedicalDisclaimerPage() {

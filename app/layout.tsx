@@ -5,6 +5,7 @@ import { ApplyModal } from "@/components/apply-modal";
 import { CookieConsent } from "@/components/cookie-consent";
 import { FacebookPixel } from "@/components/facebook-pixel";
 import { StructuredData } from "@/components/structured-data";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 // Inter: all UI, body, buttons, eyebrows, labels.
@@ -36,7 +37,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   // Canonical origin for the deployed site. Canonical/OG/Twitter URLs below
   // resolve against this, so it must match the domain we want indexed.
-  metadataBase: new URL("https://adhd.aimerge.live"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Free ADHD Belief Score · AI Merge",
     template: "%s · AI Merge",
