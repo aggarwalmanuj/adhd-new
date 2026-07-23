@@ -1,9 +1,5 @@
 import type { MetadataRoute } from "next";
-
-// Canonical public origin. Hardcoded to the deployed subdomain rather than
-// NEXT_PUBLIC_SITE_URL because that env var currently points at aimerge.live,
-// which is not the domain we want crawlers to index.
-const SITE_URL = "https://adhd.aimerge.live";
+import { SITE_URL } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {

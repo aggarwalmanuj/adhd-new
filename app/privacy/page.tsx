@@ -5,6 +5,9 @@ import { SiteHeader } from "@/components/site-header";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How AIMERGE collects, uses, and protects your information.",
+  // Self-referencing canonical. Without this the page inherits the root
+  // layout's canonical ("/") and tells Google this page IS the homepage.
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

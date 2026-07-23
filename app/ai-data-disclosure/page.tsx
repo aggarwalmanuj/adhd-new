@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "AI and Data Disclosure",
   description:
     "How artificial intelligence is used in the ADHD Belief Score, what information it processes, and the limits of what it can tell you.",
+  // Self-referencing canonical. Without this the page inherits the root
+  // layout's canonical ("/") and tells Google this page IS the homepage.
+  alternates: { canonical: "/ai-data-disclosure" },
 };
 
 export default function AiDataDisclosurePage() {

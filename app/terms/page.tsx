@@ -5,6 +5,9 @@ import { SiteHeader } from "@/components/site-header";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "The terms that govern your use of the AIMERGE website.",
+  // Self-referencing canonical. Without this the page inherits the root
+  // layout's canonical ("/") and tells Google this page IS the homepage.
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {

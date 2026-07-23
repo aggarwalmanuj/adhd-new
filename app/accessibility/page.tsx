@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: "Accessibility",
   description:
     "Our commitment to an accessible experience: WCAG 2.2 AA target, measures taken, known limitations, and how to reach us.",
+  // Self-referencing canonical. Without this the page inherits the root
+  // layout's canonical ("/") and tells Google this page IS the homepage.
+  alternates: { canonical: "/accessibility" },
 };
 
 export default function AccessibilityPage() {
