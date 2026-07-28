@@ -10,23 +10,23 @@
 :root,
 [data-palette="marine"] {
   /* Exact brand tokens */
-  --background: #0f2c3b;
+  --background: #0a232e;
   /* Nudged up from #a8c4d0: body copy carries most of this page, and the
      extra step of contrast reads as crisper without changing the hue. */
-  --foreground: #b3ccd7;
-  --ink: #eaf0f4;
-  --card: #163a4d;
-  --popover: #163a4d;
-  --secondary: #194254;
-  --muted-surface: #1d4960;
-  --muted-foreground: #95b5c4;
+  --foreground: #b6cdd8;
+  --ink: #eff5f8;
+  --card: #103039;
+  --popover: #103039;
+  --secondary: #103642;
+  --muted-surface: #16414f;
+  --muted-foreground: #7fa0ae;
   --accent: #2a6b85;
-  --border: #245a73;
+  --border: #204b5c;
   --input: #2c6b87;
-  --signal: #5fc5d4;
+  --signal: #5ec8d6;
   --destructive: #dc2626;
-  --glow: 95 197 212;
-  --shadow-ink: 5, 18, 26;
+  --glow: 94 200 214;
+  --shadow-ink: 2, 12, 18;
   --radius: 0.75rem;
   color-scheme: dark;
 
@@ -86,9 +86,9 @@
 
 /* Optional light section variant, same teal family. */
 [data-theme="aurora"] {
-  --background: #eaf0f4;
+  --background: #eff5f8;
   --foreground: #3e5b6a;
-  --ink: #0f2c3b;
+  --ink: #0a232e;
   --card: #ffffff;
   --popover: #ffffff;
   --secondary: #d5e0e7;
@@ -98,10 +98,10 @@
   --input: #c1cfd8;
   --signal: #2a8f9e;
   --glow: 72 185 198;
-  --shadow-ink: 15, 44, 59;
+  --shadow-ink: 10, 35, 46;
   /* White hairlines and specular highlights vanish on the light ground —
      invert both to ink so glass still reads as glass. */
-  --border-soft: rgba(15, 44, 59, 0.1);
+  --border-soft: rgba(10, 35, 46, 0.1);
   --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, .5);
   color-scheme: light;
 }
