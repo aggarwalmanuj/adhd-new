@@ -12,8 +12,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Get your free, personalized ADHD Belief Score. No credit card. Not a diagnosis.",
     start_url: "/",
     display: "standalone",
-    background_color: "#0f2c3b",
-    theme_color: "#0f2c3b",
+    background_color: "#0a232e",
+    theme_color: "#0a232e",
     icons: [
       {
         src: "/icon/logo.png",

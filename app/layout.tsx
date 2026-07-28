@@ -31,7 +31,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   // Do NOT set maximumScale/userScalable=no: blocking pinch-zoom is an
   // accessibility failure and hurts the Lighthouse a11y score.
-  themeColor: "#0f2c3b",
+  themeColor: "#0a232e",
 };
 
 export const metadata: Metadata = {
