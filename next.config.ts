@@ -24,18 +24,27 @@ import type { NextConfig } from "next";
    no user-generated HTML sink today, which is what makes that acceptable.
    If one is ever added, move to a nonce policy and accept dynamic rendering.
 ========================================================================== */
+const isDev = process.env.NODE_ENV === "development";
+
 const CSP = [
   "default-src 'self'",
   // 'unsafe-inline' — see the note above. connect.facebook.net = Meta Pixel,
   // va.vercel-scripts.com = Vercel Analytics.
-  "script-src 'self' 'unsafe-inline' https://connect.facebook.net https://va.vercel-scripts.com",
+  //
+  // 'unsafe-eval' is DEV-ONLY and must never reach production. React uses
+  // eval() in development to rebuild server-side callstacks in the browser,
+  // and Turbopack's HMR runtime evaluates module code the same way; without
+  // it `next dev` dies with "eval() is not supported in this environment".
+  // Neither React nor Next uses eval() in a production build.
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://connect.facebook.net https://va.vercel-scripts.com`,
   // Tailwind/React write inline style attributes (e.g. the score dial's --score).
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://www.facebook.com https://*.posthog.com",
   "font-src 'self' data:",
   // PostHog is reverse-proxied through /ingest (same origin); the direct hosts
   // stay listed because the SDK falls back to them for some endpoints.
-  "connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com https://api.calendly.com https://www.facebook.com https://vitals.vercel-insights.com",
+  // ws:/wss: are dev-only, for the Turbopack HMR socket.
+  `connect-src 'self'${isDev ? " ws: wss:" : ""} https://us.i.posthog.com https://us-assets.i.posthog.com https://api.calendly.com https://www.facebook.com https://vitals.vercel-insights.com`,
   // Calendly booking iframe in the apply modal.
   "frame-src 'self' https://calendly.com https://www.facebook.com",
   "media-src 'self' blob:",
@@ -45,7 +54,8 @@ const CSP = [
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "object-src 'none'",
-  "upgrade-insecure-requests",
+  // Would break http://localhost during `next dev`.
+  ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
 /** Applied to every response. Fixes the 100%-of-URLs header gaps in the crawl. */
