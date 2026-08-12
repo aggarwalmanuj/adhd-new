@@ -19,7 +19,9 @@
   --popover: #103039;
   --secondary: #103642;
   --muted-surface: #16414f;
-  --muted-foreground: #7fa0ae;
+  /* Matches Parents: the lighter B2B value, not #7fa0ae. Keeps faint captions
+     and eyebrows above WCAG AA on the deep ground. */
+  --muted-foreground: #95b5c4;
   --accent: #2a6b85;
   --border: #204b5c;
   --input: #2c6b87;
@@ -34,7 +36,9 @@
      components already use (bg-bg, text-fg, bg-surface, border-line, …). */
   --bg: var(--background);
   --fg: var(--ink);                  /* headings + primary text */
-  --accent-contrast: var(--background);
+  /* Text on accent-filled buttons. White (not navy) so accent buttons clear
+     WCAG AA: on --accent #2a6b85 white = 5.93:1 vs navy's 2.45:1. */
+  --accent-contrast: #ffffff;
   --surface: var(--card);
   --surface-2: var(--secondary);
   --border-strong: var(--input);
@@ -82,6 +86,29 @@
   /* Glass: a 1px specular line along the top edge, as if the ambient light
      were catching the bevel. Pairs with a translucent fill + backdrop blur. */
   --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, .06);
+
+  /* -------------------------------------------------------------------------
+     PILLAR COLOURS — the four scored dimensions. Taken from Parents verbatim.
+
+     A CATEGORICAL palette: colour identifies WHICH dimension, never its rank
+     or its value. A low Energy Alignment is not "worse amber" than a high one —
+     amber means Energy Alignment at any value. Order and assignment are fixed.
+
+     Hues sit ~90deg apart in one lightness band so they separate against the
+     navy card (#103039) and stay tellable apart under the common colour-vision
+     deficiencies.
+
+     --pillar-N      GRAPHICS ONLY — ring strokes, bar fills, icon glyphs
+     --pillar-N-ink  the SAME hue lifted until it clears 4.5:1 as small text
+  ------------------------------------------------------------------------- */
+  --pillar-1: #1a9cba; /* Direction Clarity  · teal   */
+  --pillar-2: #d95926; /* Identity Alignment · orange */
+  --pillar-3: #9085e9; /* Decision Readiness · violet */
+  --pillar-4: #c98500; /* Energy Alignment   · amber  */
+  --pillar-1-ink: #2bb3cf;
+  --pillar-2-ink: #e8703f;
+  --pillar-3-ink: #a79ef0;
+  --pillar-4-ink: #e0a52e;
 }
 
 /* Optional light section variant, same teal family. */
@@ -184,7 +211,7 @@ select {
   font-family: var(--font-serif);
   font-weight: 400;
   font-optical-sizing: auto;
-  font-size: clamp(2.1rem, 1.45rem + 3.4vw, 5.6rem);
+  font-size: clamp(2rem, 1.4rem + 3vw, 4.9rem);
   line-height: 1.08;
   letter-spacing: -0.015em;
   color: var(--ink);
@@ -199,13 +226,141 @@ select {
   font-family: var(--font-serif);
   font-weight: 400;
   font-optical-sizing: auto;
-  font-size: clamp(1.7rem, 1.3rem + 2vw, 3.05rem);
-  line-height: 1.14;
+  font-size: clamp(1.6rem, 1.25rem + 1.7vw, 2.7rem);
+  line-height: 1.16;
   letter-spacing: -0.015em;
   color: var(--ink);
   text-wrap: balance;
   overflow-wrap: break-word;
 }
+/* Section headline. Sits between .text-display (hero only) and .text-title.
+   Taken from Parents verbatim — this is the size every section heading below
+   the hero uses there, and the reason their sections read as one system. */
+.text-section {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-size: clamp(1.95rem, 1.4rem + 2.2vw, 3.75rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+/* The italic second clause of a two-clause section headline. */
+.font-serif-italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+}
+/* Chapter mark above a section headline. */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--faint);
+}
+.pulse-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--signal);
+  animation: dot-pulse 2.6s ease-in-out infinite;
+  vertical-align: middle;
+}
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+/* The rule that separates a chapter head from its content. Grows on entry. */
+.hairline-anim {
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: hairline-grow 1.1s var(--ease-out) both;
+  animation-delay: 200ms;
+}
+@keyframes hairline-grow {
+  to { transform: scaleX(1); }
+}
+
+/* Ambient orbs scoped to a single section, so a long dark page still has
+   depth between the document-level hero light and the vignette. */
+.section-orbs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.section-orbs::before,
+.section-orbs::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(80px);
+}
+.section-orbs::before {
+  width: 30rem;
+  height: 30rem;
+  top: -6rem;
+  right: -8rem;
+  background: rgb(var(--glow) / 0.07);
+}
+.section-orbs::after {
+  width: 26rem;
+  height: 26rem;
+  bottom: -8rem;
+  left: -7rem;
+  background: rgb(var(--glow) / 0.05);
+}
+
+/* Browser-chrome frame. A bare screenshot on a dark page reads as decoration;
+   the same screenshot inside a window frame reads as the product. */
+.mac-window {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--elev-3);
+}
+.mac-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-2) 60%, transparent);
+}
+.mac-dot {
+  height: 0.625rem;
+  width: 0.625rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground) 25%, transparent);
+}
+
+/* A soft teal source behind a framed image, so media sits IN the page's light
+   rather than on top of it. Vertical-only inset keeps the spill off the
+   horizontal edges, where it would read as a glowing border. */
+.signal-halo {
+  position: relative;
+  isolation: isolate;
+}
+.signal-halo::before {
+  content: "";
+  position: absolute;
+  inset: 8% -4%;
+  border-radius: 1rem;
+  background: rgb(var(--glow) / 0.1);
+  filter: blur(48px);
+  z-index: -1;
+  pointer-events: none;
+}
+
 .text-title {
   font-family: var(--font-serif);
   font-weight: 400;
@@ -223,12 +378,14 @@ select {
   color: var(--foreground);
 }
 .text-body-lg {
-  font-size: clamp(1.12rem, 1.02rem + 0.45vw, 1.3rem);
-  line-height: 1.85;
+  font-size: clamp(1.05rem, 0.98rem + 0.4vw, 1.2rem);
+  line-height: 1.7;
 }
 .text-eyebrow {
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  /* 0.75rem = 12px, the floor for real page copy. Tracked uppercase at 11px is
+     the first thing an older reader loses. Matches Parents. */
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -247,11 +404,18 @@ select {
   padding: 0.85rem 1.6rem;
   border-radius: 999px;
   font-family: var(--font-sans);
-  font-size: clamp(0.7rem, 0.66rem + 0.18vw, 0.78rem);
+  /* Floor raised from 0.7rem: at 320px the clamp resolved to 11.2px, putting
+     the page's single most important control below the 12px copy floor. */
+  font-size: clamp(0.75rem, 0.7rem + 0.18vw, 0.78rem);
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   white-space: nowrap;
+  /* Never let a long label's intrinsic (nowrap) width push the button, and the
+     page, wider than its container: this was the source of horizontal overflow
+     on narrow phones. Full-width variants below re-enable wrapping. */
+  max-width: 100%;
+  min-width: 0;
   cursor: pointer;
   transition:
     background-color var(--dur-polish) var(--ease-polish),
@@ -260,8 +424,24 @@ select {
     box-shadow var(--dur-polish) var(--ease-polish),
     transform var(--dur-polish) var(--ease-polish);
 }
+/* Full-width buttons (the mobile CTA layout uses `w-full`) get a slightly
+   tighter box and are allowed to wrap onto two short lines rather than force
+   horizontal overflow. Line height tightened so a two-line label still looks
+   like one pill. */
+.btn.w-full {
+  white-space: normal;
+  padding-left: 1.1rem;
+  padding-right: 1.1rem;
+  line-height: 1.25;
+  text-align: center;
+  text-wrap: balance;
+}
 .btn-lg {
   padding: 1rem 2rem;
+}
+.btn-lg.w-full {
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
 }
 .btn:focus-visible {
   outline: 2px solid var(--signal);
@@ -679,8 +859,13 @@ select {
   border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
 }
 
-/* Scroll reveal: staggered section entrances */
-.reveal {
+/* Scroll reveal: staggered section entrances.
+
+   Gated on .js-anim so the server HTML renders fully visible. Without the gate
+   a hydration failure — or simply a slow phone that has not run the bundle yet
+   — leaves the entire page at opacity 0, which is indistinguishable from a
+   blank page to both a visitor and an ad platform's landing-page-view ping. */
+.js-anim .reveal {
   opacity: 0;
   transform: translateY(14px);
   transition:
@@ -688,7 +873,7 @@ select {
     transform var(--dur-slow) var(--ease-out);
   transition-delay: var(--reveal-delay, 0ms);
 }
-.reveal.is-visible {
+.js-anim .reveal.is-visible {
   opacity: 1;
   transform: none;
 }
@@ -912,6 +1097,91 @@ select {
   margin-top: 0.75rem;
 }
 
+/* ---------------------------------------------------------------------------
+   Landing-page motion primitives (spec sections 01, 06).
+
+   Every one is written so the NO-JS / pre-hydration state is the finished
+   state: the bar sits at zero width, the chart line is fully drawn, the gauge
+   arc is complete, the meters are full. JS then *removes* that finished state
+   (via .js-anim on <html>) and re-plays it on scroll. A visitor whose JS never
+   arrives sees a complete page rather than blank boxes — which is the failure
+   mode that costs landing-page views.
+--------------------------------------------------------------------------- */
+
+/* Scroll progress bar. Width is driven by a CSS custom property so the scroll
+   handler only ever writes one variable, never touches layout. */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: var(--scroll-progress, 0%);
+  background: var(--signal);
+  z-index: 60;
+  pointer-events: none;
+}
+
+/* Mobile sticky CTA. Hidden by translation rather than display:none so it can
+   slide; `visibility` is what actually removes it from the a11y tree and from
+   hit-testing while it is off-screen. */
+.mobile-sticky {
+  transform: translateY(105%);
+  visibility: hidden;
+  transition:
+    transform 300ms var(--ease-out),
+    visibility 300ms;
+}
+.mobile-sticky.is-visible {
+  transform: none;
+  visibility: visible;
+}
+
+/* The week chart's line draws itself. Dash length is set per-path inline. */
+.js-anim .draw-path {
+  stroke-dasharray: var(--draw-len);
+  stroke-dashoffset: var(--draw-len);
+}
+.js-anim .draw-path.is-drawn {
+  animation: draw-in 1.6s var(--ease-out) forwards 0.15s;
+}
+@keyframes draw-in {
+  to { stroke-dashoffset: 0; }
+}
+
+/* The gauge arc sweeps up to the score. */
+.js-anim .gauge-arc {
+  stroke-dashoffset: var(--gauge-len);
+  transition: stroke-dashoffset 1.5s var(--ease-out);
+}
+
+/* Dimension meters fill left-to-right. --meter-w is the final width. */
+.meter-fill {
+  width: var(--meter-w);
+}
+.js-anim .meter-fill {
+  width: 0;
+  transition: width 1.1s var(--ease-out);
+}
+.js-anim .meter-fill.is-filled {
+  width: var(--meter-w);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Land on the finished state instantly rather than animating to it. */
+  .js-anim .draw-path,
+  .js-anim .draw-path.is-drawn {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+  .js-anim .gauge-arc {
+    transition: none;
+  }
+  .js-anim .meter-fill {
+    width: var(--meter-w);
+    transition: none;
+  }
+}
+
 /* Error shake */
 @keyframes nudge {
   0%, 100% { transform: translateX(0); }
@@ -952,7 +1222,7 @@ select {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  .reveal {
+  .js-anim .reveal {
     opacity: 1;
     transform: none;
   }

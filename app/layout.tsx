@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { ApplyModal } from "@/components/apply-modal";
+import { ApplyModalLazy } from "@/components/apply-modal-lazy";
 import { CookieConsent } from "@/components/cookie-consent";
 import { FacebookPixel } from "@/components/facebook-pixel";
 import { StructuredData } from "@/components/structured-data";
@@ -9,21 +9,39 @@ import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 // Inter: all UI, body, buttons, eyebrows, labels.
+// `adjustFontFallback` (on by default for next/font/google) synthesises a
+// size-adjusted local fallback so the swap from fallback to webfont does not
+// change the text's metrics. It is named explicitly here because it is the
+// single thing holding CLS down on this page: measured with real 4G
+// throttling, font swap alone accounted for 0.161 of layout shift — the hero
+// headline reflowing and shoving the video down the page.
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
+  adjustFontFallback: true,
+  fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
 });
 
 // Fraunces: editorial display headlines (400) + italic emphasis (300 italic).
-// Loaded as a variable font with optical sizing + the SOFT axis.
+//
+// `SOFT` is deliberately NOT in this axes list (matching Parents): no rule in
+// globals.css or any component declares `font-variation-settings`, so every
+// byte of that axis was downloaded and never rendered. Each extra axis
+// enlarges the variable font file, and this font sits on the critical path for
+// the hero <h1> — which is the LCP element — so dropping it is straight LCP
+// savings for no visual change. Re-add an axis only alongside a rule using it.
 const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
   style: ["normal", "italic"],
-  axes: ["opsz", "SOFT"],
+  axes: ["opsz"],
   display: "swap",
+  // Georgia is the closest widely-installed serif to Fraunces' proportions, so
+  // the pre-swap headline occupies close to the same box. See the note above.
+  adjustFontFallback: true,
+  fallback: ["Georgia", "Times New Roman", "serif"],
 });
 
 export const viewport: Viewport = {
@@ -93,7 +111,7 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
-        <ApplyModal />
+        <ApplyModalLazy />
         {/* Consent-gated: the pixel script is injected only after Accept.
             The old <noscript> pixel fallback is gone on purpose: it cannot
             be consent-gated, which GDPR requires. */}

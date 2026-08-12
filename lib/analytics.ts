@@ -3,18 +3,23 @@
 // PostHog and the Meta Pixel always see the same event names and payloads.
 // Both sinks are consent-gated upstream and no-op safely when absent.
 
-import posthog from "posthog-js";
 import { trackCustom } from "./fbpixel";
+import { getPostHog } from "./posthog-lazy";
 import { LP_SLUG } from "./scorecard";
 
 /** CTA placements the doc requires distinct tracking for. */
 export type CtaLocation =
   | "header"
   | "hero"
-  | "what_you_get"
+  // The picker's answer panel in 01 · the week you already know.
   | "recognition"
+  // 02 · what it is actually costing.
+  | "ledger"
+  // 05 · from your words to your map.
+  | "mechanism"
+  // 06 · the number.
   | "score_definition"
-  | "sample_result"
+  // 07 · the ten minutes.
   | "how_it_works"
   | "final"
   | "mobile_sticky";
@@ -26,8 +31,8 @@ export function trackEvent(
   if (typeof window === "undefined") return;
   const payload = { lp: LP_SLUG, ...props };
   try {
-    // __loaded is false until posthog.init runs (i.e. before consent).
-    if (posthog.__loaded) posthog.capture(name, payload);
+    // null until the chunk has loaded AND init has run (i.e. before consent).
+    getPostHog()?.capture(name, payload);
   } catch {
     // Analytics must never break the page.
   }

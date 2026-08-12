@@ -1,9 +1,9 @@
 // Client instrumentation (Next 15.3+ convention): runs before the app
 // becomes interactive.
 
-import posthog from "posthog-js";
 import { captureFirstTouchAttribution } from "@/lib/attribution";
 import { getConsent, onConsentChange } from "@/lib/consent";
+import { loadPostHog } from "@/lib/posthog-lazy";
 
 // Attribution is captured unconditionally — it must work even when PostHog
 // is off. (captureFirstTouchAttribution is idempotent and try/catch'd.)
@@ -12,7 +12,7 @@ captureFirstTouchAttribution();
 const token = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
 const enableDev = process.env.NEXT_PUBLIC_POSTHOG_ENABLE_DEV === "true";
 
-function startPostHog(): void {
+async function startPostHog(): Promise<void> {
   if (
     !token ||
     typeof window === "undefined" ||
@@ -21,6 +21,13 @@ function startPostHog(): void {
   ) {
     return;
   }
+  // Dynamic import: posthog-js is ~227 KB raw and CANNOT run before consent,
+  // yet a static import put all of it in the page's critical bundle — 258 ms
+  // of parse/compile on a throttled mobile CPU, sitting directly in front of
+  // hydration and therefore in front of the LCP paint. Now it is fetched only
+  // once consent actually exists.
+  const posthog = await loadPostHog();
+  if (!posthog) return;
   posthog.init(token, {
     // Own-origin reverse proxy (next.config rewrites) — defeats ad blockers
     // that drop *.posthog.com by hostname.

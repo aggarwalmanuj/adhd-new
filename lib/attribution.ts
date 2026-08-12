@@ -1,7 +1,7 @@
 // First-touch attribution + safe PostHog wrappers.
 // Everything here is defensive: attribution must never break the page.
 
-import posthog from "posthog-js";
+import { getPostHog } from "./posthog-lazy";
 
 const STORAGE_KEY = "hf-first-touch";
 
@@ -59,7 +59,8 @@ export function getPostHogIds(): Pick<
   "posthogSessionId" | "posthogDistinctId"
 > {
   try {
-    if (typeof window === "undefined" || !posthog.__loaded) return {};
+    const posthog = getPostHog();
+    if (!posthog) return {};
     return {
       posthogSessionId: posthog.get_session_id() || undefined,
       posthogDistinctId: posthog.get_distinct_id() || undefined,
@@ -88,8 +89,7 @@ export function getLeadAttribution(): LeadAttribution {
 
 export function phCapture(event: string, props?: Record<string, unknown>): void {
   try {
-    if (typeof window === "undefined" || !posthog.__loaded) return;
-    posthog.capture(event, props);
+    getPostHog()?.capture(event, props);
   } catch {
     // ignore
   }
@@ -97,8 +97,7 @@ export function phCapture(event: string, props?: Record<string, unknown>): void 
 
 export function phIdentify(id: string, props?: Record<string, unknown>): void {
   try {
-    if (typeof window === "undefined" || !posthog.__loaded) return;
-    posthog.identify(id, props);
+    getPostHog()?.identify(id, props);
   } catch {
     // ignore
   }

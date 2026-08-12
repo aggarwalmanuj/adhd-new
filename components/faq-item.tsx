@@ -9,15 +9,23 @@ import { trackEvent } from "@/lib/analytics";
 
 export function FaqItem({
   question,
+  /** Render this row open on first paint. The spec opens the first question
+   *  ("Is this an ADHD diagnosis?") so the disclaimer is visible without a
+   *  click. `defaultOpen`, not `open`: passing `open` to <details> would make
+   *  it a controlled attribute React re-asserts, and the row could never be
+   *  closed by the visitor. */
+  defaultOpen = false,
   children,
 }: {
   question: string;
+  defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <details
       className="faq-item"
       name="faq"
+      {...(defaultOpen ? { open: true } : {})}
       onToggle={(e) => {
         if (e.currentTarget.open) trackEvent("faq_open", { question });
       }}

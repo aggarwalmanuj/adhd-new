@@ -42,26 +42,93 @@ const CHIPS = [
 
 type Mode = "preview" | "poster" | "playing";
 
+/** Connection hints, where the browser exposes them (Chromium/Android). */
+type NetworkInfo = { saveData?: boolean; effectiveType?: string };
+
+/**
+ * Is this visitor eligible for the silent muted-autoplay preview?
+ *
+ * Returns false — meaning "show the poster and fetch nothing" — when:
+ *   · we are on the server (SSR must match the pre-hydration markup),
+ *   · the visitor prefers reduced motion,
+ *   · the connection is metered (Save-Data) or slow (2G/3G),
+ *   · IntersectionObserver is missing, so we cannot defer the fetch safely.
+ *
+ * Deliberately conservative: the cost of wrongly showing a poster is one extra
+ * tap, while the cost of wrongly autoplaying is a 31 MB download on a metered
+ * phone connection during the hero paint.
+ */
+function canAutoplayPreview(): boolean {
+  if (typeof window === "undefined") return false;
+  if (typeof IntersectionObserver === "undefined") return false;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return false;
+  }
+
+  // NO silent preview on phones.
+  //
+  // This is the single biggest performance decision on the page. The video is
+  // 31 MB, it sits inside the fold, and a muted autoplay preview pulls ~3.8 MB
+  // of it before the visitor has decided they want it — measured as the whole
+  // difference between a 3.7s and a sub-2s LCP on a throttled 4G profile.
+  //
+  // This page is bought traffic, and the reported failure is people leaving
+  // before it paints at all. A phone visitor gets the poster and a play
+  // button; the autoplay flourish is kept for desktop, where the bandwidth is
+  // not the thing standing between the ad click and the landing-page view.
+  if (!window.matchMedia("(min-width: 1024px)").matches) return false;
+
+  const conn = (navigator as Navigator & { connection?: NetworkInfo })
+    .connection;
+  if (conn?.saveData) return false;
+  if (/(^|-)[23]g$/.test(conn?.effectiveType ?? "")) return false;
+  return true;
+}
+
 export function VslPlayer() {
   const videoRef = useRef<HTMLVideoElement>(null);
   // Quartile flags live in a ref: timeupdate fires ~4×/s and must not re-render.
   const firedRef = useRef<Set<string>>(new Set());
-  const [mode, setMode] = useState<Mode>("preview");
+  // "poster" is the SSR and first-hydration state: poster image, native play
+  // button, nothing fetched. It is also the permanent state for anyone who is
+  // not eligible for the silent preview, so the markup React hydrates always
+  // matches what the server sent.
+  //
+  // Eligible visitors are promoted to "preview" from inside the observer
+  // below, at the moment the player scrolls into view — which is also the
+  // moment the first byte of video is requested.
+  const [mode, setMode] = useState<Mode>("poster");
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    // Muted autoplay: allowed by policy almost everywhere, but Low-Power-Mode
-    // iOS and some browsers still reject. Reduced-motion visitors get the
-    // same fallback: poster + plain play button, no motion until asked.
-    video.muted = true;
-    const attempt = reduceMotion
-      ? Promise.reject(new Error("prefers-reduced-motion"))
-      : video.play();
-    attempt.catch(() => setMode("poster"));
+    if (!video || !canAutoplayPreview()) return;
+
+    // Deliberately deferred rather than fired on mount.
+    //
+    // `preload="none"` only suppresses the browser's OWN speculative fetch —
+    // calling play() overrides it and pulls the video immediately. On paid
+    // mobile traffic that put a 31 MB download in direct competition with the
+    // hero paint, which is the thing this page cannot afford to lose. So the
+    // player must actually be in view before a single byte is requested.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        video.muted = true;
+        // Muted autoplay is allowed almost everywhere, but Low-Power-Mode iOS
+        // and some browsers still reject it — in which case we simply stay on
+        // the poster and the visitor presses play.
+        video
+          .play()
+          .then(() => setMode("preview"))
+          .catch(() => {
+            /* stays "poster" */
+          });
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
   }, []);
 
   const startWithSound = () => {
@@ -116,7 +183,11 @@ export function VslPlayer() {
           className="aspect-video w-full"
           src="/video/vsl-adhd-v1.mp4"
           poster="/video/vsl-poster.jpg"
-          preload="metadata"
+          // "none", not "metadata": this page runs on paid mobile traffic and
+          // the video is 31 MB. Even a metadata fetch opens a connection that
+          // competes with the LCP paint on a throttled connection. The poster
+          // is what the visitor sees until they ask for the video.
+          preload="none"
           playsInline
           muted
           controls={mode !== "preview"}
@@ -135,7 +206,9 @@ export function VslPlayer() {
             type="button"
             onClick={startWithSound}
             className="group absolute inset-0 z-10 flex cursor-pointer items-center justify-center"
-            aria-label="Unmute and play the video from the beginning"
+            // Must CONTAIN the visible text ("Your video is playing. Click to
+            // unmute.") or voice-control users cannot say what they see.
+            aria-label="Your video is playing. Click to unmute and restart from the beginning."
           >
             <span className="flex flex-col items-center gap-2 rounded-2xl bg-bg/75 px-5 py-4 text-center backdrop-blur-sm transition-transform duration-300 group-hover:scale-[1.03] sm:gap-4 sm:px-12 sm:py-9">
               <svg

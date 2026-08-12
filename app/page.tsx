@@ -1,1407 +1,1245 @@
 import Image from "next/image";
 import { FaqItem } from "@/components/faq-item";
+import { CtaBlock } from "@/components/landing/cta-block";
+import {
+  ClosingTimeline,
+  LayerStack,
+  LoopDiagram,
+  ScoreGauge,
+  WeekChart,
+} from "@/components/landing/illustrations";
+import { MomentPicker } from "@/components/landing/moment-picker";
+import { Reveal } from "@/components/landing/reveal";
+import { ScrollChrome } from "@/components/landing/scroll-chrome";
+import { ScrollEffects } from "@/components/landing/scroll-effects";
 import { LandingAnalytics } from "@/components/landing-analytics";
-import { MobileStickyCta } from "@/components/mobile-sticky-cta";
-import { Reveal } from "@/components/reveal";
-import { ScoreVisual } from "@/components/score-visual";
-import { ScorecardCta } from "@/components/scorecard-cta";
-import { SectionViewTracker } from "@/components/section-view-tracker";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { TestimonialReel } from "@/components/testimonial-reel";
 import { VslPlayer } from "@/components/vsl-player";
-import type { CtaLocation } from "@/lib/analytics";
+import {
+  CRED_LOGOS,
+  FOUNDER_PHOTO,
+  WALKTHROUGH_FRAMES,
+} from "@/lib/landing-assets";
 
 /* ==========================================================================
-   ADHD Belief Score landing page. Section order, copy, and CTA tracking
-   locations follow the "REBUILT CONVERSION EDITION" spec doc block by block
-   (Blocks 01-14). Block numbers appear only in comments, never on the page.
+   ADHD Belief Score landing page.
+
+   Section order follows the design spec exactly:
+     hero → 01 recognition → 02 ledger → 03 why it repeats → 04 breather
+     → 05 from your words to your map → 06 the number → 07 the ten minutes
+     → 08 why not another system → 09 who built it → 10 questions → closing
+
+   Every section below the hero is a SERVER component. The only client code on
+   the page is: the CTA (attribution URL), the VSL player, the picker in 01,
+   and one <ScrollEffects> that drives every scroll-triggered effect.
+
+   Typography, buttons and the navbar come from the Parents design system —
+   .text-display / .text-headline / .btn-signal etc. in globals.css. The spec
+   HTML's gold gradient buttons and cream sections are deliberately NOT used.
 ========================================================================== */
 
-const TRUST_LOGOS = [
-  { src: "/logos/ibm.png", alt: "IBM" },
-  { src: "/logos/microsoft.png", alt: "Microsoft" },
-  { src: "/logos/tmobile.png", alt: "T-Mobile" },
-  { src: "/logos/pearson.png", alt: "Pearson" },
-  { src: "/logos/un.png", alt: "United Nations" },
-];
+/* --------------------------- section primitives ---------------------------
+   All three are lifted from the Parents landing page so the two funnels share
+   one rhythm: same max width, same gutters, same vertical padding, same
+   chapter-head grid, same animated rule. Do not re-tune these per section.
+-------------------------------------------------------------------------- */
 
-const HERO_CRED_CHIPS = [
-  "Four patents held by the creator",
-  "Published in the Mensa Research Journal",
-  "Founder & CIO, TetraNoodle Technologies",
-];
-
-/* Block 01B: what the visitor receives — input, time, output, cost — stated
-   without hedges. This is the block the page previously failed to answer.
-   TODO(launch): the score/dimension/benchmark wording must match the live
-   result screen exactly before ship. */
-const WHAT_YOU_GET = [
-  {
-    key: "input",
-    body: (
-      <>
-        Answer <span className="font-medium text-fg">5 questions</span> about
-        one ADHD pattern, in your own words &mdash; messy answers welcome
-      </>
-    ),
-  },
-  {
-    key: "output",
-    body: (
-      <>
-        Instantly receive your{" "}
-        <span className="font-medium text-fg">ADHD Belief Score</span> &mdash;
-        your score (0&ndash;100), four scored dimensions, and how you compare
-        with others carrying the same kind of pattern
-      </>
-    ),
-  },
-  {
-    key: "map",
-    body: (
-      <>
-        Plus your pattern reflected back in your own words: the repeated moment,
-        the belief underneath it, and the exact moment to watch for
-      </>
-    ),
-  },
-];
-
-/* Block 04: one broadly relevant ADHD loop, told in short lines and grouped
-   into three beats so the narrative reads as a structured sequence. Lines
-   prefixed with "> " render as highlighted inner-voice quotes. */
-const RECOGNITION_ACTS = [
-  {
-    label: "The Pull",
-    lines: [
-      "The cursor blinks.",
-      "The work matters.",
-      "You may even know exactly how to do it.",
-      "Then something smaller asks for your attention.",
-      "A message. A new tab. A quick search.",
-      "A smaller task that suddenly feels easier to finish.",
-    ],
-  },
-  {
-    label: "The Wait",
-    lines: [
-      "You tell yourself:",
-      "> “I still have time.”",
-      "The important task remains open.",
-      "The day moves. The deadline gets closer.",
-      "Eventually the pressure becomes impossible to ignore.",
-    ],
-  },
-  {
-    label: "The Rescue",
-    lines: [
-      "Now you move. You focus. You finish.",
-      "Sometimes you produce excellent work.",
-      "And because the work gets done, urgency receives the credit.",
-      "Your mind records:",
-      "> “Pressure is what makes me perform.”",
-      "So the next task waits for pressure again.",
-    ],
-  },
-];
-
-/* Block 05 */
-const ISOLATED_EVENTS = [
-  "A late task.",
-  "A forgotten detail.",
-  "A burst of last-minute focus.",
-  "A system abandoned after a few days.",
-];
-
-/* Block 06: the five stages of the Pattern-to-Belief Map. */
-const MAP_STAGES = [
-  {
-    title: "The Repeated Moment",
-    body: (
-      <>
-        <p>What keeps happening?</p>
-        <p>Not:</p>
-        <blockquote>&ldquo;My whole life is disorganized.&rdquo;</blockquote>
-        <p>Something more specific:</p>
-        <blockquote>
-          &ldquo;Important work remains untouched until pressure becomes
-          intense.&rdquo;
-        </blockquote>
-      </>
-    ),
-  },
-  {
-    title: "The Meaning",
-    body: (
-      <>
-        <p>What may the repeated experience have taught you to believe?</p>
-        <p>For example:</p>
-        <blockquote>
-          &ldquo;I cannot rely on myself without an emergency.&rdquo;
-        </blockquote>
-        <p>This is a possible interpretation. Not a verdict.</p>
-      </>
-    ),
-  },
-  {
-    title: "The Reinforcing Loop",
-    body: (
-      <>
-        <p>How might the sequence keep proving the same belief?</p>
-        <p className="loop-chain">
-          waiting
-          <span aria-hidden> → </span>pressure
-          <span aria-hidden> → </span>intense action
-          <span aria-hidden> → </span>completion
-          <span aria-hidden> → </span>pressure receives the credit
-        </p>
-      </>
-    ),
-  },
-  {
-    title: "The Moment to Watch",
-    body: (
-      <>
-        <p>Where does the familiar pattern begin?</p>
-        <p>
-          Not the entire day. Not your whole personality. One moment you can
-          learn to recognize.
-        </p>
-      </>
-    ),
-  },
-  {
-    title: "The Next Evidence",
-    body: (
-      <>
-        <p>
-          What visible action would suggest that another response is available?
-        </p>
-        <p>For example:</p>
-        <blockquote>
-          Completing one meaningful step before the deadline becomes urgent.
-        </blockquote>
-      </>
-    ),
-  },
-];
-
-/* Block 07: process demonstration steps. */
-const PROCESS_STEPS = [
-  {
-    title: "Your Words",
-    body: (
-      <blockquote>
-        &ldquo;I keep putting off important work even when I know exactly what
-        to do. Once the deadline is close, I suddenly become
-        productive.&rdquo;
-      </blockquote>
-    ),
-  },
-  {
-    title: "The Repeated Moment",
-    body: (
-      <p>Important work remains untouched until the pressure becomes intense.</p>
-    ),
-  },
-  {
-    title: "A Possible Belief",
-    body: (
-      <blockquote>
-        &ldquo;I cannot rely on myself without an emergency.&rdquo;
-      </blockquote>
-    ),
-  },
-  {
-    title: "The Reinforcing Loop",
-    body: (
-      <p>
-        Waiting creates pressure. Pressure creates movement. Movement gives
-        urgency the credit.
-      </p>
-    ),
-  },
-  {
-    title: "The Moment to Watch",
-    body: (
-      <p>
-        The first moment attention moves away from the task while there still
-        appears to be plenty of time.
-      </p>
-    ),
-  },
-  {
-    title: "The Next Evidence",
-    body: (
-      <p>Complete one meaningful step before the deadline becomes urgent.</p>
-    ),
-  },
-];
-
-/* Block 07: the illustrative result leads with the score itself — a product
-   named "Score" has to look like a score wherever it is demonstrated.
-   TODO(launch): confirm the dial value, band label, and dimension values render
-   exactly as the live product does before ship. */
-const EXAMPLE_SCORE = 44;
-const EXAMPLE_BAND = "Illustrative";
-const EXAMPLE_DIMENSIONS = [
-  { label: "Direction Clarity", value: 58 },
-  { label: "Identity Alignment", value: 29 },
-  { label: "Decision Readiness", value: 46 },
-  { label: "Energy Alignment", value: 43 },
-];
-
-/* Block 07: the example result panel, styled like a product result. */
-const EXAMPLE_RESULT = [
-  {
-    label: "Your Recurring Pattern",
-    body: (
-      <p>Important work remains untouched until the pressure becomes intense.</p>
-    ),
-  },
-  {
-    label: "A Possible Belief Underneath",
-    body: (
-      <blockquote className="text-title">
-        &ldquo;I cannot rely on myself without an emergency.&rdquo;
-      </blockquote>
-    ),
-  },
-  {
-    label: "How the Pattern May Keep Proving Itself",
-    body: (
-      <p>
-        The task waits. Pressure grows. The deadline becomes louder. Urgency
-        creates movement. The task gets finished. The mind records:
-        &ldquo;Pressure worked.&rdquo; The next task waits again.
-      </p>
-    ),
-  },
-  {
-    label: "The Moment to Watch",
-    body: (
-      <p>
-        The first moment you move away from the task while telling yourself
-        there is still time.
-      </p>
-    ),
-  },
-  {
-    label: "What Different Evidence Could Look Like",
-    body: (
-      <p>
-        Opening the task and completing one meaningful step before urgency
-        takes control.
-      </p>
-    ),
-  },
-];
-
-/* Block 09: compact credential list. */
-const CREDENTIALS = [
-  "Founder and CIO, TetraNoodle Technologies",
-  "Creator of AI Merge",
-  "Holder of four patents",
-  "Published in the Mensa Research Journal",
-];
-
-/* Block 10: exact approved participant language only. Do not rewrite. */
-const PARTICIPANT_PROOF = [
-  {
-    quote: "There’s a stress part of my brain that has gone silent.",
-    name: "Nick H.",
-    detail: "Video Producer · ADHD",
-  },
-  {
-    quote:
-      "It shifted something within. It’s something I’m going to be reading over and over again.",
-    name: "Oliver",
-    detail: "Real Estate",
-  },
-];
-
-/* Block 12: the four process steps. */
-const HOW_STEPS = [
-  {
-    title: "Choose One Pattern",
-    body: "Focus on one ADHD situation that matters now. Not your entire life.",
-  },
-  {
-    title: "Describe What Happens",
-    body: "Complete 5 short questions in your own words — about 10 minutes. There is no perfect wording. Messy answers are allowed.",
-  },
-  {
-    title: "Receive Your ADHD Belief Score",
-    body: "Your score, four dimensions, peer benchmark, and your Pattern-to-Belief Map.",
-  },
-  {
-    title: "Decide What Fits",
-    body: "Keep what feels accurate. Question, correct, refine, or reject what does not.",
-  },
-];
-
-/* Block 13: the full-page reader meets the complete artifact spec at the moment
-   of decision. The last thing read before the button is the artifact, not the
-   philosophy.
-   TODO(launch): confirm the peer-benchmark wording matches the live result. */
-const FINAL_DELIVERABLES = [
-  "Your score (0–100), four scored dimensions, and a peer benchmark",
-  "The repeated moment, and the belief underneath it",
-  "The reinforcing loop",
-  "The moment to watch — and the next evidence",
-];
-
-/* Zone A microcopy. The four highest-attention words under every primary CTA
-   carry the artifact spec — input, time, cost — not a caveat. "Not a diagnosis"
-   is not deleted: its permanent home is the Block 12 FAQ.
-   TODO(launch): verify "About 10 minutes" against the live median completion
-   time before ship; the same figure appears in Blocks 01B, 03, 06, 12, and 13. */
-const CTA_MICROCOPY = "Free · 5 questions · About 10 minutes · No credit card";
-
-function ChapterMark({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="chapter text-eyebrow">
-      <span className="chapter-dot" aria-hidden />
-      <span>{children}</span>
-    </p>
-  );
-}
-
-/** Primary CTA + the reassurance line the doc requires beneath it. */
-function CtaBlock({
-  location,
-  label = "Get Your Free ADHD Belief Score",
-  microcopy = CTA_MICROCOPY,
-  className = "",
+/** Section shell. `tint` alternates the ground so adjacent sections separate
+ *  without introducing a second (light) palette. */
+function Section({
+  id,
+  tint = false,
+  orbs = false,
+  labelledBy,
+  children,
 }: {
-  location: CtaLocation;
-  label?: string;
-  microcopy?: string;
-  className?: string;
+  id?: string;
+  tint?: boolean;
+  orbs?: boolean;
+  labelledBy?: string;
+  children: React.ReactNode;
 }) {
   return (
-    <div className={`flex flex-col items-center gap-4 ${className}`}>
-      {/* Wrapper hosts the ambient light behind the button — see .cta-halo. */}
-      <span className="cta-halo w-full sm:w-auto">
-        <ScorecardCta
-          variant="signal"
-          size="lg"
-          location={location}
-          className="w-full min-h-11 sm:w-auto"
-        >
-          {label}
-        </ScorecardCta>
-      </span>
-      <p className="text-center text-sm text-faint">{microcopy}</p>
-    </div>
+    <section
+      id={id}
+      aria-labelledby={labelledBy}
+      className={`relative overflow-hidden border-t border-line py-16 sm:py-24 lg:py-28 ${
+        tint ? "bg-surface" : ""
+      }`}
+    >
+      {orbs && <div className="section-orbs" aria-hidden />}
+      <div className="relative mx-auto w-full max-w-7xl px-5 sm:px-10 lg:px-16">
+        {children}
+      </div>
+    </section>
   );
 }
+
+/** Chapter head: numbered mark, a two-clause serif headline, optional lede in
+ *  the right column. The 7/5 split is Parents' — it is what stops a headline
+ *  and its lede reading as two unrelated blocks. */
+function ChapterHead({
+  mark,
+  id,
+  lead,
+  emphasis,
+  children,
+}: {
+  mark: string;
+  id?: string;
+  /** First clause, upright. */
+  lead: string;
+  /** Second clause, italic, on its own line. */
+  emphasis?: string;
+  /** Right-column lede. One sentence, or nothing. */
+  children?: React.ReactNode;
+}) {
+  return (
+    <Reveal className="grid items-end gap-8 lg:grid-cols-12 lg:gap-16">
+      <div className="lg:col-span-7">
+        <p className="eyebrow mb-6">{mark}</p>
+        {/* Separate block spans, not raw text + a span: without the wrapper
+            the two clauses concatenate with no whitespace in the accessible
+            name, even though the visual line break looks right. */}
+        <h2 id={id} className="text-section">
+          <span className="block">{lead}</span>
+          {emphasis && <span className="block font-serif-italic">{emphasis}</span>}
+        </h2>
+      </div>
+      {children && <div className="lg:col-span-5">{children}</div>}
+    </Reveal>
+  );
+}
+
+/** The animated rule that separates a chapter head from its content. */
+function ChapterRule({ className = "my-12 sm:my-16" }: { className?: string }) {
+  return (
+    <Reveal delay={150} className={className}>
+      <div className="hairline-anim hairline" />
+    </Reveal>
+  );
+}
+
+/** Section lede — the one-sentence right column of a chapter head. */
+function Lede({ children }: { children: React.ReactNode }) {
+  return <p className="text-lg leading-[1.8] text-muted">{children}</p>;
+}
+
+/* ---------------------------------- data --------------------------------- */
+
+const HERO_CHECKLIST = [
+  "Your score out of 100, and how it compares",
+  "Four dimensions behind the number",
+  "The one moment your own answers keep circling",
+  "The next step that would prove something different",
+];
+
+const HERO_CRED = [
+  "Built on AI Merge · published in the Mensa Research Journal",
+  "Four patents held by the creator",
+  "Reflective tool · not a diagnosis",
+];
+
+const WEEK = [
+  { when: "Monday", what: "You know exactly what needs doing. You even want to do it.", peak: false },
+  { when: "Tuesday", what: "Something smaller gets finished instead. It was easier to start.", peak: false },
+  { when: "Wednesday", what: "Still open. Still fine. There is still time.", peak: false },
+  { when: "Thursday, 11pm", what: "Now you move. Full focus. Sometimes your best work.", peak: true },
+  { when: "Friday", what: "Relief, and a quiet thought: next time I’ll start early.", peak: false },
+];
+
+const LEDGER_COST = [
+  "The idea you had in March, still unopened",
+  "The version of the work only you could have made, traded for the version that fit the last four hours",
+  "Evenings paid back to a deadline that never had to get that loud",
+  "The apology you make to yourself on Friday, and mean",
+];
+
+const LEDGER_WANT = [
+  "To open the important thing first, once, and see what happens",
+  "To do the good work without the panic tax on top of it",
+  "To finish and still have the evening",
+  "To trust yourself without needing an emergency to prove it",
+];
+
+const LOOP_STEPS = [
+  {
+    title: "The task matters",
+    body: "You know what to do and you want it done. Nothing is wrong yet.",
+  },
+  {
+    title: "Something smaller wins",
+    body: "A tab, a message, a task that will actually close today. Closing something feels like proof you are working.",
+  },
+  {
+    title: "Pressure arrives",
+    body: "The deadline gets loud enough to be unignorable, and suddenly starting is no longer optional.",
+  },
+  {
+    title: "You deliver — and the wrong thing gets the credit",
+    body: "The work is done, so your mind files the receipt under pressure worked. Not I worked.",
+    tag: "This is the step that repeats",
+  },
+];
+
+const LADDER = [
+  {
+    title: "The repeated moment",
+    body: "Important work stays untouched until the pressure becomes intense.",
+  },
+  {
+    title: "A possible belief underneath",
+    body: "“I cannot rely on myself without an emergency.”",
+  },
+  {
+    title: "How it keeps proving itself",
+    flow: ["waiting", "pressure", "intense action", "completion", "pressure gets the credit"],
+  },
+  {
+    title: "The moment to watch",
+    body: "The first time attention leaves the task while there still appears to be plenty of time.",
+  },
+  {
+    title: "The next evidence",
+    body: "One meaningful step completed before urgency takes over. Small enough to actually happen.",
+  },
+];
+
+/** The four scored dimensions. `pillar` maps to --pillar-1..4 (see globals). */
+const DIMENSIONS = [
+  {
+    name: "Direction Clarity",
+    value: 58,
+    pillar: 1,
+    body: "How clearly you can say what you actually want out of this task, in your own words.",
+  },
+  {
+    name: "Identity Alignment",
+    value: 29,
+    pillar: 2,
+    body: "How closely the way you work matches the person you know you are capable of being.",
+  },
+  {
+    name: "Decision Readiness",
+    value: 46,
+    pillar: 3,
+    body: "How ready you are to start it instead of going round the same loop one more time.",
+  },
+  {
+    name: "Energy Alignment",
+    value: 43,
+    pillar: 4,
+    body: "How much of your energy this pattern is quietly using up before you begin.",
+  },
+];
+
+const BANDS = [
+  {
+    level: "Under 36",
+    title: "The moment is deciding for you",
+    body: "The response arrives before you have chosen it, so the same week keeps repeating. This is where the most room to move sits.",
+    high: false,
+  },
+  {
+    level: "76 and above",
+    title: "You are deciding",
+    body: "You can open the thing that matters, take one real step, and let the day end without needing a rescue.",
+    high: true,
+  },
+];
+
+const TIERS = [
+  {
+    kicker: "Free · on screen in ~10 min",
+    title: "Your ADHD Belief Score",
+    body: "Your number out of 100, the four dimensions behind it, and the moment your own answers keep circling back to.",
+    featured: true,
+  },
+  {
+    kicker: "Optional · after your score",
+    title: "The full written breakdown",
+    body: "The belief your words point to, where the loop starts, and the point where you have more choice than it feels like you do.",
+    featured: false,
+  },
+  {
+    kicker: "Optional · if you want to go further",
+    title: "The AI Merge program",
+    body: "The guided path for people who would rather work a pattern than read about one.",
+    featured: false,
+  },
+];
+
+const FIT_YES = [
+  "You know what to do and still do not start",
+  "You have read the advice and it did not change the moment",
+  "You are willing to describe one situation honestly",
+];
+
+const FIT_NO = [
+  "You are looking for a diagnosis or a clinical assessment",
+  "You want a productivity template to install this afternoon",
+  "You are in crisis and need immediate support — please contact a qualified service",
+];
+
+const CREDS = [
+  { label: "Founder & CIO", value: "TetraNoodle Technologies" },
+  { label: "Four patents", value: "Granted" },
+  { label: "Mensa Research Journal", value: "Published methodology" },
+  { label: "AI Merge", value: "Creator of the method" },
+];
+
+const QUOTES = [
+  {
+    quote: "There’s a stress part of my brain that has gone silent.",
+    by: "Nick H. · Video Producer · ADHD",
+  },
+  {
+    quote: "It shifted something within. It’s something I’m going to be reading over and over again.",
+    by: "Oliver · Real Estate",
+  },
+];
+
+const SCOPE_DOES = [
+  "One repeated moment",
+  "The words you use for it",
+  "The meaning that formed around it",
+  "Where the next choice sits",
+];
+
+const SCOPE_DOES_NOT = [
+  "Diagnose ADHD",
+  "Replace medication or therapy",
+  "Read your mind or your history",
+  "Decide who you are",
+];
+
+const FAQS = [
+  {
+    q: "Is this an ADHD diagnosis?",
+    a: "No. It does not determine whether you have ADHD. It is an educational and reflective tool, and it is not diagnosis, medical care, treatment, psychotherapy, or crisis support.",
+    open: true,
+  },
+  {
+    q: "Does this claim belief causes ADHD?",
+    a: "No. ADHD is a real neurodevelopmental condition. The score examines whether a belief has become attached to one repeated ADHD experience. It does not claim belief causes ADHD or explains every ADHD difficulty.",
+    open: false,
+  },
+  {
+    q: "Is it really free?",
+    a: "Yes. You receive your complete ADHD Belief Score before any paid offer is presented, and no credit card is required. Afterward you may be offered an optional next step. It is optional.",
+    open: false,
+  },
+  {
+    q: "What if the result feels inaccurate?",
+    a: "Treat it as a hypothesis, not a verdict. Keep what fits. Correct, refine, or reject what does not. You remain the authority on your own experience.",
+    open: false,
+  },
+  {
+    q: "Is technology deciding what is true about me?",
+    a: "No. It organises patterns in the information you choose to provide. It does not know your history, your medical records, or your social media, and it does not define who you are.",
+    open: false,
+  },
+  {
+    q: "How long does it really take?",
+    a: "About ten minutes. Five questions, answered in your own words. There is no perfect wording and messy answers are fine — the reflection is built from how you actually talk.",
+    open: false,
+  },
+  {
+    q: "What happens with the information I provide?",
+    a: "Your answers are used to generate your personalised score. Selected team members may review limited information for quality assurance, safety, or support, according to the published Privacy Policy. Your information is not sold.",
+    open: false,
+  },
+];
+
+/* ---------------------------------- page --------------------------------- */
 
 export default function Home() {
   return (
     <>
-      <SiteHeader />
+      {/* The video poster is the LCP element on mobile (the silent autoplay
+          preview is desktop-only — see canAutoplayPreview in vsl-player).
+          A <video poster> is discovered late and fetched at low priority, so
+          it is preloaded explicitly: this is the image the ad click is waiting
+          on, and it was the difference between a ~3.7s and a ~1.5s LCP. */}
+      <link
+        rel="preload"
+        as="image"
+        href="/video/vsl-poster.jpg"
+        fetchPriority="high"
+      />
       <LandingAnalytics />
+      <ScrollEffects />
+      <ScrollChrome />
+      <SiteHeader />
+
       <main id="main" className="relative flex-1">
-        {/* Ambient lighting layers. Both are inert, non-interactive, and sit
-            on z-index -1 behind all content — see globals.css for the model. */}
         <div className="ambient-field" aria-hidden />
         <div className="page-vignette" aria-hidden />
 
-        {/* ================= Block 01 · Hero ================= */}
+        {/* ============================ HERO ============================
+            Structure, copy and the checklist are kept exactly as specified.
+            Only the typography and the button treatment change: .text-display
+            and .btn-signal, both from the Parents system. */}
+        {/* Parents' hero shape exactly: a centred column — chip, headline,
+            one line of sub-copy, then the video and the CTA at full column
+            width. Nothing sits beside the headline, so the h1 gets the whole
+            measure and the video is never competing with it for the fold. */}
         <section id="hero" className="relative overflow-hidden">
           <div className="spotlight-hero" aria-hidden />
-          <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-18 pt-12 text-center sm:px-8 sm:pt-16">
-            <Reveal>
-              <p className="cred-chip">AI Merge · Free ADHD Belief Score</p>
+
+          <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-7 pt-8 text-center sm:px-8 sm:pb-10 sm:pt-16">
+            <Reveal immediate>
+              <p className="cred-chip">
+                For adults with ADHD · free, no card
+              </p>
             </Reveal>
-            <Reveal delay={80}>
-              <h1 className="text-display mt-8">
-                You may understand your ADHD.{" "}
+
+            <Reveal immediate>
+              <h1 id="hero-headline" className="text-display mt-6 sm:mt-8">
+                You don’t want to be fixed.{" "}
                 <span className="text-emphasis">
-                  But what has the same repeated pattern taught you to believe
-                  about yourself?
+                  You want to finish the thing you started.
                 </span>
               </h1>
             </Reveal>
-            {/* Offer clarity (management review): one concrete sentence on
-                what the free score returns, so the score is unmistakably the
-                product being offered here. */}
-            <Reveal delay={120}>
-              <p className="text-body-lg mx-auto mt-7 max-w-2xl text-muted">
-                Answer a short guided reflection and see the belief your
-                repeated ADHD pattern may be reinforcing, and the moment where
-                a different response can begin.
+
+            <Reveal immediate>
+              <p className="text-body-lg mt-6 max-w-[52ch] text-muted">
+                The plan exists. The ability exists. So why does the work only
+                move when it is almost too late?
               </p>
             </Reveal>
           </div>
 
           <div className="mx-auto w-full max-w-4xl px-5 sm:px-8">
-            <Reveal delay={160}>
+            <Reveal immediate>
               <VslPlayer />
             </Reveal>
-            <Reveal delay={220}>
-              <CtaBlock location="hero" className="mt-8" />
+            <Reveal immediate>
+              <CtaBlock
+                location="hero"
+                label="Get My Free ADHD Belief Score"
+                labelShort="Get My Free Score"
+                align="center"
+                className="mt-8"
+              />
             </Reveal>
+
+            {/* "What you get" — kept from the spec, below the CTA so it
+                supports the button rather than delaying it. */}
             <Reveal delay={280}>
-              <p className="mt-3 text-center text-sm text-faint">
-                Built from your own words · Based on the published AI Merge
-                methodology
-              </p>
+              <div className="mt-10 rounded-xl border border-line bg-surface p-6 sm:p-7">
+                <h2 className="eyebrow mb-5 text-center">
+                  What you get, in about 10 minutes
+                </h2>
+                <ul className="mx-auto grid max-w-2xl list-none gap-3 sm:grid-cols-2">
+                  {HERO_CHECKLIST.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <CheckDot />
+                      <span className="text-muted">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </Reveal>
           </div>
 
           <Reveal delay={320}>
-            <ul className="mx-auto mt-10 flex w-full max-w-4xl list-none flex-wrap items-center justify-center gap-3 px-5 pb-16 sm:px-8">
-              {HERO_CRED_CHIPS.map((chip) => (
-                <li key={chip} className="cred-chip">
-                  {chip}
+            <ul className="mx-auto mt-8 flex w-full max-w-4xl list-none flex-wrap justify-center gap-x-7 gap-y-2 px-5 pb-16 text-center text-sm text-faint sm:px-8">
+              {HERO_CRED.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </Reveal>
+        </section>
+
+        {/* ==================== 01 · THE WEEK YOU ALREADY KNOW ==================== */}
+        <Section tint orbs labelledBy="recognition-heading">
+          <ChapterHead
+            mark="01 · The week you already know"
+            id="recognition-heading"
+            lead="It never happens on one bad day."
+            emphasis="It happens on a hundred ordinary ones."
+          />
+
+          <ChapterRule />
+
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
+            <Reveal className="min-w-0 lg:col-span-7">
+              <figure className="rounded-xl border border-line bg-bg p-6 shadow-[var(--elev-2)]">
+                <figcaption className="eyebrow mb-5">
+                  Effort on the thing that actually matters
+                </figcaption>
+                <WeekChart />
+                <p className="mt-3 text-center text-sm text-faint">
+                  A shape most people recognise. Not a measurement of you.
+                </p>
+              </figure>
+            </Reveal>
+
+            <Reveal delay={100} className="min-w-0 lg:col-span-5">
+              <ol className="list-none">
+                {WEEK.map((row) => (
+                  <li
+                    key={row.when}
+                    className="grid gap-x-4 border-t border-line py-3.5 first:border-t-0 first:pt-0 sm:grid-cols-[130px_1fr] sm:items-baseline"
+                  >
+                    <span
+                      className={`font-serif text-[0.95rem] ${
+                        row.peak ? "text-signal" : "text-faint"
+                      }`}
+                    >
+                      {row.when}
+                    </span>
+                    <span className={row.peak ? "font-medium text-fg" : "text-muted"}>
+                      {row.what}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </Reveal>
+          </div>
+
+          <Reveal>
+            <blockquote className="mt-12 max-w-[64ch] border-l-2 border-signal pl-6">
+              <p className="text-title">
+                The work got done, so pressure took the credit. Do that a few
+                hundred times and it stops being a schedule. It becomes a
+                sentence about you:{" "}
+                <em className="text-emphasis">
+                  nothing moves unless it is an emergency.
+                </em>
+              </p>
+              <footer className="mt-3 text-sm text-faint">
+                Not laziness. Not a shortage of intelligence, motivation, or
+                ambition.
+              </footer>
+            </blockquote>
+          </Reveal>
+
+          <Reveal>
+            <div className="mt-12">
+              <MomentPicker />
+            </div>
+          </Reveal>
+        </Section>
+
+        {/* ==================== 02 · WHAT IT IS ACTUALLY COSTING ==================== */}
+        <Section labelledBy="ledger-heading">
+          <ChapterHead
+            mark="02 · What it is actually costing"
+            id="ledger-heading"
+            lead="The problem was never the task."
+            emphasis="It is everything the task is standing in front of."
+          />
+
+          <ChapterRule />
+
+          <Reveal delay={100}>
+            <div className="grid overflow-hidden rounded-xl border border-line md:grid-cols-2">
+              <div className="border-b border-line p-6 sm:p-8 md:border-b-0 md:border-r">
+                <h3 className="text-eyebrow mb-5">
+                  What the pattern quietly takes
+                </h3>
+                <ul className="grid list-none gap-4">
+                  {LEDGER_COST.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-muted">
+                      <span
+                        className="mt-3 h-px w-3 shrink-0 bg-[var(--muted-foreground)]"
+                        aria-hidden
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="bg-accent-soft p-6 sm:p-8">
+                <h3 className="text-eyebrow mb-5 text-signal">
+                  What you actually want
+                </h3>
+                <ul className="grid list-none gap-4">
+                  {LEDGER_WANT.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-fg">
+                      <CheckDot />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal>
+            <p className="text-body-lg mt-8 max-w-[66ch] text-muted">
+              Nothing on the right requires a different brain. It requires one
+              moment to go differently — and knowing which moment that is.
+            </p>
+          </Reveal>
+
+          <Reveal>
+            <CtaBlock
+              location="ledger"
+              label="Find My Moment"
+              className="mt-9"
+            />
+          </Reveal>
+        </Section>
+
+        {/* ==================== 03 · WHY IT REPEATS ==================== */}
+        <Section tint orbs labelledBy="loop-heading">
+          <ChapterHead
+            mark="03 · Why it repeats"
+            id="loop-heading"
+            lead="A loop does not need your permission."
+            emphasis="It only needs to work once."
+          />
+
+          <ChapterRule />
+
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-16">
+            {/* The diagram leads at 7 columns — it IS the argument of this
+                section, and at 5 it was too small to read its own labels. */}
+            <Reveal className="min-w-0 lg:col-span-7">
+              <LoopDiagram />
+            </Reveal>
+
+            <div className="min-w-0 lg:col-span-5">
+              <ol className="relative list-none">
+                {/* the spine */}
+                <span
+                  className="absolute left-[7px] top-2 bottom-2 w-px bg-line"
+                  aria-hidden
+                />
+                {LOOP_STEPS.map((step, i) => (
+                  <Reveal as="li" key={step.title} delay={i * 70} className="relative pb-7 pl-10 last:pb-0">
+                    <span
+                      className={`absolute left-0 top-1.5 h-[15px] w-[15px] rounded-full border-2 ${
+                        i === LOOP_STEPS.length - 1
+                          ? "border-signal bg-signal"
+                          : "border-signal bg-bg"
+                      }`}
+                      aria-hidden
+                    />
+                    <h3 className="text-title">{step.title}</h3>
+                    <p className="mt-1.5 text-muted">{step.body}</p>
+                    {step.tag && (
+                      <span className="text-eyebrow mt-3 inline-block rounded-full border border-signal px-3 py-1 text-signal">
+                        {step.tag}
+                      </span>
+                    )}
+                  </Reveal>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </Section>
+
+        {/* ==================== 04 · BREATHER ==================== */}
+        <section
+          className="relative border-t border-line py-16 text-center sm:py-24"
+          aria-labelledby="breather-heading"
+        >
+          <div className="relative mx-auto w-full max-w-3xl px-5 sm:px-8">
+            <Reveal>
+              <h2 id="breather-heading" className="text-section mx-auto max-w-[22ch]">
+                <span className="block">ADHD does not have to disappear</span>
+                <span className="block font-serif-italic">
+                  for Thursday to go differently.
+                </span>
+              </h2>
+            </Reveal>
+            <Reveal delay={100}>
+              <p className="text-body-lg mx-auto mt-6 max-w-[56ch] text-muted">
+                The pull toward something easier can still show up. The sentence{" "}
+                <em>I’ll do it later</em> can still arrive. The change is not
+                becoming a different person. It is catching the one moment
+                before the old conclusion takes over.
+              </p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ============== 05 · FROM YOUR WORDS TO YOUR MAP ============== */}
+        <Section tint orbs labelledBy="mechanism-heading">
+          <ChapterHead
+            mark="05 · From your words to your map"
+            id="mechanism-heading"
+            lead="You write one messy paragraph."
+            emphasis="Here is what comes back."
+          >
+            <Lede>
+              No clever wording required. This is a real example of the path
+              from a sentence to a map.
+            </Lede>
+          </ChapterHead>
+
+          <ChapterRule />
+
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-16">
+            <Reveal className="min-w-0 lg:col-span-5">
+              <figure className="rounded-xl border border-line bg-bg p-6 shadow-[var(--elev-2)] lg:sticky lg:top-24">
+                <figcaption className="text-eyebrow mb-4">
+                  What someone typed
+                </figcaption>
+                <blockquote className="text-title">
+                  “I keep putting off important work even when I know exactly
+                  what to do. Once the deadline is close, I suddenly become
+                  productive.”
+                </blockquote>
+                <p className="mt-5 text-sm italic text-faint">
+                  Question 1 of 5 · answered in about 40 seconds
+                </p>
+                <p className="mt-4 border-t border-dashed border-line pt-4 font-mono text-xs text-faint">
+                  5 questions · ~10 min · answers stay private
+                </p>
+              </figure>
+            </Reveal>
+
+            <ol className="min-w-0 list-none lg:col-span-7">
+              {LADDER.map((step, i) => (
+                <Reveal
+                  as="li"
+                  key={step.title}
+                  delay={i * 60}
+                  className="grid grid-cols-[2.5rem_1fr] gap-x-4 border-b border-line py-5 last:border-b-0"
+                >
+                  <span className="font-serif text-sm text-signal" aria-hidden>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <h3 className="text-eyebrow text-signal">{step.title}</h3>
+                    {step.body && (
+                      <p className="text-body-lg mt-2 text-fg">{step.body}</p>
+                    )}
+                    {step.flow && (
+                      <p className="mt-2 font-mono text-sm leading-loose text-muted">
+                        {step.flow.map((f, j) => (
+                          <span key={f}>
+                            {f}
+                            {j < step.flow.length - 1 && (
+                              <span className="text-signal"> → </span>
+                            )}
+                          </span>
+                        ))}
+                      </p>
+                    )}
+                  </div>
+                </Reveal>
+              ))}
+            </ol>
+          </div>
+
+          <Reveal>
+            <CtaBlock
+              location="mechanism"
+              label="Map My Pattern"
+              className="mt-10"
+            />
+          </Reveal>
+        </Section>
+
+        {/* ==================== 06 · THE NUMBER ==================== */}
+        <Section labelledBy="score-heading">
+          <ChapterHead
+            mark="06 · The number"
+            id="score-heading"
+            lead="One number for the thing"
+            emphasis="you cannot see yourself."
+          >
+            <Lede>
+              Your score places how much of that moment you are actually
+              choosing, and how much of it was decided before you arrived.
+            </Lede>
+          </ChapterHead>
+
+          <ChapterRule />
+
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-16">
+            <Reveal className="min-w-0 lg:col-span-5">
+              <div className="rounded-xl border border-line bg-surface p-6 lg:sticky lg:top-24">
+                <ScoreGauge />
+                <div className="mt-5 grid gap-3">
+                  {BANDS.map((band) => (
+                    <div
+                      key={band.level}
+                      className={`rounded-xl border p-5 ${
+                        band.high
+                          ? "border-signal/40 bg-accent-soft"
+                          : "border-line bg-bg"
+                      }`}
+                    >
+                      <span className="text-eyebrow block text-signal">
+                        {band.level}
+                      </span>
+                      <h3 className="text-title mt-2">{band.title}</h3>
+                      <p className="mt-2 text-sm text-muted">{band.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
+
+            <div className="min-w-0 lg:col-span-7">
+              {/* data-anim="meters" — the observer fills every bar inside. */}
+              <Reveal>
+                <div
+                  data-anim="meters"
+                  className="grid gap-px overflow-hidden rounded-xl border border-line bg-line"
+                >
+                  {DIMENSIONS.map((dim) => (
+                    <div key={dim.name} className="bg-surface p-5 sm:p-6">
+                      <div className="flex items-baseline justify-between gap-4">
+                        <h3 className="text-title">{dim.name}</h3>
+                        <span
+                          className="font-serif text-3xl"
+                          style={{ color: `var(--pillar-${dim.pillar}-ink)` }}
+                        >
+                          {dim.value}
+                        </span>
+                      </div>
+                      {/* The bar is decorative: the number beside it already
+                          carries the value for assistive tech. */}
+                      <div
+                        className="mt-3.5 h-1 overflow-hidden rounded-full bg-[var(--muted-surface)]"
+                        aria-hidden
+                      >
+                        <span
+                          className="meter-fill block h-full rounded-full"
+                          style={
+                            {
+                              "--meter-w": `${dim.value}%`,
+                              background: `var(--pillar-${dim.pillar})`,
+                            } as React.CSSProperties
+                          }
+                        />
+                      </div>
+                      <p className="mt-3 text-sm text-muted">{dim.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </Reveal>
+
+              <Reveal>
+                <p className="mt-5 text-sm text-faint">
+                  It is not a grade, and it does not rate you as a person, a
+                  professional, or a parent. A lower number means more room to
+                  move.
+                </p>
+              </Reveal>
+
+              <Reveal>
+                <CtaBlock
+                  location="score_definition"
+                  label="See My Number"
+                  className="mt-8"
+                />
+              </Reveal>
+            </div>
+          </div>
+        </Section>
+
+        {/* ==================== 07 · THE TEN MINUTES ==================== */}
+        <Section tint labelledBy="ten-heading">
+          <ChapterHead
+            mark="07 · The ten minutes"
+            id="ten-heading"
+            lead="See the whole thing"
+            emphasis="before you begin."
+          >
+            <Lede>
+              Every screen you will meet, in order. No call to book before you
+              see a result, and no card at any point.
+            </Lede>
+          </ChapterHead>
+
+          <ChapterRule />
+
+          {/* The five screens, each in browser chrome. The 3/4 cover-crop the
+              previous version used was the bug in the screenshot: these are
+              WIDE captures (roughly 2:1), so cropping them to portrait threw
+              away most of every screen. They are letterboxed at their real
+              aspect ratio inside a window frame instead — which is also how
+              Parents presents the same five steps. */}
+          <Reveal delay={150}>
+            <ol className="reel-scroller -mx-5 flex snap-x snap-mandatory list-none gap-5 overflow-x-auto px-5 pb-4 sm:-mx-10 sm:px-10 lg:mx-0 lg:grid lg:grid-cols-2 lg:gap-8 lg:overflow-visible lg:px-0">
+              {WALKTHROUGH_FRAMES.map((frame, i) => (
+                <li
+                  key={frame.src}
+                  className={`w-[86%] shrink-0 snap-center sm:w-[70%] lg:w-auto ${
+                    // Five items in a 2-up grid: the last one spans both
+                    // columns rather than leaving a hole beside it.
+                    i === WALKTHROUGH_FRAMES.length - 1 ? "lg:col-span-2" : ""
+                  }`}
+                >
+                  <figure className="mac-window">
+                    <div className="mac-bar">
+                      <span className="flex gap-1.5" aria-hidden>
+                        <span className="mac-dot" />
+                        <span className="mac-dot" />
+                        <span className="mac-dot" />
+                      </span>
+                      <span
+                        className="ml-1 hidden truncate rounded-full bg-bg/60 px-3 py-1 text-[11px] tracking-wide text-faint sm:inline-block"
+                        aria-hidden
+                      >
+                        aimerge.live / your-score
+                      </span>
+                    </div>
+                    <Image
+                      src={frame.src}
+                      alt={frame.alt}
+                      width={frame.width}
+                      height={frame.height}
+                      // Every frame is below the fold; none is ever the LCP.
+                      loading="lazy"
+                      sizes="(min-width: 1024px) 46vw, 86vw"
+                      className="w-full bg-bg object-contain"
+                    />
+                    <figcaption className="flex items-baseline justify-between gap-4 border-t border-line px-5 py-4">
+                      <b className="text-title font-serif font-normal">
+                        {frame.step}
+                      </b>
+                      <span className="shrink-0 text-sm text-faint">
+                        {frame.note}
+                      </span>
+                    </figcaption>
+                  </figure>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
+          <p className="mt-4 text-sm text-faint">
+            Illustrative — yours is built from your own words.
+          </p>
+
+          <ul className="mt-14 grid list-none gap-4 md:grid-cols-3">
+            {TIERS.map((tier, i) => (
+              <Reveal
+                as="li"
+                key={tier.title}
+                delay={i * 70}
+                className={`rounded-xl border p-6 ${
+                  tier.featured
+                    ? "border-signal/50 bg-accent-soft shadow-[var(--elev-2)]"
+                    : "border-line bg-bg"
+                }`}
+              >
+                <span className="text-eyebrow block text-signal">
+                  {tier.kicker}
+                </span>
+                <h3 className="text-title mt-3">{tier.title}</h3>
+                <p className="mt-2 text-sm text-muted">{tier.body}</p>
+              </Reveal>
+            ))}
+          </ul>
+          <p className="mt-4 text-sm text-faint">
+            Step one is free and complete on its own. You are never required to
+            buy anything to receive it.
+          </p>
+
+          <Reveal>
+            <CtaBlock
+              location="how_it_works"
+              label="Start Question One"
+              className="mt-9"
+            />
+          </Reveal>
+        </Section>
+
+        {/* ================ 08 · WHY NOT ANOTHER SYSTEM ================ */}
+        <Section labelledBy="layers-heading">
+          <ChapterHead
+            mark="08 · Why not another system"
+            id="layers-heading"
+            lead="You have already tried"
+            emphasis="the layer above this one."
+          >
+            <Lede>
+              Keep every one of them. They work on real things. None of them is
+              aimed at the layer underneath.
+            </Lede>
+          </ChapterHead>
+
+          <ChapterRule />
+
+          <Reveal delay={140}>
+            <div className="mx-auto max-w-3xl">
+              <LayerStack />
+            </div>
+          </Reveal>
+
+          <Reveal>
+            <p className="text-body-lg mt-8 max-w-[66ch] text-muted">
+              Sometimes the next useful step is not another system. It is seeing
+              the belief clearly enough to stop mistaking it for your identity.
+            </p>
+          </Reveal>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-2">
+            <Reveal>
+              <div className="h-full rounded-xl border border-line p-6">
+                <h3 className="text-eyebrow mb-4 text-signal">
+                  Worth ten minutes if
+                </h3>
+                <ul className="grid list-none gap-3">
+                  {FIT_YES.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-muted">
+                      <span className="mt-2.5 h-px w-2.5 shrink-0 bg-signal" aria-hidden />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+            <Reveal delay={80}>
+              <div className="h-full rounded-xl border border-line p-6">
+                <h3 className="text-eyebrow mb-4">Probably not for you if</h3>
+                <ul className="grid list-none gap-3">
+                  {FIT_NO.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-muted">
+                      <span
+                        className="mt-2.5 h-px w-2.5 shrink-0 bg-[var(--muted-foreground)]"
+                        aria-hidden
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          </div>
+        </Section>
+
+        {/* ==================== 09 · WHO BUILT IT ==================== */}
+        <Section tint orbs labelledBy="founder-heading">
+          <ChapterHead
+            mark="09 · Who built it"
+            id="founder-heading"
+            lead="I could see the pattern."
+            emphasis="I could not see what the pattern had taught me."
+          />
+
+          <ChapterRule />
+
+          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+            <Reveal delay={150} className="min-w-0 lg:col-span-4">
+              {/* Square crop, top-weighted so it takes the face rather than
+                  centring on the torso. Same treatment as Parents. */}
+              <figure className="mx-auto w-full max-w-[400px]">
+                <div className="signal-halo relative aspect-square overflow-hidden rounded-xl border border-line shadow-[var(--elev-2)]">
+                  <Image
+                    src={FOUNDER_PHOTO.src}
+                    alt={FOUNDER_PHOTO.alt}
+                    fill
+                    loading="lazy"
+                    sizes="(max-width: 1024px) 100vw, 400px"
+                    className="object-cover object-top"
+                  />
+                </div>
+              </figure>
+            </Reveal>
+
+            <Reveal delay={250} className="min-w-0 lg:col-span-8">
+              <div className="space-y-5 text-[1.05rem] leading-[1.85] text-muted">
+                <p>
+                  I could create plans, systems, and strategies. I could still
+                  watch something change the moment vision had to become
+                  consistent action.
+                </p>
+                <p>
+                  Understanding ADHD gave me language for the behaviour. It did
+                  not automatically reveal the belief that had formed around it.
+                  That gap is why I built the Belief Score, using AI Merge, a
+                  methodology I created and published in the{" "}
+                  <em>Mensa Research Journal</em>.
+                </p>
+                <p className="font-serif-italic text-xl text-ink">
+                  The result is not meant to replace your judgment. It is meant
+                  to give you something clear enough to examine.
+                </p>
+              </div>
+
+              <div className="mt-8 border-t border-line pt-6">
+                <p className="text-title">Manuj Aggarwal</p>
+                {/* As a card grid each claim is countable at a glance, rather
+                    than a wall of prose beside a portrait. */}
+                <ul className="mt-4 grid list-none gap-2.5 sm:grid-cols-2">
+                  {CREDS.map((c) => (
+                    <li
+                      key={c.label}
+                      className="flex items-start gap-3 rounded-lg border border-line bg-card px-4 py-3"
+                    >
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-signal" aria-hidden />
+                      <span className="min-w-0">
+                        <b className="block text-sm font-semibold text-fg">
+                          {c.label}
+                        </b>
+                        <span className="text-sm text-faint">{c.value}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          </div>
+
+          <div className="mt-11 grid gap-4 md:grid-cols-2">
+            {QUOTES.map((q, i) => (
+              <Reveal as="figure" key={q.by} delay={i * 80} className="border-l-2 border-signal/60 pl-5">
+                <blockquote className="text-title">“{q.quote}”</blockquote>
+                <figcaption className="mt-2 text-sm text-faint">{q.by}</figcaption>
+              </Reveal>
+            ))}
+          </div>
+          <p className="mt-4 max-w-[76ch] text-xs leading-relaxed text-faint">
+            Individual experiences vary. These accounts reflect experiences
+            across the broader AI Merge work rather than the free ADHD Belief
+            Score, and do not guarantee that another participant will receive
+            the same result.
+          </p>
+
+          <Reveal>
+            <ul className="mt-9 flex list-none flex-wrap items-center gap-x-8 gap-y-5 opacity-60">
+              {CRED_LOGOS.map((logo) => (
+                <li key={logo.src}>
+                  <Image
+                    src={logo.src}
+                    alt={logo.alt}
+                    width={logo.width}
+                    height={logo.height}
+                    loading="lazy"
+                    sizes="120px"
+                    className="brand-logo h-5 w-auto brightness-0 invert"
+                  />
                 </li>
               ))}
             </ul>
           </Reveal>
-        </section>
+          <p className="mt-4 max-w-[76ch] text-xs leading-relaxed text-faint">
+            Organizations shown reflect prior professional work by Manuj
+            Aggarwal and do not imply endorsement of the ADHD Belief Score, AI
+            Merge, TetraNoodle Technologies, or this offer.
+          </p>
+        </Section>
 
-        {/* ================= Block 01B · What you'll get =================
-            The artifact spec: input, time, output, cost, answered within one
-            thumb-scroll of the hero CTA. Zone A — no hedges belong in this
-            block; every caveat has a home in the Block 12 FAQ. */}
-        <section className="border-t border-line">
-          <div className="mx-auto w-full max-w-3xl px-5 py-14 sm:px-8">
-            <SectionViewTracker event="whatyouget_view" />
-            <Reveal>
-              <h2 className="text-headline">
-                What you&rsquo;ll get &mdash; free, in about 10 minutes
-              </h2>
-            </Reveal>
-            <ul className="mt-8 grid list-none gap-4">
-              {WHAT_YOU_GET.map((item, i) => (
-                <Reveal as="li" key={item.key} delay={i * 60}>
-                  <div className="flex items-start gap-3">
-                    <span className="list-dot mt-3 shrink-0" aria-hidden />
-                    <p className="text-body-lg text-muted">{item.body}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </ul>
+        {/* ==================== 10 · BEFORE YOU START ==================== */}
+        <Section labelledBy="faq-heading">
+          <ChapterHead
+            mark="10 · Before you start"
+            id="faq-heading"
+            lead="Questions"
+            emphasis="people ask."
+          />
 
-            {/* The proof sits beside the claim it proves (moved here from the
-                Block 02 early-proof strip).
-                TODO(launch): replace with a consented, mobile-cropped capture
-                of the current result screen. */}
-            <Reveal delay={120}>
-              <figure className="mx-auto mt-10 max-w-2xl">
-                <div className="media-frame overflow-hidden rounded-2xl">
-                  <Image
-                    src="/take/reportsummary.png"
-                    alt="An actual ADHD Belief Score result: an overall score with four scored dimensions and a peer benchmark"
-                    width={1792}
-                    height={815}
-                    className="w-full"
-                    sizes="(min-width: 768px) 672px, 100vw"
-                  />
-                </div>
-                <figcaption className="mt-3 text-center text-sm text-faint">
-                  An actual ADHD Belief Score result.
-                </figcaption>
-              </figure>
-            </Reveal>
+          <ChapterRule />
 
-            <Reveal delay={160}>
-              <CtaBlock location="what_you_get" className="mt-10" />
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ================= Block 02 · Early proof strip ================= */}
-        <section className="border-y border-line bg-surface">
-          <div className="mx-auto w-full max-w-3xl px-5 py-14 text-center sm:px-8">
-            <Reveal>
-              <h2 className="text-title">
-                A Personalized Reflection Built from the Pattern You Describe
-              </h2>
-            </Reveal>
-            <Reveal delay={60}>
-              <p className="mt-4 text-sm text-faint">
-                Published AI Merge methodology · Four patents held by the
-                creator · Built from real participant language
-              </p>
-            </Reveal>
-            {/* The result screenshot now lives in Block 01B, beside the claim
-                it proves. What remains here is the credibility strip and, when
-                one is approved, a single participant quote about pattern
-                recognition. Awaiting an exact, approved statement — ship
-                without the quote rather than invent specificity. */}
-          </div>
-        </section>
-
-        {/* ================= Block 03 · Silent skepticism ================= */}
-        <section className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-28">
-          <Reveal>
-            <ChapterMark>Before you scroll past</ChapterMark>
-          </Reveal>
-          <Reveal delay={60}>
-            <h2 className="text-headline mt-5">You May Already Be Thinking:</h2>
-          </Reveal>
-          <div className="text-body-lg mt-8 space-y-5 text-muted">
-            <Reveal>
-              <blockquote className="border-l-2 border-line pl-5 text-fg">
-                &ldquo;I know I have ADHD. I already understand this
-                pattern.&rdquo;
-              </blockquote>
-            </Reveal>
-            <Reveal delay={40}>
-              <p>Or:</p>
-            </Reveal>
-            <Reveal delay={60}>
-              <blockquote className="border-l-2 border-line pl-5 text-fg">
-                &ldquo;My problem is practical. I do not need another
-                explanation.&rdquo;
-              </blockquote>
-            </Reveal>
-            <Reveal delay={100}>
-              <p>That may be true.</p>
-            </Reveal>
-            <Reveal delay={120}>
-              <p>
-                The ADHD Belief Score is not asking you to accept another label.
-                It asks you to examine one additional question:
-              </p>
-            </Reveal>
-          </div>
-          <Reveal delay={160}>
-            <p className="text-headline mt-9">
-              <span className="text-emphasis">
-                What has the repeated experience come to mean about you?
-              </span>
-            </p>
-          </Reveal>
-          <Reveal delay={200}>
-            <p className="text-body-lg mt-9 text-muted">
-              You do not have to agree with the result. You only have to decide
-              whether the pattern it reflects feels worth examining.
-            </p>
-          </Reveal>
-          {/* Concrete re-anchor: the philosophical beat has to land on the
-              artifact and on the visitor's sovereignty over it. */}
-          <Reveal delay={240}>
-            <p className="text-body-lg mt-6 font-medium text-fg">
-              The score takes about 10 minutes. What you do with the result
-              stays entirely yours.
-            </p>
-          </Reveal>
-        </section>
-
-        {/* ============ Block 04 · Recognition and revelation ============ */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-28">
-            <div className="text-center">
-              <Reveal>
-                <p className="chapter justify-center text-eyebrow">
-                  <span className="chapter-dot" aria-hidden />
-                  <span>Sound familiar</span>
-                </p>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-5">
-                  The Task Is Open. You Know What Needs to Happen.
-                </h2>
-              </Reveal>
-            </div>
-
-            {/* The loop, in three labeled beats along an editorial rail
-                (the doc's Block 04 spec asks for narrow reading width and
-                no cards). */}
-            <div className="mx-auto mt-12 max-w-xl space-y-10">
-              {RECOGNITION_ACTS.map((act, i) => (
-                <Reveal key={act.label} delay={i * 80}>
-                  <div className="border-l border-line pl-6 sm:pl-8">
-                    <p className="text-eyebrow text-signal">
-                      {String(i + 1).padStart(2, "0")} · {act.label}
-                    </p>
-                    <div className="mt-4 space-y-2.5">
-                      {act.lines.map((line) =>
-                        line.startsWith("> ") ? (
-                          <blockquote
-                            key={line}
-                            className="text-title -ml-6 border-l-2 border-signal py-1 pl-[calc(1.5rem-2px)] sm:-ml-8 sm:pl-[calc(2rem-2px)]"
-                          >
-                            {line.slice(2)}
-                          </blockquote>
-                        ) : (
-                          <p key={line} className="text-lg leading-relaxed text-muted">
-                            {line}
-                          </p>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-
-            <Reveal delay={100}>
-              <p className="text-headline mt-14 text-center">
-                The deadline may not only be forcing action.{" "}
-                <span className="text-emphasis">
-                  It may be teaching you that urgency is the only version of
-                  you that can be trusted.
-                </span>
-              </p>
-            </Reveal>
-
-            <Reveal delay={140}>
-              <p className="text-body-lg mx-auto mt-8 max-w-xl text-center text-muted">
-                That does not mean you are lazy. It does not mean you lack
-                intelligence, motivation, or ambition. It may mean that one
-                repeated ADHD experience has gradually become a belief about
-                who you are and how you work.
-              </p>
-            </Reveal>
-
-            <Reveal delay={180}>
-              <CtaBlock location="recognition" className="mt-12" />
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ============ Block 05 · Why this is possible now ============ */}
-        <section className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-28">
-          <Reveal>
-            <ChapterMark>Why now</ChapterMark>
-          </Reveal>
-          <Reveal delay={60}>
-            <h2 className="text-headline mt-5">
-              Patterns That Were Hard to See Can Now Be Examined More Clearly
-            </h2>
-          </Reveal>
-          {/* The isolated events, shown as isolated fragments. */}
-          <ul className="mt-9 grid list-none gap-3 sm:grid-cols-2">
-            {ISOLATED_EVENTS.map((line, i) => (
-              <Reveal as="li" key={line} delay={i * 50}>
-                <div className="flex h-full items-center gap-3 rounded-xl border border-line bg-card px-5 py-4">
-                  <span className="list-dot shrink-0" aria-hidden />
-                  <span className="font-medium text-fg">{line}</span>
-                </div>
-              </Reveal>
-            ))}
-          </ul>
-
-          {/* One paragraph, no hedges: the three closing lines below carry all
-              of this block's epistemic humility. */}
-          <div className="text-body-lg mt-8 space-y-4 text-muted">
-            <Reveal>
-              <p>
-                Each event feels isolated. Viewed together &mdash; the language,
-                the sequence, the response, the conclusion &mdash; a larger
-                pattern becomes visible. Technology can now help organize those
-                connections with consistency and precision.
-              </p>
-            </Reveal>
-          </div>
-          <Reveal delay={140}>
-            <p className="text-title mt-10 border-l-2 border-signal pl-6 leading-relaxed">
-              The technology helps reveal the pattern.{" "}
-              <span className="text-emphasis">You decide what it means.</span>{" "}
-              Your actions create the evidence that matters.
-            </p>
-          </Reveal>
-        </section>
-
-        {/* ============ Block 06 · The Pattern-to-Belief Map ============ */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
-            <div className="mx-auto max-w-2xl text-center">
-              <Reveal>
-                <ChapterMark>The mechanism</ChapterMark>
-              </Reveal>
-              {/* One product name per sentence: the Score is the product, the
-                  Map is introduced once, as what the Score contains. */}
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-5">
-                  What&rsquo;s Inside Your ADHD Belief Score
-                </h2>
-              </Reveal>
-              <Reveal delay={120}>
-                <p className="text-body-lg mt-6 text-muted">
-                  Your score includes a{" "}
-                  <span className="font-medium text-fg">
-                    Pattern-to-Belief Map
-                  </span>{" "}
-                  &mdash; a five-part breakdown of the one pattern that matters
-                  now, built from your own words:
-                </p>
-              </Reveal>
-            </div>
-
-            <ol className="mt-14 grid list-none gap-5 md:grid-cols-2 xl:grid-cols-5">
-              {MAP_STAGES.map((stage, i) => (
-                <Reveal as="li" key={stage.title} delay={i * 60}>
-                  <div className="liftable flex h-full flex-col rounded-2xl border border-line bg-card p-7">
-                    <span className="text-eyebrow text-signal">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="text-title mt-3">{stage.title}</h3>
-                    <div className="map-stage-body mt-4 space-y-3 text-sm leading-relaxed text-muted">
-                      {stage.body}
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-            </ol>
-
-            <Reveal delay={120}>
-              <CtaBlock location="score_definition" className="mt-14" />
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ====== Block 07 · Process demonstration + example result ====== */}
-        <section className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
-          <div className="mx-auto max-w-2xl text-center">
-            <Reveal>
-              <ChapterMark>From your words to your map</ChapterMark>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="text-headline mt-5">
-                See How the ADHD Belief Score Works
-              </h2>
-            </Reveal>
-          </div>
-
-          <Reveal delay={100}>
-            <figure className="mx-auto mt-12 max-w-4xl">
-              <div className="media-frame overflow-hidden rounded-2xl">
-                <Image
-                  src="/take/question.png"
-                  alt="The guided reflection interface: a question asking you to describe a specific situation in your own words, with a free-text answer box"
-                  width={1888}
-                  height={906}
-                  className="w-full"
-                  sizes="(min-width: 1024px) 896px, 100vw"
-                />
-              </div>
-              <figcaption className="mt-3 text-center text-sm text-faint">
-                The guided reflection from the live assessment: you answer in
-                your own words.
-              </figcaption>
-            </figure>
-          </Reveal>
-
-          <div className="mt-14 grid gap-12 lg:grid-cols-2 lg:gap-16">
-            {/* Process: your language becomes the map, step by step. */}
-            <ol className="relative list-none space-y-0">
-              {PROCESS_STEPS.map((step, i) => (
-                <Reveal as="li" key={step.title} delay={i * 50}>
-                  <div className="relative flex gap-5 pb-8 last:pb-0">
-                    <div className="flex flex-col items-center">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line bg-card text-xs font-semibold text-signal">
-                        {i + 1}
-                      </span>
-                      {i < PROCESS_STEPS.length - 1 && (
-                        <span
-                          className="mt-1 w-px flex-1 bg-line"
-                          aria-hidden
-                        />
-                      )}
-                    </div>
-                    <div className="min-w-0 pb-1">
-                      <h3 className="text-title">{step.title}</h3>
-                      <div className="map-stage-body mt-2 space-y-2 leading-relaxed text-muted">
-                        {step.body}
-                      </div>
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-            </ol>
-
-            {/* Example result panel, shaped like the live product result.
-                (Real interface screenshots appear in the early-proof strip
-                and above; this panel stays illustrative because its copy is
-                the doc's worked ADHD example.) */}
-            <Reveal delay={100}>
-              <div className="relative rounded-2xl border border-line bg-card p-7 sm:p-9">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="text-title">
-                    Example ADHD Belief Score Result
-                  </h3>
-                  <span className="cred-chip shrink-0">
-                    Illustrative example
-                  </span>
-                </div>
-                {/* The score leads; the prose reads beneath it. */}
-                <div className="mt-7">
-                  <ScoreVisual
-                    score={EXAMPLE_SCORE}
-                    band={EXAMPLE_BAND}
-                    dimensions={EXAMPLE_DIMENSIONS}
-                  />
-                </div>
-                <dl className="mt-8 space-y-6 border-t border-line pt-7">
-                  {EXAMPLE_RESULT.map((row) => (
-                    <div
-                      key={row.label}
-                      className="border-t border-line pt-5 first:border-t-0 first:pt-0"
-                    >
-                      <dt className="text-eyebrow text-signal">{row.label}</dt>
-                      <dd className="map-stage-body mt-2 leading-relaxed text-muted">
-                        {row.body}
-                      </dd>
-                    </div>
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-16">
+            <Reveal className="min-w-0 lg:col-span-5">
+              <div className="rounded-xl border border-line bg-surface p-6 lg:sticky lg:top-24">
+                <h3 className="text-eyebrow mb-4 text-signal">
+                  What it looks at
+                </h3>
+                <ul className="grid list-none gap-2.5">
+                  {SCOPE_DOES.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-fg">
+                      <CheckDot />
+                      <span>{item}</span>
+                    </li>
                   ))}
-                </dl>
+                </ul>
+
+                <h3 className="text-eyebrow mb-4 mt-7">What it does not do</h3>
+                <ul className="grid list-none gap-2.5">
+                  {SCOPE_DOES_NOT.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-muted">
+                      <span
+                        className="mt-1.5 h-3.5 w-3.5 shrink-0 rounded-full border border-dashed border-[var(--muted-foreground)]"
+                        aria-hidden
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </Reveal>
-          </div>
 
-          <div className="mx-auto mt-14 max-w-2xl text-center">
-            {/* Ownership, not a take-back. The "Illustrative example" caption
-                on the panel above carries the honesty; the non-prediction point
-                has its permanent home in the Block 12 FAQ. */}
-            <Reveal>
-              <p className="text-title">
-                Yours will be built from your own words.
-              </p>
-            </Reveal>
-            <Reveal delay={120}>
-              <CtaBlock location="sample_result" className="mt-10" />
+            <Reveal delay={100} className="min-w-0 lg:col-span-7">
+              {FAQS.map((item) => (
+                <FaqItem key={item.q} question={item.q} defaultOpen={item.open}>
+                  <p>{item.a}</p>
+                </FaqItem>
+              ))}
             </Reveal>
           </div>
-        </section>
+        </Section>
 
-        {/* ============== Block 08 · Identity transition ============== */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-28">
+        {/* ==================== CLOSING ==================== */}
+        <section
+          className="relative border-t border-line py-16 text-center sm:py-24"
+          aria-labelledby="closing-heading"
+        >
+          <div className="relative mx-auto w-full max-w-3xl px-5 sm:px-8">
             <Reveal>
-              <ChapterMark>What actually changes</ChapterMark>
+              <div className="mx-auto mb-8 max-w-xl">
+                <ClosingTimeline />
+              </div>
             </Reveal>
-            <Reveal delay={60}>
-              <h2 className="text-headline mt-5">
-                The Goal Is Not to Become a Different Person
-              </h2>
-            </Reveal>
-            <div className="text-body-lg mt-9 space-y-4 text-muted">
-              <Reveal>
-                <p>
-                  ADHD does not have to disappear for the moment to unfold
-                  differently.
-                </p>
-              </Reveal>
-              <Reveal delay={40}>
-                <p>
-                  The task can still matter. The pull toward something easier
-                  can still appear. The familiar sentence may still arrive:
-                </p>
-              </Reveal>
-              <Reveal delay={80}>
-                <blockquote className="border-l-2 border-line pl-5 text-fg">
-                  &ldquo;I will do it later.&rdquo;
-                </blockquote>
-              </Reveal>
-              <Reveal delay={120}>
-                <p>
-                  The change is not perfection. It is recognizing the moment
-                  before the old conclusion takes over. It is completing one
-                  meaningful action before panic becomes necessary. It is
-                  beginning to collect evidence that:
-                </p>
-              </Reveal>
-            </div>
-            <Reveal delay={160}>
-              <p className="text-headline mt-9">
-                <span className="text-emphasis">
-                  pressure is not the only state in which you can trust
-                  yourself.
+            <Reveal>
+              <h2 id="closing-heading" className="text-section mx-auto max-w-[19ch]">
+                <span className="block">
+                  The next task is already on your list.
                 </span>
-              </p>
-            </Reveal>
-            <Reveal delay={200}>
-              <p className="text-body-lg mt-9 text-muted">
-                One different action does not rewrite an identity. But it can
-                interrupt the assumption that the old pattern is the only
-                version of you available.
-              </p>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ========= Block 09 · Founder, credentials, and logos ========= */}
-        <section className="mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
-          <div className="grid items-start gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-            <Reveal className="relative">
-              <div className="relative overflow-hidden rounded-2xl border border-line">
-                <Image
-                  src="/manuj/closeup.jpg"
-                  alt="Manuj Aggarwal, creator of AI Merge"
-                  width={1400}
-                  height={1867}
-                  sizes="(min-width: 1024px) 430px, 100vw"
-                  className="h-96 w-full object-cover object-top lg:h-136"
-                />
-              </div>
-            </Reveal>
-
-            <div className="min-w-0">
-              <Reveal>
-                <ChapterMark>The person behind it</ChapterMark>
-              </Reveal>
-              {/* The page sells the Score, so the founder headline names the
-                  Score. AI Merge appears once in the body below, as pedigree —
-                  the brand is revealed by climbing the funnel, not announced at
-                  the door. */}
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-5">
-                  Why I Built the Belief Score
-                </h2>
-              </Reveal>
-              <Reveal delay={100}>
-                <blockquote className="text-emphasis mt-7 text-xl leading-relaxed">
-                  &ldquo;I understood the ADHD pattern. That did not always mean
-                  I could change what the pattern had taught me to
-                  believe.&rdquo;
-                </blockquote>
-              </Reveal>
-              <div className="text-body-lg mt-7 space-y-4 text-muted">
-                <Reveal>
-                  <p>
-                    I could see what was possible. I could create plans,
-                    systems, strategies, and ideas. And I could still watch
-                    something change when vision had to become consistent
-                    action.
-                  </p>
-                </Reveal>
-                <Reveal delay={40}>
-                  <p>
-                    The visible ADHD behavior was one part of the experience.
-                    Underneath it were quieter questions: What did beginning
-                    appear to say about me? What did finishing expose? What did
-                    another delay seem to prove?
-                  </p>
-                </Reveal>
-                <Reveal delay={80}>
-                  <p>
-                    Understanding ADHD gave me language for the pattern. It did
-                    not automatically reveal the belief that had formed around
-                    the pattern. That gap is why I built the Belief Score
-                    &mdash; on <span className="font-medium text-fg">AI Merge</span>,
-                    a methodology I created and published in the{" "}
-                    <em>Mensa Research Journal</em>.
-                  </p>
-                </Reveal>
-                <Reveal delay={120}>
-                  <p>
-                    The goal is not to ask technology to tell people who they
-                    are. The goal is to help people see a connection they may
-                    not have been able to see alone, and then let them decide
-                    what is true.
-                  </p>
-                </Reveal>
-              </div>
-              <Reveal delay={140}>
-                <p className="mt-6 font-medium text-fg">Manuj Aggarwal</p>
-              </Reveal>
-
-              <Reveal delay={160}>
-                <div className="mt-10 rounded-2xl border border-line bg-card p-7">
-                  <p className="text-eyebrow text-faint">About the Creator</p>
-                  <ul className="mt-4 grid list-none gap-2.5 sm:grid-cols-2">
-                    {CREDENTIALS.map((c) => (
-                      <li key={c} className="flex items-start gap-2.5 text-sm text-muted">
-                        <span className="list-dot mt-1.5 shrink-0" aria-hidden />
-                        {c}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="mt-4 text-sm text-faint">
-                    Manuj&rsquo;s work spans artificial intelligence, enterprise
-                    technology, human performance, belief, identity, and
-                    pattern-based transformation.
-                  </p>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-
-          <Reveal delay={100}>
-            <div className="mt-16">
-              <p className="text-eyebrow text-center text-faint">
-                Professional Experience Behind AI Merge
-              </p>
-              <ul className="mt-8 flex list-none flex-wrap items-center justify-center gap-x-12 gap-y-6">
-                {TRUST_LOGOS.map((logo) => (
-                  <li
-                    key={logo.alt}
-                    className="relative h-9 w-24 opacity-60 grayscale sm:h-10 sm:w-28"
-                  >
-                    <Image
-                      src={logo.src}
-                      alt={logo.alt}
-                      fill
-                      sizes="(min-width: 640px) 112px, 96px"
-                      className="object-contain"
-                    />
-                  </li>
-                ))}
-              </ul>
-              <p className="mx-auto mt-6 max-w-2xl text-center text-xs leading-relaxed text-faint">
-                Organizations shown reflect prior professional work by Manuj
-                Aggarwal and do not imply endorsement of the ADHD Belief Score,
-                AI Merge, TetraNoodle Technologies, or this offer.
-              </p>
-            </div>
-          </Reveal>
-        </section>
-
-        {/* ============== Block 10 · Participant proof ============== */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-4xl px-5 py-20 sm:px-8 sm:py-28">
-            <Reveal>
-              <ChapterMark>In their words</ChapterMark>
-            </Reveal>
-            <Reveal delay={60}>
-              <h2 className="text-headline mt-5">
-                What Participants Have Noticed Through AI Merge
-              </h2>
-            </Reveal>
-            <Reveal delay={100}>
-              <p className="text-body-lg mt-5 max-w-xl text-muted">
-                Experiences reported by AI Merge participants, in their own
-                words. Tap any clip to listen.
-              </p>
-            </Reveal>
-            <Reveal delay={140}>
-              <div className="mt-10">
-                <TestimonialReel />
-              </div>
-            </Reveal>
-            <ul className="mt-12 grid list-none gap-5 sm:grid-cols-2">
-              {PARTICIPANT_PROOF.map((item, i) => (
-                <Reveal as="li" key={item.name} delay={i * 60}>
-                  <figure className="liftable flex h-full flex-col justify-between rounded-2xl border border-line bg-card p-8">
-                    <blockquote className="text-title">
-                      &ldquo;{item.quote}&rdquo;
-                    </blockquote>
-                    <figcaption className="mt-6 text-sm text-faint">
-                      {item.name} · {item.detail}
-                    </figcaption>
-                  </figure>
-                </Reveal>
-              ))}
-            </ul>
-            <Reveal delay={120}>
-              <p className="mt-8 text-sm leading-relaxed text-faint">
-                Individual experiences vary. These accounts reflect personal
-                experiences with the full AI Merge experience, not the free
-                ADHD Belief Score, and do not guarantee that another
-                participant will experience the same result.
-              </p>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ==== Block 11 · Existing ADHD support and differentiation ==== */}
-        <section className="mx-auto w-full max-w-2xl px-5 py-20 sm:px-8 sm:py-28">
-          <Reveal>
-            <ChapterMark>Keep what helps</ChapterMark>
-          </Reveal>
-          <Reveal delay={60}>
-            <h2 className="text-headline mt-5">
-              This Is Not Another ADHD Productivity System
-            </h2>
-          </Reveal>
-          <div className="text-body-lg mt-9 space-y-4 text-muted">
-            <Reveal>
-              <p>
-                A planner can help you organize the task. A reminder can tell
-                you what is late. Medication may support ADHD symptoms.
-                Coaching may help with structure and follow-through. Therapy
-                may support emotional history, wellbeing, and
-                self-understanding. Accommodations, routines, accountability,
-                and environmental support may all help.
-              </p>
-            </Reveal>
-            <Reveal delay={40}>
-              <p className="text-fg">Keep what helps.</p>
-            </Reveal>
-            <Reveal delay={80}>
-              <p>The ADHD Belief Score examines a different question:</p>
-            </Reveal>
-          </div>
-          <Reveal delay={120}>
-            <p className="text-headline mt-9">
-              <span className="text-emphasis">
-                What has this repeated ADHD moment taught you to believe about
-                yourself?
-              </span>
-            </p>
-          </Reveal>
-          <div className="text-body-lg mt-9 space-y-4 text-muted">
-            <Reveal>
-              <p>
-                It does not claim belief causes ADHD. It does not replace
-                medication, therapy, coaching, diagnosis, or professional care.
-                It examines how the meaning attached to a repeated ADHD
-                experience may influence what happens when that moment appears
-                again.
-              </p>
-            </Reveal>
-            <Reveal delay={60}>
-              <p>
-                Sometimes the next useful step is not another system. It is
-                seeing the belief clearly enough to stop confusing it with your
-                identity.
-              </p>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ===== Block 12 · How it works + essential questions ===== */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto w-full max-w-5xl px-5 py-20 sm:px-8 sm:py-28">
-            <div className="mx-auto max-w-2xl text-center">
-              <Reveal>
-                <ChapterMark>The process</ChapterMark>
-              </Reveal>
-              <Reveal delay={60}>
-                <h2 className="text-headline mt-5">
-                  How the ADHD Belief Score Works
-                </h2>
-              </Reveal>
-            </div>
-
-            <ol className="mt-12 grid list-none gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {HOW_STEPS.map((step, i) => (
-                <Reveal as="li" key={step.title} delay={i * 60}>
-                  <div className="liftable h-full rounded-2xl border border-line bg-card p-7">
-                    <span className="text-eyebrow text-signal">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="text-title mt-3">{step.title}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-muted">
-                      {step.body}
-                    </p>
-                  </div>
-                </Reveal>
-              ))}
-            </ol>
-
-            <Reveal delay={100}>
-              <p className="mx-auto mt-8 max-w-xl text-center text-body-lg text-muted">
-                The ADHD Belief Score is a hypothesis for reflection, not an
-                authority over your experience.
-              </p>
-            </Reveal>
-
-            <Reveal delay={140}>
-              <CtaBlock location="how_it_works" className="mt-10" />
-            </Reveal>
-
-            {/* Essential questions: closed by default, one open at a time
-                (native exclusive accordion via the shared name attribute). */}
-            <div className="mx-auto mt-20 max-w-2xl">
-              <Reveal>
-                <h2 className="text-headline text-center">
-                  Essential Questions
-                </h2>
-              </Reveal>
-              <Reveal delay={80}>
-                <div className="mt-10">
-                  {/* Permanent home of "Not a diagnosis," relocated from the
-                      hero CTA microcopy. */}
-                  <FaqItem question="Is this an ADHD diagnosis?">
-                    <p>
-                      No. The ADHD Belief Score does not determine whether you
-                      have ADHD.
-                    </p>
-                    <p>
-                      It is an educational and reflective tool. It does not
-                      provide diagnosis, medical care, treatment,
-                      psychotherapy, or crisis support.
-                    </p>
-                  </FaqItem>
-
-                  <FaqItem question="Does the ADHD Belief Score claim belief causes ADHD?">
-                    <p>No. ADHD is a real neurodevelopmental condition.</p>
-                    <p>
-                      The ADHD Belief Score examines whether a belief has become
-                      attached to one repeated ADHD experience. It does not
-                      claim that belief causes ADHD or explains every ADHD
-                      difficulty.
-                    </p>
-                  </FaqItem>
-
-                  {/* Permanent home of the non-prediction point, relocated
-                      from the Block 07 example result. */}
-                  <FaqItem question="What if my ADHD Belief Score feels inaccurate?">
-                    <p>
-                      Treat it as a hypothesis. Keep what fits. Correct, refine,
-                      or reject what does not.
-                    </p>
-                    <p>
-                      The example result shown on this page does not predict
-                      what your score will say. Your result is a reflection for
-                      you to examine, refine, accept, or reject.
-                    </p>
-                    <p>
-                      The result is intended to support reflection, not replace
-                      your judgment.
-                    </p>
-                  </FaqItem>
-
-                  <FaqItem question="Is technology deciding what is true about me?">
-                    <p>
-                      No. The technology helps organize patterns in the
-                      information you choose to provide. It does not
-                      independently know your history. It does not define who
-                      you are.
-                    </p>
-                    <p>
-                      The result is a possible interpretation for you to
-                      examine. You remain the authority on what fits.
-                    </p>
-                  </FaqItem>
-
-                  <FaqItem question="What happens with the information I provide?">
-                    {/* TODO(launch): verify against current operating
-                        practice, Privacy Policy, AI and Data Disclosure,
-                        vendor configuration, retention and model-training
-                        policy. */}
-                    <p>
-                      Your answers are used to generate your personalized ADHD
-                      Belief Score. Selected team members may review limited
-                      information for quality assurance, safety, or support,
-                      according to the published Privacy Policy.
-                    </p>
-                    <p>Your information is not sold.</p>
-                  </FaqItem>
-
-                  <FaqItem question="Is the complete ADHD Belief Score really free?">
-                    <p>
-                      Yes. You receive your complete free ADHD Belief Score
-                      before any paid offer is presented. No credit card is
-                      required.
-                    </p>
-                    <p>
-                      Afterward, you may be offered an optional paid next step
-                      designed to help you work with the result more
-                      deliberately. The paid next step is optional.
-                    </p>
-                  </FaqItem>
-
-                  <FaqItem question="View research, privacy, technology, and safety details">
-                      <h3 className="text-title">Research Foundation</h3>
-                      <p>
-                        Research across psychology, learning, expectations,
-                        stress, identity, and performance suggests that beliefs
-                        can influence what people notice, how they interpret
-                        difficulty, what they avoid, how long they persist, and
-                        what outcomes they begin to expect. That does not mean
-                        belief causes ADHD.
-                      </p>
-                      {/* TODO(launch): insert approved research summary,
-                          source register, methodology disclosure, exact
-                          publication wording, and approved use of
-                          "peer-reviewed" if applicable. */}
-                      <p>
-                        The AI Merge methodology combines established
-                        scientific principles with a proprietary interpretive
-                        framework. The ADHD Belief Score should be treated as a
-                        reflective tool unless direct validation research
-                        establishes stronger claims.
-                      </p>
-
-                      <h3 className="text-title">
-                        How Technology Supports the Result
-                      </h3>
-                      <p>
-                        The system uses the information you provide to help
-                        organize what happened, what you did next, what the
-                        repeated moment may have come to mean, what belief may
-                        have formed around it, how the pattern may continue
-                        reinforcing itself, and what a different response could
-                        look like.
-                      </p>
-                      <p>
-                        The system does not diagnose ADHD. It does not
-                        independently access your social media, medical
-                        records, or personal history.
-                      </p>
-
-                      <h3 className="text-title">Safety</h3>
-                      <p>
-                        The ADHD Belief Score is not a medical device, an ADHD
-                        diagnostic test, medical advice, treatment,
-                        psychotherapy, crisis care, an emergency service, or a
-                        replacement for qualified healthcare.
-                      </p>
-                      <p>
-                        Do not begin, stop, or change medication or treatment
-                        based on the ADHD Belief Score.
-                      </p>
-                      <p>
-                        If you are in immediate danger, experiencing a
-                        mental-health emergency, or thinking about harming
-                        yourself or another person, contact local emergency
-                        services or an appropriate crisis-support service
-                        immediately.
-                      </p>
-                  </FaqItem>
-                </div>
-              </Reveal>
-            </div>
-          </div>
-        </section>
-
-        {/* ================= Block 13 · Final CTA ================= */}
-        <section className="border-t border-line">
-          <div className="mx-auto w-full max-w-2xl px-5 py-24 text-center sm:px-8 sm:py-32">
-            <Reveal>
-              <h2 className="text-display">
-                You already know what the ADHD pattern keeps doing.{" "}
-                <span className="text-emphasis">
-                  Now see what it may have taught you to believe.
+                <span className="block font-serif-italic">
+                  You decide who opens it.
                 </span>
               </h2>
             </Reveal>
-            <Reveal delay={80}>
-              <p className="text-body-lg mt-8 text-muted">
-                <span className="font-medium text-fg">
-                  Free, in about 10 minutes:
-                </span>{" "}
-                answer{" "}
-                <span className="font-medium text-fg">5 questions</span> about
-                one repeated ADHD pattern, in your own words &mdash; and
-                instantly receive your{" "}
-                <span className="font-medium text-fg">ADHD Belief Score</span>:
+            <Reveal delay={100}>
+              <p className="text-body-lg mx-auto mt-6 max-w-[46ch] text-muted">
+                Five questions, your own words, your score immediately.
               </p>
             </Reveal>
-            <Reveal delay={120}>
-              <ul className="mx-auto mt-8 grid max-w-xl list-none gap-3 text-left">
-                {FINAL_DELIVERABLES.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <span className="list-dot mt-2.5 shrink-0" aria-hidden />
-                    <span className="text-body-lg text-muted">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
             <Reveal delay={160}>
-              <CtaBlock location="final" className="mt-10" />
+              <CtaBlock
+                location="final"
+                label="Get My Free ADHD Belief Score"
+                labelShort="Get My Free Score"
+                align="center"
+                className="mt-9"
+              />
             </Reveal>
             <Reveal delay={220}>
-              <p className="mx-auto mt-10 max-w-md text-sm leading-relaxed text-faint">
-                Your result is a starting point for reflection. Not a final
-                statement about who you are.
+              <p className="mt-8 text-sm text-faint">
+                Your result is a personalised hypothesis. You decide what fits.
               </p>
             </Reveal>
           </div>
         </section>
       </main>
-      {/* Block 14 lives in SiteFooter. */}
+
       <SiteFooter />
-      <MobileStickyCta />
     </>
+  );
+}
+
+/** The teal tick used by the hero checklist, the ledger and the scope card. */
+function CheckDot() {
+  return (
+    <span
+      aria-hidden
+      className="mt-1.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-accent-soft"
+    >
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path
+          d="M1.5 5.2L3.8 7.5L8.5 2.5"
+          stroke="var(--signal)"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
   );
 }
