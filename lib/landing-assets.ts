@@ -17,52 +17,73 @@ export type LandingImage = {
 
 /** Section 07 · "The ten minutes" — the five screens, in order. */
 export type WalkthroughFrame = LandingImage & {
-  /** Step label, e.g. "01 · Who this is for". */
-  step: string;
-  /** Right-hand micro-label, e.g. "30 seconds". */
-  note: string;
+  /** Two-digit step number shown in the tablist. */
+  n: string;
+  /** Step title. */
+  title: string;
+  /** Duration / kind, e.g. "30 seconds". */
+  meta: string;
+  /** Caption clause 1 — what the visitor actually does on this screen. */
+  what: string;
+  /** Caption clause 2 — why it is worth doing. */
+  why: string;
 };
 
 export const WALKTHROUGH_FRAMES: WalkthroughFrame[] = [
   {
-    step: "01 · Who this is for",
-    note: "30 seconds",
+    n: "01",
+    title: "Tell us who this is for",
+    meta: "30 seconds",
     src: "/take/audience.png",
-    alt: "The entry screen: a short form for your first name and email, then a choice between an individual or an organisation reading.",
     width: 1880,
     height: 892,
+    alt: "The entry screen: a short form for your first name and email, then a choice between an individual or an organisation reading.",
+    what: "Your first name and the email your result is sent to.",
+    why: "Your answers stay private and the score is yours to keep. Free, with no credit card.",
   },
   {
-    step: "02 · Pick one moment",
-    note: "In your own words",
+    n: "02",
+    title: "Pick one moment",
+    meta: "In your own words",
     src: "/take/question.png",
-    alt: "The first question: pick one ADHD moment that keeps repeating and describe the last real time it happened.",
     width: 1888,
     height: 906,
+    alt: "The first question: pick one ADHD moment that keeps repeating and describe the last real time it happened.",
+    what: "Five open questions about one repeated moment, in your own words.",
+    why: "There is nothing to study and no right answer. Messy answers are genuinely fine.",
   },
   {
-    step: "03 · Watch it reflect back",
-    note: "As you go",
+    n: "03",
+    title: "Watch it reflect back",
+    meta: "As you go",
     src: "/take/beat.png",
-    alt: "A reflection screen partway through: the moment you described is read back to you in composed language.",
     width: 1879,
     height: 891,
+    alt: "A reflection screen partway through: the moment you described is read back to you in composed language.",
+    what: "Between questions, what you described is read back to you in plain language.",
+    why: "This is where most people feel seen: language for what they knew but had not named.",
   },
   {
-    step: "04 · Receive your score",
-    note: "Instant",
+    n: "04",
+    title: "Receive your score",
+    meta: "Instant",
     src: "/take/reportsummary.png",
-    alt: "The result screen: a Belief Score out of 100 with the four dimensions listed beneath it and a peer benchmark.",
     width: 1792,
     height: 815,
+    alt: "The result screen: a Belief Score out of 100 with the four dimensions listed beneath it and a peer benchmark.",
+    what: "Your ADHD Belief Score across four dimensions, and the pattern underneath it.",
+    why: "A precise, honest score. Not a label, and not a diagnosis.",
   },
   {
-    step: "05 · Go deeper, if you choose",
-    note: "Optional",
+    n: "05",
+    title: "Go deeper, if you choose",
+    meta: "Optional",
     src: "/take/reportpdf.png",
-    alt: "Page one of the written Action Plan: the score, the pattern named, and each dimension with a written reading.",
     width: 988,
     height: 769,
+    alt: "Page one of the written Action Plan: the score, the pattern named, and each dimension with a written reading.",
+    what: "A full written breakdown built around your exact answers.",
+    why: "What the pattern means, where the loop starts, and what shifts when it lifts.",
   },
 ];
 

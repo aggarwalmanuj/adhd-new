@@ -15,16 +15,24 @@
 /* ---------------------------------------------------------------------------
    01 · The week chart
 
-   Redrawn from the spec's flat polyline. What the original could not show is
-   WHY the shape matters, so this version adds: a shaded "there is still time"
-   band under the flat stretch, a real gridded baseline, the deadline as a
-   vertical event rather than an unlabelled gap, and the spike rendered as an
-   area so the eye reads volume-of-effort, not just a peak.
+   The argument is the CONTRAST: four dead-flat days against one vertical
+   night. The spec's plain polyline showed the shape but not the claim, so the
+   flat stretch is now bracketed and labelled ("four days of 'there's still
+   time'") rather than left as empty space, the deadline is an explicit event,
+   the spike is an area so the eye reads volume-of-effort rather than a peak,
+   and the point is stated once under the axis.
 --------------------------------------------------------------------------- */
 export function WeekChart() {
+  // Days laid out on a shared grid so the axis labels, the plot points and the
+  // annotation callouts all derive from one set of x-positions. Hand-placing
+  // them is what let the first version's labels drift off their own points.
+  const X = { mon: 70, tue: 190, wed: 310, thu: 430, night: 560, fri: 660 };
+  const BASE = 214; // y of the axis
+  const TOP = 46; // y of the peak
+
   return (
     <svg
-      viewBox="0 0 700 260"
+      viewBox="0 0 700 290"
       role="img"
       aria-labelledby="week-chart-title"
       className="w-full h-auto"
@@ -36,118 +44,129 @@ export function WeekChart() {
       </title>
 
       <defs>
-        {/* The spike's volume. Fades out downward so it reads as effort
-            accumulating rather than as a solid filled shape. */}
+        {/* The spike's volume. Fades downward so it reads as effort
+            accumulating, not as a solid filled shape. */}
         <linearGradient id="week-spike" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--pillar-4)" stopOpacity="0.45" />
+          <stop offset="0%" stopColor="var(--pillar-4)" stopOpacity="0.5" />
           <stop offset="100%" stopColor="var(--pillar-4)" stopOpacity="0" />
-        </linearGradient>
-        {/* The flat stretch: the same dead calm, in the dimension colour for
-            Decision Readiness, because that is precisely what is missing. */}
-        <linearGradient id="week-flat" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--pillar-3)" stopOpacity="0.16" />
-          <stop offset="100%" stopColor="var(--pillar-3)" stopOpacity="0" />
         </linearGradient>
       </defs>
 
-      {/* gridlines */}
-      <g stroke="var(--border)" strokeWidth="1">
-        <line x1="40" y1="200" x2="670" y2="200" />
-        <line x1="40" y1="140" x2="670" y2="140" strokeDasharray="3 7" opacity="0.5" />
-        <line x1="40" y1="80" x2="670" y2="80" strokeDasharray="3 7" opacity="0.5" />
-      </g>
+      {/* THE ARGUMENT OF THIS DRAWING is the contrast between a four-day dead
+          flat stretch and one vertical night, so the flat stretch is drawn as
+          a labelled span rather than left as empty space. */}
 
-      {/* the long flat stretch, shaded */}
+      {/* the dead-flat span, bracketed */}
+      <g stroke="var(--border)" strokeWidth="1.5" fill="none">
+        <path d={`M${X.mon} 130 L${X.mon} 122 L${X.thu} 122 L${X.thu} 130`} />
+      </g>
+      <text
+        x={(X.mon + X.thu) / 2}
+        y="112"
+        textAnchor="middle"
+        fontSize="13"
+        fill="var(--muted-foreground)"
+        fontFamily="var(--font-sans)"
+      >
+        four days of “there’s still time”
+      </text>
+
+      {/* baseline */}
+      <line x1="40" y1={BASE} x2="680" y2={BASE} stroke="var(--border)" strokeWidth="1" />
+
+      {/* the spike's area */}
       <path
-        d="M40 194 L170 192 L300 195 L420 189 L490 187 L490 200 L40 200 Z"
-        fill="url(#week-flat)"
-      />
-      {/* the spike's volume */}
-      <path
-        d="M490 187 L540 60 L580 38 L620 186 L620 200 L490 200 Z"
+        d={`M${X.thu} ${BASE - 20} L${X.night - 20} ${TOP + 22} L${X.night} ${TOP} L${X.night + 40} ${BASE - 24} L${X.night + 40} ${BASE} L${X.thu} ${BASE} Z`}
         fill="url(#week-spike)"
       />
 
       {/* the deadline, as an event */}
       <line
-        x1="620"
-        y1="30"
-        x2="620"
-        y2="200"
+        x1={X.night + 40}
+        y1={TOP - 10}
+        x2={X.night + 40}
+        y2={BASE}
         stroke="var(--muted-foreground)"
         strokeWidth="1.5"
         strokeDasharray="4 5"
-        opacity="0.75"
+        opacity="0.7"
       />
       <text
-        x="626"
-        y="28"
-        fontSize="12"
+        x={X.night + 46}
+        y={TOP - 14}
+        fontSize="12.5"
         fill="var(--muted-foreground)"
         fontFamily="var(--font-sans)"
       >
         due
       </text>
 
-      {/* the line itself — this is the path that draws on scroll */}
+      {/* the line itself — draws on scroll */}
       <path
         className="draw-path"
         data-anim="draw"
         style={{ "--draw-len": 1400 } as React.CSSProperties}
-        d="M40 194 L170 192 L300 195 L420 189 L490 187 L540 60 L580 38 L620 186 L670 194"
+        d={`M${X.mon} ${BASE - 8} L${X.tue} ${BASE - 10} L${X.wed} ${BASE - 7} L${X.thu} ${BASE - 20} L${X.night - 20} ${TOP + 22} L${X.night} ${TOP} L${X.night + 40} ${BASE - 24} L${X.fri} ${BASE - 12}`}
         fill="none"
         stroke="var(--ink)"
-        strokeWidth="2.6"
+        strokeWidth="3"
         strokeLinejoin="round"
         strokeLinecap="round"
       />
 
-      {/* the 11pm peak */}
+      {/* flat-stretch dots: small, muted — nothing happened here */}
+      {[X.mon, X.tue, X.wed].map((x) => (
+        <circle key={x} cx={x} cy={BASE - 8} r="4" fill="var(--muted-foreground)" />
+      ))}
+
+      {/* the 11pm peak — the one moment the whole week collapses into */}
+      <circle cx={X.night} cy={TOP} r="16" fill="var(--pillar-4)" opacity="0.15" />
       <circle
-        cx="580"
-        cy="38"
-        r="5.5"
+        cx={X.night}
+        cy={TOP}
+        r="6.5"
         fill="var(--pillar-4)"
         stroke="var(--background)"
         strokeWidth="2.5"
       />
       <text
-        x="580"
-        y="24"
+        x={X.night}
+        y={TOP - 26}
         textAnchor="middle"
-        fontSize="13"
+        fontSize="17"
         fill="var(--ink)"
         fontFamily="var(--font-serif)"
       >
         11pm
       </text>
 
-      {/* the sentence that lives in the flat stretch */}
-      <text
-        x="52"
-        y="176"
-        fontSize="12.5"
-        fill="var(--muted-foreground)"
-        fontFamily="var(--font-sans)"
-        fontStyle="italic"
-      >
-        “There’s still time.”
-      </text>
-
       {/* day axis */}
       <g
-        fontSize="12"
+        fontSize="12.5"
         fill="var(--muted-foreground)"
         textAnchor="middle"
         fontFamily="var(--font-sans)"
       >
-        <text x="70" y="226">Mon</text>
-        <text x="200" y="226">Tue</text>
-        <text x="330" y="226">Wed</text>
-        <text x="450" y="226">Thu</text>
-        <text x="570" y="226">Thu night</text>
-        <text x="662" y="226">Fri</text>
+        <text x={X.mon} y={BASE + 26}>Mon</text>
+        <text x={X.tue} y={BASE + 26}>Tue</text>
+        <text x={X.wed} y={BASE + 26}>Wed</text>
+        <text x={X.thu} y={BASE + 26}>Thu</text>
+        <text x={X.night} y={BASE + 26} fill="var(--ink)">Thu night</text>
+        <text x={X.fri} y={BASE + 26}>Fri</text>
       </g>
+
+      {/* the whole point, stated once under the axis */}
+      <text
+        x="350"
+        y={BASE + 62}
+        textAnchor="middle"
+        fontSize="14"
+        fontStyle="italic"
+        fill="var(--muted-foreground)"
+        fontFamily="var(--font-sans)"
+      >
+        Same week. Same person. One night doing all of it.
+      </text>
     </svg>
   );
 }
@@ -253,19 +272,31 @@ export function LoopDiagram() {
           d={arc(a, b)}
           fill="none"
           stroke="var(--signal)"
-          strokeWidth="2.25"
-          opacity="0.6"
+          strokeWidth="3"
+          opacity="0.65"
           markerEnd="url(#loop-arrow)"
         />
       ))}
-      {/* THE arc that repeats — heavier, warmer, unmissable. This is the
-          "urgency takes the credit" return leg, and the whole point of the
-          section is that it is the step that keeps the loop alive. */}
+
+      {/* THE arc that repeats. Drawn twice: a wide, low-alpha glow underneath
+          and the stroke on top, so it reads as the lit path around a dim ring
+          without resorting to an SVG filter (which would cost a raster layer
+          on a page whose whole problem is mobile paint cost). This is the
+          "urgency takes the credit" return leg — the step the section exists
+          to name — so it is the one thing on the drawing that glows. */}
       <path
         d={arc(270, 360)}
         fill="none"
         stroke="var(--pillar-4)"
-        strokeWidth="4"
+        strokeWidth="14"
+        opacity="0.16"
+        strokeLinecap="round"
+      />
+      <path
+        d={arc(270, 360)}
+        fill="none"
+        stroke="var(--pillar-4)"
+        strokeWidth="5.5"
         markerEnd="url(#loop-arrow-hot)"
       />
 

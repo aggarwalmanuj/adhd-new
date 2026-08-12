@@ -12,15 +12,13 @@ import { MomentPicker } from "@/components/landing/moment-picker";
 import { Reveal } from "@/components/landing/reveal";
 import { ScrollChrome } from "@/components/landing/scroll-chrome";
 import { ScrollEffects } from "@/components/landing/scroll-effects";
+import { Walkthrough } from "@/components/landing/walkthrough";
+import { WordsToMap } from "@/components/landing/words-to-map";
 import { LandingAnalytics } from "@/components/landing-analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { VslPlayer } from "@/components/vsl-player";
-import {
-  CRED_LOGOS,
-  FOUNDER_PHOTO,
-  WALKTHROUGH_FRAMES,
-} from "@/lib/landing-assets";
+import { CRED_LOGOS, FOUNDER_PHOTO } from "@/lib/landing-assets";
 
 /* ==========================================================================
    ADHD Belief Score landing page.
@@ -180,29 +178,6 @@ const LOOP_STEPS = [
     title: "You deliver — and the wrong thing gets the credit",
     body: "The work is done, so your mind files the receipt under pressure worked. Not I worked.",
     tag: "This is the step that repeats",
-  },
-];
-
-const LADDER = [
-  {
-    title: "The repeated moment",
-    body: "Important work stays untouched until the pressure becomes intense.",
-  },
-  {
-    title: "A possible belief underneath",
-    body: "“I cannot rely on myself without an emergency.”",
-  },
-  {
-    title: "How it keeps proving itself",
-    flow: ["waiting", "pressure", "intense action", "completion", "pressure gets the credit"],
-  },
-  {
-    title: "The moment to watch",
-    body: "The first time attention leaves the task while there still appears to be plenty of time.",
-  },
-  {
-    title: "The next evidence",
-    body: "One meaningful step completed before urgency takes over. Small enough to actually happen.",
   },
 ];
 
@@ -677,59 +652,7 @@ export default function Home() {
 
           <ChapterRule />
 
-          <div className="grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-16">
-            <Reveal className="min-w-0 lg:col-span-5">
-              <figure className="rounded-xl border border-line bg-bg p-6 shadow-[var(--elev-2)] lg:sticky lg:top-24">
-                <figcaption className="text-eyebrow mb-4">
-                  What someone typed
-                </figcaption>
-                <blockquote className="text-title">
-                  “I keep putting off important work even when I know exactly
-                  what to do. Once the deadline is close, I suddenly become
-                  productive.”
-                </blockquote>
-                <p className="mt-5 text-sm italic text-faint">
-                  Question 1 of 5 · answered in about 40 seconds
-                </p>
-                <p className="mt-4 border-t border-dashed border-line pt-4 font-mono text-xs text-faint">
-                  5 questions · ~10 min · answers stay private
-                </p>
-              </figure>
-            </Reveal>
-
-            <ol className="min-w-0 list-none lg:col-span-7">
-              {LADDER.map((step, i) => (
-                <Reveal
-                  as="li"
-                  key={step.title}
-                  delay={i * 60}
-                  className="grid grid-cols-[2.5rem_1fr] gap-x-4 border-b border-line py-5 last:border-b-0"
-                >
-                  <span className="font-serif text-sm text-signal" aria-hidden>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <h3 className="text-eyebrow text-signal">{step.title}</h3>
-                    {step.body && (
-                      <p className="text-body-lg mt-2 text-fg">{step.body}</p>
-                    )}
-                    {step.flow && (
-                      <p className="mt-2 font-mono text-sm leading-loose text-muted">
-                        {step.flow.map((f, j) => (
-                          <span key={f}>
-                            {f}
-                            {j < step.flow.length - 1 && (
-                              <span className="text-signal"> → </span>
-                            )}
-                          </span>
-                        ))}
-                      </p>
-                    )}
-                  </div>
-                </Reveal>
-              ))}
-            </ol>
-          </div>
+          <WordsToMap />
 
           <Reveal>
             <CtaBlock
@@ -856,60 +779,10 @@ export default function Home() {
 
           <ChapterRule />
 
-          {/* The five screens, each in browser chrome. The 3/4 cover-crop the
-              previous version used was the bug in the screenshot: these are
-              WIDE captures (roughly 2:1), so cropping them to portrait threw
-              away most of every screen. They are letterboxed at their real
-              aspect ratio inside a window frame instead — which is also how
-              Parents presents the same five steps. */}
           <Reveal delay={150}>
-            <ol className="reel-scroller -mx-5 flex snap-x snap-mandatory list-none gap-5 overflow-x-auto px-5 pb-4 sm:-mx-10 sm:px-10 lg:mx-0 lg:grid lg:grid-cols-2 lg:gap-8 lg:overflow-visible lg:px-0">
-              {WALKTHROUGH_FRAMES.map((frame, i) => (
-                <li
-                  key={frame.src}
-                  className={`w-[86%] shrink-0 snap-center sm:w-[70%] lg:w-auto ${
-                    // Five items in a 2-up grid: the last one spans both
-                    // columns rather than leaving a hole beside it.
-                    i === WALKTHROUGH_FRAMES.length - 1 ? "lg:col-span-2" : ""
-                  }`}
-                >
-                  <figure className="mac-window">
-                    <div className="mac-bar">
-                      <span className="flex gap-1.5" aria-hidden>
-                        <span className="mac-dot" />
-                        <span className="mac-dot" />
-                        <span className="mac-dot" />
-                      </span>
-                      <span
-                        className="ml-1 hidden truncate rounded-full bg-bg/60 px-3 py-1 text-[11px] tracking-wide text-faint sm:inline-block"
-                        aria-hidden
-                      >
-                        aimerge.live / your-score
-                      </span>
-                    </div>
-                    <Image
-                      src={frame.src}
-                      alt={frame.alt}
-                      width={frame.width}
-                      height={frame.height}
-                      // Every frame is below the fold; none is ever the LCP.
-                      loading="lazy"
-                      sizes="(min-width: 1024px) 46vw, 86vw"
-                      className="w-full bg-bg object-contain"
-                    />
-                    <figcaption className="flex items-baseline justify-between gap-4 border-t border-line px-5 py-4">
-                      <b className="text-title font-serif font-normal">
-                        {frame.step}
-                      </b>
-                      <span className="shrink-0 text-sm text-faint">
-                        {frame.note}
-                      </span>
-                    </figcaption>
-                  </figure>
-                </li>
-              ))}
-            </ol>
+            <Walkthrough />
           </Reveal>
+
           <p className="mt-4 text-sm text-faint">
             Illustrative — yours is built from your own words.
           </p>
@@ -1100,28 +973,41 @@ export default function Home() {
             the same result.
           </p>
 
-          <Reveal>
-            <ul className="mt-9 flex list-none flex-wrap items-center gap-x-8 gap-y-5 opacity-60">
-              {CRED_LOGOS.map((logo) => (
-                <li key={logo.src}>
-                  <Image
-                    src={logo.src}
-                    alt={logo.alt}
-                    width={logo.width}
-                    height={logo.height}
-                    loading="lazy"
-                    sizes="120px"
-                    className="brand-logo h-5 w-auto brightness-0 invert"
-                  />
-                </li>
-              ))}
-            </ul>
+          {/* Logo strip — same treatment as Parents: a bordered block with an
+              eyebrow, a 2-up/5-up grid, and grayscale logos that come to full
+              colour on hover. `fill` inside a fixed-height cell is what keeps
+              five logos of wildly different aspect ratios optically level;
+              the previous flat `h-5` row made the UN roundel tiny and IBM huge. */}
+          <Reveal delay={300}>
+            <div className="mt-16 border-t border-line pt-10">
+              <p className="eyebrow mb-8 text-center">Prior professional work</p>
+              <ul className="grid list-none grid-cols-2 items-center justify-items-center gap-x-10 gap-y-8 sm:grid-cols-5 sm:gap-x-12">
+                {CRED_LOGOS.map((logo) => (
+                  <li key={logo.src} className="relative h-7 w-full">
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt}
+                      fill
+                      loading="lazy"
+                      sizes="(min-width: 640px) 120px, 100px"
+                      // These are DARK-inked logos on transparent PNGs, so
+                      // Parents' plain `grayscale` leaves them almost invisible
+                      // on the navy ground. `brightness-0 invert` flattens each
+                      // to pure white first, then opacity does the recessing —
+                      // same visual weight as Parents, but legible here.
+                      className="object-contain opacity-55 brightness-0 invert transition-opacity duration-700 hover:opacity-90"
+                    />
+                  </li>
+                ))}
+              </ul>
+              {/* Mandatory whenever the strip is shown. */}
+              <p className="mx-auto mt-8 max-w-3xl text-center text-xs leading-relaxed text-faint">
+                Organizations shown reflect prior professional work by Manuj
+                Aggarwal and do not imply endorsement of the ADHD Belief Score,
+                AI Merge, TetraNoodle Technologies, or this offer.
+              </p>
+            </div>
           </Reveal>
-          <p className="mt-4 max-w-[76ch] text-xs leading-relaxed text-faint">
-            Organizations shown reflect prior professional work by Manuj
-            Aggarwal and do not imply endorsement of the ADHD Belief Score, AI
-            Merge, TetraNoodle Technologies, or this offer.
-          </p>
         </Section>
 
         {/* ==================== 10 · BEFORE YOU START ==================== */}

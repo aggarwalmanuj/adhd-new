@@ -181,6 +181,9 @@ body {
   line-height: 1.78;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  /* Mirror the html clip so no decorative bleed can produce a horizontal
+     scrollbar on any device. Matches Parents. */
+  overflow-x: clip;
 }
 
 /* Never let a form control render below 16px: iOS auto-zooms the viewport on
@@ -619,7 +622,9 @@ select {
      top of the section and only its upper falloff reached the type. */
   top: -8rem;
   height: 860px;
-  width: min(900px, 150vw);
+  /* Capped at 100vw so this decorative orb never adds document width on narrow
+     phones (150vw pushed ~98px past each edge at 390px). Matches Parents. */
+  width: min(900px, 100vw);
   transform: translateX(-50%);
   border-radius: 9999px;
   background: rgb(var(--glow) / .05);
@@ -1179,6 +1184,79 @@ select {
   .js-anim .meter-fill {
     width: var(--meter-w);
     transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Walkthrough (section 07). Ported from Parents.
+--------------------------------------------------------------------------- */
+
+/* Every slide shares ONE grid cell, so switching between captures of
+   different native ratios never reflows the page — and no slide is cropped. */
+.wt-stage {
+  display: grid;
+}
+.wt-stage > * {
+  grid-area: 1 / 1;
+}
+
+/* Story-style progress segments in the window chrome. */
+.wt-seg-bar {
+  transform-origin: left;
+  transform: scaleX(0);
+}
+.wt-seg-done {
+  transform: scaleX(1);
+}
+.wt-seg-fill {
+  animation: wt-seg 6500ms linear both;
+}
+@keyframes wt-seg {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* Seats the screenshot into the frame instead of letting it sit on top. */
+.wt-vignette {
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--shadow-ink), 0.04),
+    inset 0 -36px 60px -40px rgba(var(--shadow-ink), 0.55);
+}
+
+/* Editorial list row: the number shifts and a rule draws out on hover. Used by
+   the walkthrough tablist and the ladder in section 05. */
+.row-interactive {
+  transition: padding-left var(--dur-med) var(--ease-out);
+}
+.row-interactive:hover {
+  padding-left: 0.5rem;
+}
+.row-interactive .row-num {
+  transition:
+    color var(--dur-med) var(--ease-out),
+    transform var(--dur-med) var(--ease-out);
+}
+.row-interactive:hover .row-num {
+  color: var(--ink);
+  transform: translateX(4px);
+}
+.row-interactive .row-mark {
+  width: 0;
+  height: 1px;
+  background: var(--signal);
+  display: inline-block;
+  transition: width var(--dur-slow) var(--ease-out);
+}
+.row-interactive:hover .row-mark,
+.row-interactive[aria-selected="true"] .row-mark {
+  width: 2.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wt-seg-fill {
+    animation: none;
+    transform: scaleX(1);
   }
 }
 
