@@ -87,6 +87,92 @@ export const WALKTHROUGH_FRAMES: WalkthroughFrame[] = [
   },
 ];
 
+/* ---------------------------------------------------------------------------
+   PHOTOGRAPHY (spec v4)
+
+   Each slot is either a real file or `null`. A null slot renders a styled,
+   labelled placeholder frame at the correct aspect ratio — the layout is
+   final either way, so dropping a file in later changes nothing but the
+   picture. To fill one: add the file to /public/images/ and replace `null`
+   with { src, alt, width, height }.
+
+   Three slots are deliberately EMPTY rather than filled from the existing
+   library, because the available photo contradicts the copy it sits under.
+   Each carries a `needs` note describing the shot to source. Using a
+   stressed-man stock photo under a line about calm mornings would undercut
+   the sentence it is meant to support.
+--------------------------------------------------------------------------- */
+
+export type PhotoSlot =
+  | (LandingImage & { needs?: never })
+  /** Not yet supplied — renders a placeholder. `needs` is the shot brief. */
+  | { src: null; needs: string; alt: string };
+
+/** 01 · beside the week chart. */
+export const PHOTO_WEEK: PhotoSlot = {
+  src: "/images/Week.jpg",
+  alt: "Someone at a desk, head in hand, the work still open in front of them.",
+  width: 941,
+  height: 1412,
+};
+
+/** 02 · left panel, "the version you are living". */
+export const PHOTO_LIVING: PhotoSlot = {
+  src: "/images/Looking.avif",
+  alt: "Turned away from the desk toward a window, coffee going cold.",
+  width: 6000,
+  height: 4000,
+};
+
+/** 02 · right panel, "the version you want".
+ *  Meeting.jpg was rejected: it is a business meeting, and this caption is
+ *  about having your EVENING back, not about another work conversation. */
+export const PHOTO_WANTED: PhotoSlot = {
+  src: null,
+  needs:
+    "Daylight, laptop closed or out of frame — someone genuinely off the clock. A walk, a meal, time with someone. Landscape 4:3. Must read as personal time, not a workplace.",
+  alt: "Daylight, laptop closed, present with other people.",
+};
+
+/** 04 · full-bleed breather background.
+ *  HeroSection.jpg was rejected: it is a man rubbing his eyes in distress, and
+ *  this section is the one calm beat on the page. */
+export const PHOTO_BREATHER: PhotoSlot = {
+  src: null,
+  needs:
+    "Morning light on a quiet, uncluttered desk — no person, or a person at ease. Wide landscape (≥1900px) since it runs full-bleed behind text. Calm and unhurried, the opposite of deadline pressure.",
+  alt: "Morning light on a quiet desk, the day not yet decided.",
+};
+
+/** Closing · full-bleed background.
+ *  Hero.jpg was rejected for the same reason: it shows despair, and the
+ *  closing line is about agency. */
+export const PHOTO_CLOSING: PhotoSlot = {
+  src: null,
+  needs:
+    "A workspace at the START of a day — open notebook, first light, nothing begun yet. Wide landscape (≥1900px). Should feel like possibility, not exhaustion.",
+  alt: "A workspace at the start of the day.",
+};
+
+/**
+ * Section 09 · the testimonial reel. Posters only; clips load on demand.
+ *
+ * TODO(names): the spec labelled clips 1 and 2 as "Nick H." and "Oliver", but
+ * those names do not match the people in the actual files (clip-1 is a woman;
+ * clip-4 captions itself "Lee Killingsworth"). Attributing a real testimonial
+ * to the wrong person is not a cosmetic error, so every clip is labelled
+ * neutrally until someone who knows the recordings supplies the right names.
+ * Several clips caption their own speaker on screen, which is a good source.
+ */
+export const TESTIMONIAL_CLIPS = [
+  { poster: "/video/testimonials/posters/clip-1.jpg", src: "/video/testimonials/clip-1.mp4", label: "AI Merge participant" },
+  { poster: "/video/testimonials/posters/clip-2.jpg", src: "/video/testimonials/clip-2.mp4", label: "AI Merge participant" },
+  { poster: "/video/testimonials/posters/clip-3.jpg", src: "/video/testimonials/clip-3.mp4", label: "AI Merge participant" },
+  { poster: "/video/testimonials/posters/clip-4.jpg", src: "/video/testimonials/clip-4.mp4", label: "AI Merge participant" },
+  { poster: "/video/testimonials/posters/clip-5.jpg", src: "/video/testimonials/clip-5.mp4", label: "AI Merge participant" },
+  { poster: "/video/testimonials/posters/clip-6.jpg", src: "/video/testimonials/clip-6.mp4", label: "AI Merge participant" },
+] as const;
+
 /** Section 09 · founder portrait. */
 export const FOUNDER_PHOTO: LandingImage = {
   src: "/manuj/closeup.jpg",

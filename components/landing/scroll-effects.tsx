@@ -75,6 +75,44 @@ export function ScrollEffects() {
               playGauge(el, reduce);
               break;
 
+            // Section 01: the week columns grow from the axis, staggered so
+            // the eye travels Monday→Friday and lands on the Thursday spike.
+            case "bars":
+              el.querySelectorAll<HTMLElement>(".bar-fill").forEach((b, i) => {
+                window.setTimeout(() => b.classList.add("is-grown"), i * 110);
+              });
+              el.querySelectorAll<HTMLElement>(".bar-cap").forEach((c) =>
+                c.classList.add("is-grown")
+              );
+              break;
+
+            // Section 06: the marker fades onto the curve and the score
+            // counts up beside it.
+            case "curve":
+              el.querySelector(".curve-marker")?.classList.add("is-shown");
+              countUp(
+                el.querySelector<HTMLElement>(".curve-number"),
+                GAUGE_TARGET,
+                reduce
+              );
+              break;
+
+            // Section 06: the radar polygon grows out from the centre.
+            case "radar": {
+              const petal = el.querySelector<SVGPolygonElement>(".radar-petal");
+              if (!petal) break;
+              const final = petal.getAttribute("points") ?? "";
+              if (reduce) break;
+              // Collapse to the centre, then release on the next frame so the
+              // CSS transition has two distinct values to animate between.
+              const c = 170;
+              petal.setAttribute("points", `${c},${c} ${c},${c} ${c},${c} ${c},${c}`);
+              requestAnimationFrame(() =>
+                requestAnimationFrame(() => petal.setAttribute("points", final))
+              );
+              break;
+            }
+
             default:
               // Plain scroll reveal.
               el.classList.add("is-visible");
@@ -116,20 +154,30 @@ function playGauge(wrap: HTMLElement, reduce: boolean) {
     arc.style.strokeDashoffset = String(len - (len * GAUGE_TARGET) / 100);
   }
 
-  if (!num) return;
+  countUp(num, GAUGE_TARGET, reduce);
+}
+
+/**
+ * Count an element's text up to `target`.
+ *
+ * Cubic ease-out so it decelerates into the final number rather than ticking
+ * linearly and stopping dead. Under reduced motion the number is simply set.
+ */
+function countUp(
+  el: Element | null,
+  target: number,
+  reduce: boolean,
+  durationMs = 1400
+) {
+  if (!el) return;
   if (reduce) {
-    num.textContent = String(GAUGE_TARGET);
+    el.textContent = String(target);
     return;
   }
-
-  // Cubic ease-out on the count so it decelerates into the final number
-  // rather than ticking linearly and stopping dead.
   const start = performance.now();
   const step = (now: number) => {
-    const p = Math.min((now - start) / 1400, 1);
-    num.textContent = String(
-      Math.round(GAUGE_TARGET * (1 - Math.pow(1 - p, 3)))
-    );
+    const p = Math.min((now - start) / durationMs, 1);
+    el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
     if (p < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);

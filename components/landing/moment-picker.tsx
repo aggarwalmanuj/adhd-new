@@ -1,46 +1,48 @@
 "use client";
 
-// Section 01's "Which one sounds most like you?" picker.
+// Section 01 · "Which one sounds most like you?"
 //
-// The only genuinely stateful block on the page, so it is the only section
-// below the hero that ships as a client component.
+// v4 upgrade: picking an option no longer just prints a sentence — it renders
+// a small mock of the FIRST PAGE OF A RESULT, with the repeated moment and the
+// belief filled in from the choice and the rest of the card blurred out. That
+// turns an inert copy block into the cheapest possible demonstration of the
+// product, immediately before the CTA that asks for ten minutes.
 //
-// Accessibility: these are real <button>s in a group, each carrying
-// aria-pressed, so keyboard and screen-reader users get the toggle semantics
-// for free — no roving tabindex or key handlers to reimplement badly. The
-// answer panel is aria-live so a screen-reader user hears the response without
-// having to go looking for it.
+// Accessibility: real <button>s carrying aria-pressed, so keyboard and screen
+// reader users get toggle semantics with no custom key handling. The preview
+// is aria-live so the result is announced rather than silently painted.
 
 import { useState } from "react";
-import { ScorecardCta } from "@/components/scorecard-cta";
 import { CtaMicrocopy } from "@/components/landing/cta-block";
+import { ScorecardCta } from "@/components/scorecard-cta";
 
 const OPTIONS = [
   {
     key: "Option A",
     quote: "The thing that matters most is the thing I open last.",
-    answer:
-      "Then your score starts exactly there. Not with your whole life — with the one thing you keep opening last, and what leaving it has quietly come to mean about you.",
+    moment: "Important work stays untouched until the pressure becomes intense.",
+    belief: "“I cannot rely on myself without an emergency.”",
   },
   {
     key: "Option B",
     quote: "I do brilliant work, but only when it is almost too late.",
-    answer:
-      "Then the question is not whether you can do the work. You clearly can. It is what the rescue keeps teaching you about when you are allowed to trust yourself.",
+    moment: "Good work arrives, but only once the deadline makes it unavoidable.",
+    belief: "“The rescue is the only version of me that can be trusted.”",
   },
   {
     key: "Option C",
     quote: "I start strong. Day four is where it dies.",
-    answer:
-      "Then your score looks at day four: the exact moment a new system stops feeling like yours, and the conclusion you quietly draw about yourself when it does.",
+    moment: "A new system holds for three days, then quietly stops being yours.",
+    belief: "“Starting is easy for me. Staying is not.”",
   },
 ] as const;
 
 export function MomentPicker() {
   const [picked, setPicked] = useState<number | null>(null);
+  const choice = picked === null ? null : OPTIONS[picked];
 
   return (
-    <div className="rounded-2xl border border-line bg-surface p-6 shadow-[var(--elev-2)] sm:p-10">
+    <div className="rounded-2xl border border-line bg-surface p-6 shadow-[var(--elev-1)] sm:p-10">
       <h3 className="text-headline" id="picker-heading">
         Which one sounds most like you?
       </h3>
@@ -64,7 +66,7 @@ export function MomentPicker() {
               className={`pressable rounded-xl border p-5 text-left transition-[background-color,border-color,transform] duration-250 ease-[cubic-bezier(0.22,0.61,0.36,1)] ${
                 on
                   ? "border-signal bg-accent-soft"
-                  : "border-line bg-bg hover:border-line-strong hover:bg-surface-2"
+                  : "border-line bg-bg/50 hover:border-line-strong hover:bg-surface-2"
               }`}
             >
               <span className="text-eyebrow block text-signal">{opt.key}</span>
@@ -74,27 +76,51 @@ export function MomentPicker() {
         })}
       </div>
 
-      {/* aria-live so the answer is announced, not just painted. Rendered as a
-          region that exists at all times — swapping the whole node in and out
-          is what makes live regions miss announcements in Safari. */}
-      <div aria-live="polite" className="mt-0">
-        {picked !== null && (
-          <div className="anim-step-in mt-7 border-t border-line pt-7">
-            <p className="text-body-lg max-w-[62ch] text-muted">
-              {OPTIONS[picked].answer}
-            </p>
-            <div className="mt-6 flex flex-col items-start gap-4">
-              <span className="cta-halo w-full sm:w-auto">
-                <ScorecardCta
-                  variant="signal"
-                  size="lg"
-                  location="recognition"
-                  className="w-full min-h-11 sm:w-auto"
-                >
-                  Start with that moment
-                </ScorecardCta>
+      {/* Live region rendered at all times — swapping the whole node in and
+          out is what makes announcements get missed in Safari. */}
+      <div aria-live="polite">
+        {choice && (
+          <div className="anim-step-in mt-7 grid gap-5 border-t border-line pt-7 lg:grid-cols-2 lg:items-center">
+            {/* The mock result card. */}
+            <div className="rounded-xl border border-signal/30 bg-accent-soft p-5">
+              <span className="text-eyebrow block text-signal">
+                Your repeated moment
               </span>
-              <CtaMicrocopy className="text-left" />
+              <p className="text-title mt-2">{choice.moment}</p>
+
+              <span className="text-eyebrow mt-5 block text-signal">
+                A possible belief underneath
+              </span>
+              <p className="mt-2 font-serif text-lg italic font-light text-muted">
+                {choice.belief}
+              </p>
+
+              {/* The rest of the page, withheld. Decorative only. */}
+              <div className="mt-4 grid gap-2" aria-hidden>
+                <i className="block h-2 rounded bg-ink/10" />
+                <i className="block h-2 w-[82%] rounded bg-ink/10" />
+                <i className="block h-2 w-[64%] rounded bg-ink/10" />
+              </div>
+            </div>
+
+            <div>
+              <p className="text-body-lg text-fg">
+                That is roughly the shape of the first page of your result. The
+                real one is written from your words, not from three options.
+              </p>
+              <div className="mt-6 flex flex-col items-start gap-4">
+                <span className="cta-halo w-full sm:w-auto">
+                  <ScorecardCta
+                    variant="signal"
+                    size="lg"
+                    location="recognition"
+                    className="w-full min-h-11 sm:w-auto"
+                  >
+                    Build Mine Properly
+                  </ScorecardCta>
+                </span>
+                <CtaMicrocopy className="text-left" />
+              </div>
             </div>
           </div>
         )}

@@ -16,7 +16,10 @@
 // ranked. This is an illustration, which is the one place the brief allows
 // colour beyond the marine palette.
 //
-// A SERVER component: nothing here is interactive.
+// The typed sentence itself is a small client component (it animates on
+// scroll); everything else here is server-rendered.
+
+import { TypedAnswer } from "@/components/landing/typed-answer";
 
 type Stage = {
   n: string;
@@ -83,18 +86,24 @@ export function WordsToMap() {
           halves are on screen together. */}
       <div className="min-w-0 lg:col-span-5">
         <figure className="rounded-xl border border-line bg-surface p-6 shadow-[var(--elev-2)] sm:p-7 lg:sticky lg:top-24">
-          <figcaption className="eyebrow mb-5">What someone typed</figcaption>
+          <figcaption className="eyebrow mb-5">
+            Question 1 of 5 · what someone typed
+          </figcaption>
 
-          <blockquote className="text-title leading-[1.5]">
-            <Phrase pillar={1}>“I keep putting off important work</Phrase>{" "}
+          {/* v4: the sentence types itself in when it scrolls into view,
+              rather than arriving as a finished quotation. The phrase tints
+              below still carry the derivation — they land as the typing
+              completes. */}
+          <TypedAnswer />
+
+          {/* The same sentence, re-stated with each phrase tinted to the
+              stage it feeds. This is the legend for the colour on the right. */}
+          <blockquote className="mt-5 border-t border-line pt-5 text-[0.95rem] leading-[1.7] text-muted">
+            <Phrase pillar={1}>I keep putting off important work</Phrase>{" "}
             <Phrase pillar={2}>even when I know exactly what to do.</Phrase>{" "}
             <Phrase pillar={3}>Once the deadline is close,</Phrase>{" "}
-            <Phrase pillar={4}>I suddenly become productive.”</Phrase>
+            <Phrase pillar={4}>I suddenly become productive.</Phrase>
           </blockquote>
-
-          <p className="mt-5 text-sm italic text-faint">
-            Question 1 of 5 · answered in about 40 seconds
-          </p>
 
           {/* The legend that makes the colour mean something. */}
           <p className="mt-5 border-t border-line pt-5 text-sm text-faint">

@@ -3,10 +3,10 @@ import { FaqItem } from "@/components/faq-item";
 import { CtaBlock } from "@/components/landing/cta-block";
 import {
   ClosingTimeline,
-  LayerStack,
-  LoopDiagram,
-  ScoreGauge,
-  WeekChart,
+  DimensionRadar,
+  Flywheel,
+  ScoreCurve,
+  Strata,
 } from "@/components/landing/illustrations";
 import { MomentPicker } from "@/components/landing/moment-picker";
 import { Reveal } from "@/components/landing/reveal";
@@ -18,7 +18,17 @@ import { LandingAnalytics } from "@/components/landing-analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { VslPlayer } from "@/components/vsl-player";
-import { CRED_LOGOS, FOUNDER_PHOTO } from "@/lib/landing-assets";
+import { Photo, PhotoOverlay } from "@/components/landing/photo";
+import { TestimonialReel } from "@/components/landing/testimonial-reel";
+import {
+  CRED_LOGOS,
+  FOUNDER_PHOTO,
+  PHOTO_BREATHER,
+  PHOTO_CLOSING,
+  PHOTO_LIVING,
+  PHOTO_WANTED,
+  PHOTO_WEEK,
+} from "@/lib/landing-assets";
 
 /* ==========================================================================
    ADHD Belief Score landing page.
@@ -145,6 +155,16 @@ const WEEK = [
   { when: "Wednesday", what: "Still open. Still fine. There is still time.", peak: false },
   { when: "Thursday, 11pm", what: "Now you move. Full focus. Sometimes your best work.", peak: true },
   { when: "Friday", what: "Relief, and a quiet thought: next time I’ll start early.", peak: false },
+];
+
+/** v4 illustration A: the week as five columns. `h` is the bar's height as a
+ *  percentage of the plot area. Thursday is the whole point of the chart. */
+const WEEK_BARS = [
+  { day: "Mon", h: 9, cap: "—", peak: false },
+  { day: "Tue", h: 14, cap: "—", peak: false },
+  { day: "Wed", h: 11, cap: "—", peak: false },
+  { day: "Thu 11pm", h: 92, cap: "everything", peak: true },
+  { day: "Fri", h: 22, cap: "—", peak: false },
 ];
 
 const LEDGER_COST = [
@@ -440,34 +460,87 @@ export default function Home() {
 
           <ChapterRule />
 
-          <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
-            <Reveal className="min-w-0 lg:col-span-7">
-              <figure className="rounded-xl border border-line bg-bg p-6 shadow-[var(--elev-2)]">
-                <figcaption className="eyebrow mb-5">
+          {/* v4 illustration A: the week as five columns. A column chart
+              states "four days of almost nothing, then one night of
+              everything" more directly than a line, because the eye compares
+              heights without having to trace a path. */}
+          <div className="grid gap-5 lg:grid-cols-12 lg:items-stretch lg:gap-6">
+            <Reveal className="min-w-0 lg:col-span-8">
+              <figure className="relative h-full rounded-xl border border-line bg-surface shadow-[var(--elev-1)]">
+                <figcaption className="absolute left-6 top-6 max-w-[16ch] text-sm text-faint">
                   Effort on the thing that actually matters
                 </figcaption>
-                <WeekChart />
-                <p className="mt-3 text-center text-sm text-faint">
-                  A shape most people recognise. Not a measurement of you.
-                </p>
+                <div
+                  data-anim="bars"
+                  className="grid h-[280px] grid-cols-5 items-end gap-3 px-6 pt-7 sm:h-[340px] sm:gap-5 sm:px-8 sm:pt-8"
+                >
+                  {WEEK_BARS.map((bar) => (
+                    <div key={bar.day} className="flex h-full flex-col justify-end">
+                      <span
+                        className={`bar-cap mb-2 text-center font-serif text-[0.95rem] ${
+                          bar.peak ? "text-signal" : "text-faint"
+                        }`}
+                      >
+                        {bar.cap}
+                      </span>
+                      <span
+                        className={`bar-fill w-full rounded-t-lg border border-b-0 ${
+                          bar.peak
+                            ? "border-signal bg-gradient-to-b from-signal to-signal/20 shadow-[0_0_44px_rgb(var(--glow)/.22)]"
+                            : "border-signal/20 bg-gradient-to-b from-signal/20 to-signal/5"
+                        }`}
+                        style={{ "--bar-h": `${bar.h}%` } as React.CSSProperties}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-5 gap-3 border-t border-line px-6 pb-6 pt-3 sm:gap-5 sm:px-8 sm:pb-7">
+                  {WEEK_BARS.map((bar) => (
+                    <span
+                      key={bar.day}
+                      className={`text-center text-[0.86rem] font-medium ${
+                        bar.peak ? "text-ink" : "text-faint"
+                      }`}
+                    >
+                      {bar.day}
+                    </span>
+                  ))}
+                </div>
               </figure>
             </Reveal>
 
-            <Reveal delay={100} className="min-w-0 lg:col-span-5">
-              <ol className="list-none">
+            <Reveal delay={100} className="min-w-0 lg:col-span-4">
+              <Photo
+                slot={PHOTO_WEEK}
+                sizes="(min-width: 1024px) 33vw, 100vw"
+                className="h-full min-h-64"
+              >
+                <PhotoOverlay>
+                  <p className="font-serif text-xl leading-snug text-ink">
+                    By Thursday it is not a plan any more. It is a rescue.
+                  </p>
+                  <p className="mt-2 text-sm text-faint">
+                    And the rescue always works, which is the problem.
+                  </p>
+                </PhotoOverlay>
+              </Photo>
+            </Reveal>
+          </div>
+
+          <div className="mt-8">
+            <Reveal delay={100} className="min-w-0">
+              <ol className="list-none overflow-hidden rounded-xl border border-line">
                 {WEEK.map((row) => (
                   <li
                     key={row.when}
-                    className="grid gap-x-4 border-t border-line py-3.5 first:border-t-0 first:pt-0 sm:grid-cols-[130px_1fr] sm:items-baseline"
+                    className={`grid gap-x-4 border-t border-line px-5 py-4 first:border-t-0 sm:grid-cols-[8rem_1fr] sm:items-baseline ${
+                      row.peak ? "bg-accent-soft" : "bg-surface/45"
+                    }`}
                   >
-                    <span
-                      className={`font-serif text-[0.95rem] ${
-                        row.peak ? "text-signal" : "text-faint"
-                      }`}
-                    >
+                    <span className="font-serif text-[0.95rem] text-signal">
                       {row.when}
                     </span>
-                    <span className={row.peak ? "font-medium text-fg" : "text-muted"}>
+                    <span className={row.peak ? "text-ink" : "text-muted"}>
                       {row.what}
                     </span>
                   </li>
@@ -510,6 +583,39 @@ export default function Home() {
           />
 
           <ChapterRule />
+
+          {/* v4: the two versions of the same week, as pictures. The ledger
+              below states them in words; the diptych makes the gap felt
+              before it is read. */}
+          <div className="mb-6 grid gap-4 md:grid-cols-2">
+            <Reveal className="min-w-0">
+              <Photo
+                slot={PHOTO_LIVING}
+                ratio="4 / 3"
+                sizes="(min-width: 768px) 46vw, 100vw"
+                className="[&_img]:saturate-50 [&_img]:brightness-[0.62]"
+              >
+                <PhotoOverlay badge="The version you are living">
+                  <p className="font-serif text-xl leading-snug text-ink">
+                    Finishing at midnight, and calling it focus.
+                  </p>
+                </PhotoOverlay>
+              </Photo>
+            </Reveal>
+            <Reveal delay={80} className="min-w-0">
+              <Photo
+                slot={PHOTO_WANTED}
+                ratio="4 / 3"
+                sizes="(min-width: 768px) 46vw, 100vw"
+              >
+                <PhotoOverlay badge="The version you want">
+                  <p className="font-serif text-xl leading-snug text-ink">
+                    Finishing on Wednesday, and still having the evening.
+                  </p>
+                </PhotoOverlay>
+              </Photo>
+            </Reveal>
+          </div>
 
           <Reveal delay={100}>
             <div className="grid overflow-hidden rounded-xl border border-line md:grid-cols-2">
@@ -577,7 +683,7 @@ export default function Home() {
             {/* The diagram leads at 7 columns — it IS the argument of this
                 section, and at 5 it was too small to read its own labels. */}
             <Reveal className="min-w-0 lg:col-span-7">
-              <LoopDiagram />
+              <Flywheel />
             </Reveal>
 
             <div className="min-w-0 lg:col-span-5">
@@ -613,10 +719,25 @@ export default function Home() {
 
         {/* ==================== 04 · BREATHER ==================== */}
         <section
-          className="relative border-t border-line py-16 text-center sm:py-24"
+          // No vertical padding: the photo sets the height and the copy is
+          // absolutely centred over it.
+          className="relative border-y border-line text-center"
           aria-labelledby="breather-heading"
         >
-          <div className="relative mx-auto w-full max-w-3xl px-5 sm:px-8">
+          {/* v4: the breather runs full-bleed behind a photograph. It is the
+              one section with no argument to make — the picture carries it. */}
+          <Photo
+            slot={PHOTO_BREATHER}
+            sizes="100vw"
+            quietPlaceholder
+            className="!rounded-none !border-x-0 min-h-[62vh]"
+          >
+            <span
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-b from-bg/90 via-bg/70 to-bg/95"
+            />
+          </Photo>
+          <div className="absolute inset-0 mx-auto flex w-full max-w-3xl flex-col justify-center px-5 text-center sm:px-8">
             <Reveal>
               <h2 id="breather-heading" className="text-section mx-auto max-w-[22ch]">
                 <span className="block">ADHD does not have to disappear</span>
@@ -679,18 +800,31 @@ export default function Home() {
 
           <ChapterRule />
 
-          <div className="grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-16">
-            <Reveal className="min-w-0 lg:col-span-5">
-              <div className="rounded-xl border border-line bg-surface p-6 lg:sticky lg:top-24">
-                <ScoreGauge />
-                <div className="mt-5 grid gap-3">
+          {/* v4: a distribution + a petal chart, side by side. The curve
+              answers "where do I sit"; the radar answers "made of what". The
+              old gauge answered neither on its own. */}
+          <div className="grid gap-5 lg:grid-cols-12 lg:items-stretch lg:gap-6">
+            <Reveal className="min-w-0 lg:col-span-7">
+              <div
+                data-anim="curve"
+                className="h-full rounded-xl border border-line bg-surface p-6 shadow-[var(--elev-1)]"
+              >
+                <p className="eyebrow">Where an illustrative score sits</p>
+                <div className="mb-4 mt-3 flex items-baseline gap-3">
+                  <span className="curve-number font-serif text-[clamp(3rem,7vw,4.6rem)] leading-none text-ink">
+                    44
+                  </span>
+                  <span className="text-sm text-faint">out of 100 · illustrative</span>
+                </div>
+                <ScoreCurve />
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
                   {BANDS.map((band) => (
                     <div
                       key={band.level}
                       className={`rounded-xl border p-5 ${
                         band.high
                           ? "border-signal/40 bg-accent-soft"
-                          : "border-line bg-bg"
+                          : "border-line bg-bg/35"
                       }`}
                     >
                       <span className="text-eyebrow block text-signal">
@@ -704,63 +838,46 @@ export default function Home() {
               </div>
             </Reveal>
 
-            <div className="min-w-0 lg:col-span-7">
-              {/* data-anim="meters" — the observer fills every bar inside. */}
-              <Reveal>
-                <div
-                  data-anim="meters"
-                  className="grid gap-px overflow-hidden rounded-xl border border-line bg-line"
-                >
+            <Reveal delay={100} className="min-w-0 lg:col-span-5">
+              <div
+                data-anim="radar"
+                className="h-full rounded-xl border border-line bg-surface p-6 shadow-[var(--elev-1)]"
+              >
+                <p className="eyebrow">The four dimensions behind it</p>
+                <DimensionRadar />
+                <ul className="mt-5 grid list-none gap-3 sm:grid-cols-2">
                   {DIMENSIONS.map((dim) => (
-                    <div key={dim.name} className="bg-surface p-5 sm:p-6">
-                      <div className="flex items-baseline justify-between gap-4">
-                        <h3 className="text-title">{dim.name}</h3>
-                        <span
-                          className="font-serif text-3xl"
-                          style={{ color: `var(--pillar-${dim.pillar}-ink)` }}
-                        >
-                          {dim.value}
-                        </span>
-                      </div>
-                      {/* The bar is decorative: the number beside it already
-                          carries the value for assistive tech. */}
-                      <div
-                        className="mt-3.5 h-1 overflow-hidden rounded-full bg-[var(--muted-surface)]"
+                    <li key={dim.name} className="flex items-center gap-2.5 text-[0.92rem]">
+                      <i
                         aria-hidden
+                        className="h-2.5 w-2.5 shrink-0 rounded-[3px]"
+                        style={{ background: `var(--pillar-${dim.pillar})` }}
+                      />
+                      <span className="min-w-0 truncate text-muted">{dim.name}</span>
+                      <b
+                        className="ml-auto font-serif text-lg font-normal"
+                        style={{ color: `var(--pillar-${dim.pillar}-ink)` }}
                       >
-                        <span
-                          className="meter-fill block h-full rounded-full"
-                          style={
-                            {
-                              "--meter-w": `${dim.value}%`,
-                              background: `var(--pillar-${dim.pillar})`,
-                            } as React.CSSProperties
-                          }
-                        />
-                      </div>
-                      <p className="mt-3 text-sm text-muted">{dim.body}</p>
-                    </div>
+                        {dim.value}
+                      </b>
+                    </li>
                   ))}
-                </div>
-              </Reveal>
-
-              <Reveal>
-                <p className="mt-5 text-sm text-faint">
-                  It is not a grade, and it does not rate you as a person, a
-                  professional, or a parent. A lower number means more room to
-                  move.
+                </ul>
+                <p className="mt-4 text-sm text-faint">
+                  Colour identifies which dimension, never how good the number
+                  is. A lower score means more room to move.
                 </p>
-              </Reveal>
-
-              <Reveal>
-                <CtaBlock
-                  location="score_definition"
-                  label="See My Number"
-                  className="mt-8"
-                />
-              </Reveal>
-            </div>
+              </div>
+            </Reveal>
           </div>
+
+          <Reveal>
+            <CtaBlock
+              location="score_definition"
+              label="See My Number"
+              className="mt-9"
+            />
+          </Reveal>
         </Section>
 
         {/* ==================== 07 · THE TEN MINUTES ==================== */}
@@ -839,7 +956,7 @@ export default function Home() {
 
           <Reveal delay={140}>
             <div className="mx-auto max-w-3xl">
-              <LayerStack />
+              <Strata />
             </div>
           </Reveal>
 
@@ -955,6 +1072,12 @@ export default function Home() {
                   ))}
                 </ul>
               </div>
+
+              {/* v4: participant clips. Posters only until one is tapped —
+                  see TestimonialReel. Placed under the bio so the founder
+                  block itself keeps the layout it already had. */}
+              <p className="eyebrow mt-9">In their words · tap a clip to play</p>
+              <TestimonialReel />
             </Reveal>
           </div>
 
@@ -1063,10 +1186,21 @@ export default function Home() {
 
         {/* ==================== CLOSING ==================== */}
         <section
-          className="relative border-t border-line py-16 text-center sm:py-24"
+          className="relative border-t border-line text-center"
           aria-labelledby="closing-heading"
         >
-          <div className="relative mx-auto w-full max-w-3xl px-5 sm:px-8">
+          <Photo
+            slot={PHOTO_CLOSING}
+            sizes="100vw"
+            quietPlaceholder
+            className="!rounded-none !border-x-0 min-h-[70vh]"
+          >
+            <span
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-b from-bg/90 via-bg/70 to-bg/95"
+            />
+          </Photo>
+          <div className="absolute inset-0 mx-auto flex w-full max-w-3xl flex-col justify-center px-5 py-12 sm:px-8">
             <Reveal>
               <div className="mx-auto mb-8 max-w-xl">
                 <ClosingTimeline />
