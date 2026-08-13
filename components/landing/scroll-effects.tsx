@@ -6,15 +6,15 @@
 // a page whose whole problem is that it is too slow to paint on mobile.
 //
 // Progressive enhancement is the load-bearing idea here: the server HTML is
-// already the FINISHED state (chart drawn, gauge full, meters filled). This
+// already the FINISHED state (chart drawn, bars filled, marker placed). This
 // component adds `.js-anim` to <html>, which is what *un*-finishes them, and
 // then plays them back on scroll. If hydration never happens, the visitor gets
 // a complete page instead of empty boxes.
 
 import { useEffect } from "react";
 
-/** Score the gauge counts up to. Illustrative, per the spec's own caption. */
-const GAUGE_TARGET = 44;
+/** The illustrative score shown in section 06. Matches SCORE in page.tsx. */
+const SCORE_TARGET = 44;
 
 export function ScrollEffects() {
   useEffect(() => {
@@ -51,7 +51,7 @@ export function ScrollEffects() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
-    // ---- one observer for reveals, the chart, the gauge, the meters ------
+    // ---- one observer for every scroll-triggered effect on the page ----
     // Each target declares what it wants via a data attribute, so adding an
     // animated element later needs no new observer and no new effect.
     const observer = new IntersectionObserver(
@@ -71,10 +71,6 @@ export function ScrollEffects() {
               );
               break;
 
-            case "gauge":
-              playGauge(el, reduce);
-              break;
-
             // Section 01: the week columns grow from the axis, staggered so
             // the eye travels Monday→Friday and lands on the Thursday spike.
             case "bars":
@@ -86,19 +82,23 @@ export function ScrollEffects() {
               );
               break;
 
-            // Section 06: the marker fades onto the curve and the score
-            // counts up beside it.
-            case "curve":
-              el.querySelector(".curve-marker")?.classList.add("is-shown");
+            // Section 06: the "you" marker slides along the scale to its
+            // position and the number counts up beside it.
+            case "score":
+              el.querySelector(".you")?.classList.add("is-placed");
               countUp(
-                el.querySelector<HTMLElement>(".curve-number"),
-                GAUGE_TARGET,
+                el.querySelector<HTMLElement>(".score-number"),
+                SCORE_TARGET,
                 reduce
               );
               break;
 
-            // Section 06: the radar polygon grows out from the centre.
+            // Section 06: the radar polygon grows out from the centre, and
+            // the four dimension bars fill alongside it.
             case "radar": {
+              el.querySelectorAll<HTMLElement>(".dim-bar > i").forEach((b) =>
+                b.classList.add("is-filled")
+              );
               const petal = el.querySelector<SVGPolygonElement>(".radar-petal");
               if (!petal) break;
               const final = petal.getAttribute("points") ?? "";
@@ -137,24 +137,6 @@ export function ScrollEffects() {
   }, []);
 
   return null;
-}
-
-/** Sweep the gauge arc and count the number up to the target. */
-function playGauge(wrap: HTMLElement, reduce: boolean) {
-  const arc = wrap.querySelector<SVGPathElement>(".gauge-arc");
-  const num = wrap.querySelector<SVGTextElement>(".gauge-number");
-
-  if (arc) {
-    // Ask the BROWSER for the path length rather than trusting a number in a
-    // custom property. The two disagreed once already (a hand-computed arc
-    // length against a path whose radius later changed), and the visible
-    // symptom is a gauge that sweeps past its own score.
-    const len = arc.getTotalLength();
-    arc.style.strokeDasharray = String(len);
-    arc.style.strokeDashoffset = String(len - (len * GAUGE_TARGET) / 100);
-  }
-
-  countUp(num, GAUGE_TARGET, reduce);
 }
 
 /**

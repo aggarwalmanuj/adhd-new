@@ -31,14 +31,14 @@ export function SiteFooter() {
             <Link
               key={item.href}
               href={item.href}
-              className="inline-block py-1 text-muted transition-colors hover:text-fg"
+              className="inline-flex min-h-11 items-center py-1 text-muted transition-colors hover:text-fg"
             >
               {item.label}
             </Link>
           ))}
           <a
             href="mailto:feedback@tetranoodle.com"
-            className="inline-block py-1 text-muted transition-colors hover:text-fg"
+            className="inline-flex min-h-11 items-center py-1 text-muted transition-colors hover:text-fg"
           >
             Contact
           </a>

@@ -44,10 +44,10 @@ export function MomentPicker() {
   return (
     <div className="rounded-2xl border border-line bg-surface p-6 shadow-[var(--elev-1)] sm:p-10">
       <h3 className="text-headline" id="picker-heading">
-        Which one sounds most like you?
+        Which ADHD pattern sounds most like you?
       </h3>
-      <p className="mt-2 text-muted">
-        Pick one. It takes a second, and it is where your score would begin.
+      <p className="mt-2 text-sm text-faint">
+        Tap one and you will see the shape your result would take.
       </p>
 
       <div
@@ -83,8 +83,11 @@ export function MomentPicker() {
           <div className="anim-step-in mt-7 grid gap-5 border-t border-line pt-7 lg:grid-cols-2 lg:items-center">
             {/* The mock result card. */}
             <div className="rounded-xl border border-signal/30 bg-accent-soft p-5">
+              <p className="mb-3 text-sm text-faint">
+                A preview of page one of your result
+              </p>
               <span className="text-eyebrow block text-signal">
-                Your repeated moment
+                Your repeated ADHD moment
               </span>
               <p className="text-title mt-2">{choice.moment}</p>
 
@@ -105,8 +108,8 @@ export function MomentPicker() {
 
             <div>
               <p className="text-body-lg text-fg">
-                That is roughly the shape of the first page of your result. The
-                real one is written from your words, not from three options.
+                That is roughly the shape of it. The real one is written from
+                your words, not from three options.
               </p>
               <div className="mt-6 flex flex-col items-start gap-4">
                 <span className="cta-halo w-full sm:w-auto">

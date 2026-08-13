@@ -5,7 +5,6 @@ import {
   ClosingTimeline,
   DimensionRadar,
   Flywheel,
-  ScoreCurve,
   Strata,
 } from "@/components/landing/illustrations";
 import { MomentPicker } from "@/components/landing/moment-picker";
@@ -160,11 +159,11 @@ const WEEK = [
 /** v4 illustration A: the week as five columns. `h` is the bar's height as a
  *  percentage of the plot area. Thursday is the whole point of the chart. */
 const WEEK_BARS = [
-  { day: "Mon", h: 9, cap: "—", peak: false },
-  { day: "Tue", h: 14, cap: "—", peak: false },
-  { day: "Wed", h: 11, cap: "—", peak: false },
-  { day: "Thu 11pm", h: 92, cap: "everything", peak: true },
-  { day: "Fri", h: 22, cap: "—", peak: false },
+  { day: "Mon", h: 9, cap: "barely", peak: false },
+  { day: "Tue", h: 14, cap: "a little", peak: false },
+  { day: "Wed", h: 11, cap: "still not", peak: false },
+  { day: "Thu 11pm", h: 92, cap: "all of it", peak: true },
+  { day: "Fri", h: 22, cap: "the rest", peak: false },
 ];
 
 const LEDGER_COST = [
@@ -207,33 +206,50 @@ const DIMENSIONS = [
     name: "Direction Clarity",
     value: 58,
     pillar: 1,
-    body: "How clearly you can say what you actually want out of this task, in your own words.",
+    ask: "Can you say what you actually want here?",
   },
   {
     name: "Identity Alignment",
     value: 29,
     pillar: 2,
-    body: "How closely the way you work matches the person you know you are capable of being.",
+    ask: "Does how you work match who you are?",
   },
   {
     name: "Decision Readiness",
     value: 46,
     pillar: 3,
-    body: "How ready you are to start it instead of going round the same loop one more time.",
+    ask: "Can you start instead of circling?",
   },
   {
     name: "Energy Alignment",
     value: 43,
     pillar: 4,
-    body: "How much of your energy this pattern is quietly using up before you begin.",
+    ask: "What is this pattern costing you to hold?",
   },
 ];
+
+/** The three score bands.
+ *
+ *  The middle band matters most and was missing: with only "under 36" and
+ *  "76 and above" on the page, the whole centre of the scale went unexplained
+ *  — and 44, the number shown right beside it, falls in that gap. A visitor
+ *  who lands mid-range could read the two extremes and conclude neither
+ *  described them. */
+/** The illustrative score, and the peer benchmark, in one place. */
+const SCORE = 44;
+const PEER_AVG = 48;
 
 const BANDS = [
   {
     level: "Under 36",
     title: "The moment is deciding for you",
     body: "The response arrives before you have chosen it, so the same week keeps repeating. This is where the most room to move sits.",
+    high: false,
+  },
+  {
+    level: "36 – 75",
+    title: "Some of it is yours",
+    body: "Where most people land. The four dimensions show which part is holding you back.",
     high: false,
   },
   {
@@ -266,6 +282,7 @@ const TIERS = [
 ];
 
 const FIT_YES = [
+  "You have ADHD, diagnosed or strongly suspected",
   "You know what to do and still do not start",
   "You have read the advice and it did not change the moment",
   "You are willing to describe one situation honestly",
@@ -352,17 +369,6 @@ const FAQS = [
 export default function Home() {
   return (
     <>
-      {/* The video poster is the LCP element on mobile (the silent autoplay
-          preview is desktop-only — see canAutoplayPreview in vsl-player).
-          A <video poster> is discovered late and fetched at low priority, so
-          it is preloaded explicitly: this is the image the ad click is waiting
-          on, and it was the difference between a ~3.7s and a ~1.5s LCP. */}
-      <link
-        rel="preload"
-        as="image"
-        href="/video/vsl-poster.jpg"
-        fetchPriority="high"
-      />
       <LandingAnalytics />
       <ScrollEffects />
       <ScrollChrome />
@@ -380,83 +386,103 @@ export default function Home() {
             one line of sub-copy, then the video and the CTA at full column
             width. Nothing sits beside the headline, so the h1 gets the whole
             measure and the video is never competing with it for the fold. */}
+        {/* ============================ HERO (spec v7) ============================
+            Two columns from 900px — copy + CTA left, video right, one eyeful.
+            Below that, a budgeted stack: headline → video → CTA, with the
+            explainer and checklist pushed below the fold. See .hero-grid in
+            globals.css for the measurements this is based on. */}
         <section id="hero" className="relative overflow-hidden">
           <div className="spotlight-hero" aria-hidden />
 
-          <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-7 pt-8 text-center sm:px-8 sm:pb-10 sm:pt-16">
-            <Reveal immediate>
-              <p className="cred-chip">
-                For adults with ADHD · free, no card
-              </p>
-            </Reveal>
+          <div className="relative mx-auto w-full max-w-7xl px-5 sm:px-10 lg:px-16">
+            <div className="hero-grid">
+              <div className="hero-copy">
+                <Reveal immediate className="hero-chip">
+                  <p className="cred-chip">
+                    For adults with ADHD · free, no card
+                  </p>
+                </Reveal>
 
-            <Reveal immediate>
-              <h1 id="hero-headline" className="text-display mt-6 sm:mt-8">
-                You don’t want to be fixed.{" "}
-                <span className="text-emphasis">
-                  You want to finish the thing you started.
-                </span>
-              </h1>
-            </Reveal>
+                <Reveal immediate className="hero-head">
+                  <h1 id="hero-headline" className="text-display">
+                    You don’t want your ADHD fixed.{" "}
+                    <span className="text-emphasis">
+                      You want to finish the thing you started.
+                    </span>
+                  </h1>
+                </Reveal>
 
-            <Reveal immediate>
-              <p className="text-body-lg mt-6 max-w-[52ch] text-muted">
-                The plan exists. The ability exists. So why does the work only
-                move when it is almost too late?
-              </p>
-            </Reveal>
-          </div>
+                <Reveal immediate className="hero-sub">
+                  <p className="text-body-lg text-muted">
+                    A free 10-minute reflection. One ADHD moment, five
+                    questions, your score on screen.
+                  </p>
+                </Reveal>
 
-          <div className="mx-auto w-full max-w-4xl px-5 sm:px-8">
-            <Reveal immediate>
-              <VslPlayer />
-            </Reveal>
-            <Reveal immediate>
-              <CtaBlock
-                location="hero"
-                label="Get My Free ADHD Belief Score"
-                labelShort="Get My Free Score"
-                align="center"
-                className="mt-8"
-              />
-            </Reveal>
-
-            {/* "What you get" — kept from the spec, below the CTA so it
-                supports the button rather than delaying it. */}
-            <Reveal delay={280}>
-              <div className="mt-10 rounded-xl border border-line bg-surface p-6 sm:p-7">
-                <h2 className="eyebrow mb-5 text-center">
-                  What you get, in about 10 minutes
-                </h2>
-                <ul className="mx-auto grid max-w-2xl list-none gap-3 sm:grid-cols-2">
-                  {HERO_CHECKLIST.map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <CheckDot />
-                      <span className="text-muted">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+                <Reveal immediate className="hero-cta">
+                  <CtaBlock
+                    location="hero"
+                    label="Get My Free ADHD Belief Score"
+                    labelShort="Get My Free Score"
+                    className="items-center lg:items-start"
+                  />
+                </Reveal>
               </div>
-            </Reveal>
-          </div>
 
-          <Reveal delay={320}>
-            <ul className="mx-auto mt-8 flex w-full max-w-4xl list-none flex-wrap justify-center gap-x-7 gap-y-2 px-5 pb-16 text-center text-sm text-faint sm:px-8">
-              {HERO_CRED.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </Reveal>
+              <Reveal immediate className="hero-video">
+                <VslPlayer />
+              </Reveal>
+
+              {/* Everything that is NOT headline, video or button. On a phone
+                  this sits below the fold by design. */}
+              <div className="hero-extras">
+                <Reveal delay={280}>
+                  <div className="rounded-xl border border-line bg-surface p-5 sm:p-7">
+                    <p className="mx-auto max-w-[60ch] text-center text-ink lg:mx-0 lg:text-left">
+                      The{" "}
+                      <strong className="font-medium">ADHD Belief Score</strong>{" "}
+                      asks you to describe one ADHD moment that keeps
+                      repeating, then shows you what that moment has quietly
+                      taught you to believe about yourself.
+                    </p>
+                    <ul className="mt-4 grid list-none gap-3 border-t border-line pt-4 text-left sm:grid-cols-2 sm:gap-x-8">
+                      {HERO_CHECKLIST.map((item) => (
+                        <li key={item} className="flex items-start gap-3">
+                          <CheckDot />
+                          <span className="text-[0.95rem] text-muted">
+                            {item}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </Reveal>
+
+                <Reveal delay={320}>
+                  <ul className="mt-5 flex list-none flex-wrap justify-center gap-x-6 gap-y-1.5 pb-12 text-center text-[0.8rem] text-faint lg:justify-start lg:text-left">
+                    {HERO_CRED.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </Reveal>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* ==================== 01 · THE WEEK YOU ALREADY KNOW ==================== */}
         <Section tint orbs labelledBy="recognition-heading">
           <ChapterHead
-            mark="01 · The week you already know"
+            mark="01 · The ADHD week you already know"
             id="recognition-heading"
             lead="It never happens on one bad day."
             emphasis="It happens on a hundred ordinary ones."
-          />
+          >
+            <Lede>
+              Most ADHD advice describes the behaviour. This is about one week
+              you have probably already lived.
+            </Lede>
+          </ChapterHead>
 
           <ChapterRule />
 
@@ -467,8 +493,8 @@ export default function Home() {
           <div className="grid gap-5 lg:grid-cols-12 lg:items-stretch lg:gap-6">
             <Reveal className="min-w-0 lg:col-span-8">
               <figure className="relative h-full rounded-xl border border-line bg-surface shadow-[var(--elev-1)]">
-                <figcaption className="absolute left-6 top-6 max-w-[16ch] text-sm text-faint">
-                  Effort on the thing that actually matters
+                <figcaption className="absolute left-6 top-6 max-w-[22ch] text-sm text-faint">
+                  How much of the important task actually got done each day
                 </figcaption>
                 <div
                   data-anim="bars"
@@ -551,10 +577,15 @@ export default function Home() {
 
           <Reveal>
             <blockquote className="mt-12 max-w-[64ch] border-l-2 border-signal pl-6">
-              <p className="text-title">
-                The work got done, so pressure took the credit. Do that a few
-                hundred times and it stops being a schedule. It becomes a
-                sentence about you:{" "}
+              {/* v6 "key line": the one sentence that has to land even if the
+                  section is skimmed. Set larger than body copy so the eye
+                  stops on it. */}
+              <p className="keyline">
+                The work got done, so pressure took the credit.
+              </p>
+              <p className="mt-3 text-muted">
+                Do that a few hundred times and it stops being a schedule. It
+                becomes a sentence about you:{" "}
                 <em className="text-emphasis">
                   nothing moves unless it is an emergency.
                 </em>
@@ -576,11 +607,16 @@ export default function Home() {
         {/* ==================== 02 · WHAT IT IS ACTUALLY COSTING ==================== */}
         <Section labelledBy="ledger-heading">
           <ChapterHead
-            mark="02 · What it is actually costing"
+            mark="02 · What ADHD is actually costing you"
             id="ledger-heading"
             lead="The problem was never the task."
             emphasis="It is everything the task is standing in front of."
-          />
+          >
+            <Lede>
+              Ask most people what ADHD costs them and they name the thing they
+              missed. It is rarely the thing.
+            </Lede>
+          </ChapterHead>
 
           <ChapterRule />
 
@@ -653,7 +689,7 @@ export default function Home() {
           </Reveal>
 
           <Reveal>
-            <p className="text-body-lg mt-8 max-w-[66ch] text-muted">
+            <p className="keyline mt-8 max-w-[44rem]">
               Nothing on the right requires a different brain. It requires one
               moment to go differently — and knowing which moment that is.
             </p>
@@ -671,11 +707,15 @@ export default function Home() {
         {/* ==================== 03 · WHY IT REPEATS ==================== */}
         <Section tint orbs labelledBy="loop-heading">
           <ChapterHead
-            mark="03 · Why it repeats"
+            mark="03 · Why the ADHD loop repeats"
             id="loop-heading"
             lead="A loop does not need your permission."
             emphasis="It only needs to work once."
-          />
+          >
+            <Lede>
+              Four steps. The fourth is the one that keeps the wheel turning.
+            </Lede>
+          </ChapterHead>
 
           <ChapterRule />
 
@@ -748,10 +788,10 @@ export default function Home() {
             </Reveal>
             <Reveal delay={100}>
               <p className="text-body-lg mx-auto mt-6 max-w-[56ch] text-muted">
-                The pull toward something easier can still show up. The sentence{" "}
-                <em>I’ll do it later</em> can still arrive. The change is not
-                becoming a different person. It is catching the one moment
-                before the old conclusion takes over.
+                The pull toward something easier can still show up. The
+                sentence <em>I’ll do it later</em> can still arrive. The change
+                is catching the one moment before the old conclusion takes
+                over.
               </p>
             </Reveal>
           </div>
@@ -766,8 +806,8 @@ export default function Home() {
             emphasis="Here is what comes back."
           >
             <Lede>
-              No clever wording required. This is a real example of the path
-              from a sentence to a map.
+              Left: what one person typed. Right: the five things the Belief
+              Score gave back.
             </Lede>
           </ChapterHead>
 
@@ -787,85 +827,140 @@ export default function Home() {
         {/* ==================== 06 · THE NUMBER ==================== */}
         <Section labelledBy="score-heading">
           <ChapterHead
-            mark="06 · The number"
+            mark="06 · Your ADHD Belief Score"
             id="score-heading"
             lead="One number for the thing"
             emphasis="you cannot see yourself."
           >
             <Lede>
-              Your score places how much of that moment you are actually
-              choosing, and how much of it was decided before you arrived.
+              It scores{" "}
+              <strong className="font-medium text-ink">
+                how much of that one ADHD moment you are actually choosing
+              </strong>
+              . It does not score your ADHD, and it is not a grade.
             </Lede>
           </ChapterHead>
 
           <ChapterRule />
 
-          {/* v4: a distribution + a petal chart, side by side. The curve
-              answers "where do I sit"; the radar answers "made of what". The
-              old gauge answered neither on its own. */}
-          <div className="grid gap-5 lg:grid-cols-12 lg:items-stretch lg:gap-6">
-            <Reveal className="min-w-0 lg:col-span-7">
-              <div
-                data-anim="curve"
-                className="h-full rounded-xl border border-line bg-surface p-6 shadow-[var(--elev-1)]"
-              >
-                <p className="eyebrow">Where an illustrative score sits</p>
-                <div className="mb-4 mt-3 flex items-baseline gap-3">
-                  <span className="curve-number font-serif text-[clamp(3rem,7vw,4.6rem)] leading-none text-ink">
+          {/* v6: ONE linear scale replaces the bell curve. A distribution
+              asks the reader to decode a shape before they can find
+              themselves on it; a track with two marks — you, and where most
+              people start — says the same thing at a glance. */}
+          <Reveal>
+            <div
+              data-anim="score"
+              className="rounded-xl border border-line bg-surface p-6 shadow-[var(--elev-1)]"
+            >
+              <div className="grid items-center gap-4 sm:grid-cols-[auto_1fr] sm:gap-7">
+                <div>
+                  <span className="score-number block font-serif text-[clamp(3.5rem,3rem+4vw,5.5rem)] leading-[0.95] text-signal">
                     44
                   </span>
-                  <span className="text-sm text-faint">out of 100 · illustrative</span>
+                  <p className="text-sm text-faint">out of 100 · illustrative</p>
                 </div>
-                <ScoreCurve />
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                  {BANDS.map((band) => (
-                    <div
-                      key={band.level}
-                      className={`rounded-xl border p-5 ${
-                        band.high
-                          ? "border-signal/40 bg-accent-soft"
-                          : "border-line bg-bg/35"
-                      }`}
-                    >
-                      <span className="text-eyebrow block text-signal">
-                        {band.level}
-                      </span>
-                      <h3 className="text-title mt-2">{band.title}</h3>
-                      <p className="mt-2 text-sm text-muted">{band.body}</p>
-                    </div>
-                  ))}
+
+                <div>
+                  <div
+                    className="score-scale"
+                    style={{ "--score-pos": `${SCORE}%` } as React.CSSProperties}
+                  >
+                    <span className="track" aria-hidden />
+                    <span className="avg" style={{ left: `${PEER_AVG}%` }}>
+                      <i aria-hidden />
+                      <span>most start near {PEER_AVG}</span>
+                    </span>
+                    <span className="you">
+                      <span>you</span>
+                      <i aria-hidden />
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-[0.78rem] text-faint">
+                    <span>0 · the moment decides</span>
+                    <span>100 · you decide</span>
+                  </div>
                 </div>
               </div>
+
+              {/* Three bands, not two. The middle one is where most people
+                  actually land — and where the 44 above sits — so leaving it
+                  out let a mid-range visitor read both extremes and conclude
+                  neither described them. */}
+              <div className="mt-5 grid gap-2.5">
+                {BANDS.map((band) => (
+                  <div
+                    key={band.level}
+                    className={`grid items-baseline gap-4 rounded-xl border p-4 sm:grid-cols-[5.5rem_1fr] ${
+                      band.high
+                        ? "border-signal/40 bg-accent-soft"
+                        : "border-line bg-bg/30"
+                    }`}
+                  >
+                    <span
+                      className={`text-[0.72rem] uppercase tracking-[0.16em] ${
+                        band.high ? "text-signal" : "text-faint"
+                      }`}
+                    >
+                      {band.level}
+                    </span>
+                    <div>
+                      <b className="font-medium text-ink">{band.title}</b>
+                      <p className="mt-0.5 text-sm text-muted">{band.body}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+
+          {/* The radar and the four bars, side by side: the shape gives the
+              gestalt, the bars give the numbers. */}
+          <div
+            data-anim="radar"
+            className="mt-12 grid gap-6 lg:grid-cols-2 lg:gap-10"
+          >
+            <Reveal className="min-w-0">
+              <DimensionRadar />
+              <p className="mt-3 text-center text-sm text-faint">
+                A wider shape means more of the moment is yours.
+              </p>
             </Reveal>
 
-            <Reveal delay={100} className="min-w-0 lg:col-span-5">
-              <div
-                data-anim="radar"
-                className="h-full rounded-xl border border-line bg-surface p-6 shadow-[var(--elev-1)]"
-              >
-                <p className="eyebrow">The four dimensions behind it</p>
-                <DimensionRadar />
-                <ul className="mt-5 grid list-none gap-3 sm:grid-cols-2">
-                  {DIMENSIONS.map((dim) => (
-                    <li key={dim.name} className="flex items-center gap-2.5 text-[0.92rem]">
+            <Reveal delay={100} className="min-w-0">
+              <div className="grid gap-3.5">
+                {DIMENSIONS.map((dim) => (
+                  <div key={dim.name} className="grid gap-1.5">
+                    <span className="flex items-baseline gap-2.5">
                       <i
                         aria-hidden
-                        className="h-2.5 w-2.5 shrink-0 rounded-[3px]"
+                        className="h-2.5 w-2.5 shrink-0 -translate-y-px rounded-[3px]"
                         style={{ background: `var(--pillar-${dim.pillar})` }}
                       />
-                      <span className="min-w-0 truncate text-muted">{dim.name}</span>
-                      <b
-                        className="ml-auto font-serif text-lg font-normal"
+                      <b className="font-medium text-ink">{dim.name}</b>
+                      <span
+                        className="ml-auto font-serif text-lg"
                         style={{ color: `var(--pillar-${dim.pillar}-ink)` }}
                       >
                         {dim.value}
-                      </b>
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-4 text-sm text-faint">
-                  Colour identifies which dimension, never how good the number
-                  is. A lower score means more room to move.
+                      </span>
+                    </span>
+                    {/* Decorative: the number above already carries the value. */}
+                    <span className="dim-bar" aria-hidden>
+                      <i
+                        style={
+                          {
+                            "--bar-w": `${dim.value}%`,
+                            background: `var(--pillar-${dim.pillar})`,
+                          } as React.CSSProperties
+                        }
+                      />
+                    </span>
+                    <span className="text-sm text-faint">{dim.ask}</span>
+                  </div>
+                ))}
+                <p className="mt-1 text-sm text-faint">
+                  Colour only says which dimension it is, never how good the
+                  number is.
                 </p>
               </div>
             </Reveal>
@@ -883,7 +978,7 @@ export default function Home() {
         {/* ==================== 07 · THE TEN MINUTES ==================== */}
         <Section tint labelledBy="ten-heading">
           <ChapterHead
-            mark="07 · The ten minutes"
+            mark="07 · The ten minutes, screen by screen"
             id="ten-heading"
             lead="See the whole thing"
             emphasis="before you begin."
@@ -941,7 +1036,7 @@ export default function Home() {
         {/* ================ 08 · WHY NOT ANOTHER SYSTEM ================ */}
         <Section labelledBy="layers-heading">
           <ChapterHead
-            mark="08 · Why not another system"
+            mark="08 · Where this sits in your ADHD support"
             id="layers-heading"
             lead="You have already tried"
             emphasis="the layer above this one."
@@ -961,8 +1056,8 @@ export default function Home() {
           </Reveal>
 
           <Reveal>
-            <p className="text-body-lg mt-8 max-w-[66ch] text-muted">
-              Sometimes the next useful step is not another system. It is seeing
+            <p className="keyline mt-8 max-w-[44rem]">
+              The next useful step may not be another system. It may be seeing
               the belief clearly enough to stop mistaking it for your identity.
             </p>
           </Reveal>
@@ -1005,10 +1100,10 @@ export default function Home() {
         {/* ==================== 09 · WHO BUILT IT ==================== */}
         <Section tint orbs labelledBy="founder-heading">
           <ChapterHead
-            mark="09 · Who built it"
+            mark="09 · Who built the ADHD Belief Score"
             id="founder-heading"
             lead="I could see the pattern."
-            emphasis="I could not see what the pattern had taught me."
+            emphasis="I could not see what it had taught me."
           />
 
           <ChapterRule />
@@ -1139,7 +1234,7 @@ export default function Home() {
             mark="10 · Before you start"
             id="faq-heading"
             lead="Questions"
-            emphasis="people ask."
+            emphasis="people with ADHD ask."
           />
 
           <ChapterRule />
@@ -1218,7 +1313,8 @@ export default function Home() {
             </Reveal>
             <Reveal delay={100}>
               <p className="text-body-lg mx-auto mt-6 max-w-[46ch] text-muted">
-                Five questions, your own words, your score immediately.
+                Five questions about one ADHD moment, in your own words, and
+                your Belief Score on screen straight away.
               </p>
             </Reveal>
             <Reveal delay={160}>

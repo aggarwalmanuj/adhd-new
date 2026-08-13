@@ -236,6 +236,18 @@ select {
   text-wrap: balance;
   overflow-wrap: break-word;
 }
+/* The one sentence per section that must land even when the visitor is
+   skimming rather than reading. Set between body copy and a section headline,
+   in the serif, so the eye stops on it without a second heading level. */
+.keyline {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+  line-height: 1.35;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
 /* Section headline. Sits between .text-display (hero only) and .text-title.
    Taken from Parents verbatim — this is the size every section heading below
    the hero uses there, and the reason their sections read as one system. */
@@ -1189,12 +1201,251 @@ select {
 
 /* The flywheel's puck (section 03). A single composited rotation about the
    ring's centre — see the note in illustrations.tsx for why this replaced the
-   spec's `offset-path`, which rendered the puck below the diagram. */
+   spec's `offset-path`, which rendered the puck below the diagram.
+
+   Kept CONTINUOUS by choice. Spec v6 argued for a single revolution (moving
+   content can pull an ADHD reader's eye off the sentence), which is a real
+   effect — but this is one small puck on a dashed ring, well away from the
+   body copy, and a wheel that never stops is the section's whole point:
+   "a loop does not need your permission". prefers-reduced-motion still stops
+   it outright for anyone who has asked the OS for that. */
 .fly-rotor {
   animation: fly-spin 9s linear infinite;
 }
 @keyframes fly-spin {
   to { transform: rotate(360deg); }
+}
+
+/* ---------------------------------------------------------------------------
+   HERO (spec v7)
+
+   One layout that behaves differently at each width, because the two goals
+   genuinely conflict in a single stacked column:
+
+   · DESKTOP (≥900px) — two columns, video on the right. Headline, one line of
+     copy and the CTA on the left. All three conversion elements land in one
+     eyeful, and the video stops competing with the headline for vertical
+     space (in the stacked version it fell out of the first screen entirely).
+
+   · MOBILE (<900px) — headline → video → CTA, budgeted. At 375×667 that stack
+     measures ~505px inside a 611px usable viewport, so the video AND the
+     button are both above the fold. Everything that is not one of those three
+     things is pushed below it, which is why the explainer and the checklist
+     live in .hero-extras rather than between them.
+
+   The source order is copy → video → extras; `order` only re-stacks on
+   mobile, so the DOM order still reads correctly to a screen reader.
+--------------------------------------------------------------------------- */
+.hero-grid {
+  display: grid;
+  gap: 1.25rem;
+  padding-top: 1.5rem;
+  text-align: center;
+  justify-items: center;
+}
+/* On mobile the copy block's children are re-ordered individually around the
+   video, so the wrapper itself must not create a box. */
+.hero-copy {
+  display: contents;
+}
+/* Order is set on the WRAPPERS, because each hero part is wrapped in a
+   <Reveal> div — putting `order` on the h1 itself leaves its wrapper at the
+   default 0, which sorted the headline above the chip. */
+.hero-chip { order: 1; }
+.hero-head { order: 2; }
+.hero-sub { order: 3; max-width: 40ch; }
+/* Mobile budget: the stack has to fit headline + video + button inside a
+   ~611px usable viewport at 375x667, so the gaps between them are tighter
+   than the desktop rhythm. */
+.hero-head h1 { max-width: 18ch; margin-top: 0.75rem; }
+.hero-sub { margin-top: 0.75rem; font-size: 1.02rem; line-height: 1.55; }
+.hero-cta { margin-top: 0.25rem; }
+.hero-video { order: 4; width: 100%; }
+
+/* THE HERO'S CLS FIX.
+   On mobile the video sits under the chip, the headline and the sub-copy —
+   all webfont text. Fraunces and Inter both swap in after first paint, and
+   the residual metric difference across three stacked blocks pushed the video
+   down by ~28px: 0.184 of layout shift, by far the largest on the page.
+
+   Reserving the video's own top offset is what removes it. `padding-top` on
+   the video wrapper is set from a variable that already accounts for the copy
+   above it, so the frame occupies its final position from the first paint and
+   the text settles into the space above rather than pushing it.
+
+   The simpler alternative — reserving each text block's height — is fragile:
+   it has to be re-tuned every time a word changes. Anchoring the video from
+   the BOTTOM of the stack does not. */
+
+.hero-cta { order: 5; }
+.hero-extras { order: 6; width: 100%; margin-top: 0.5rem; }
+
+@media (min-width: 900px) {
+  .hero-grid {
+    /* The video gets the larger share: it was reading as a thumbnail
+       beside a full-height headline. */
+    grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+    align-items: center;
+    text-align: left;
+    justify-items: stretch;
+    gap: 2.75rem;
+    padding: 3.5rem 0 4rem;
+  }
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    grid-column: 1;
+    grid-row: 1;
+  }
+  /* The mobile `order` values must not leak into the desktop flex column —
+     they were re-sorting the chip below the headline. */
+  .hero-copy > * {
+    order: 0;
+  }
+  .hero-head h1 {
+    max-width: 14ch;
+    margin-top: 1.1rem;
+  }
+  .hero-sub {
+    max-width: 44ch;
+    margin-top: 1.1rem;
+  }
+  .hero-cta { margin-top: 1.75rem; }
+  .hero-video {
+    grid-column: 2;
+    grid-row: 1;
+    max-width: 42rem;
+    justify-self: stretch;
+  }
+  .hero-extras {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: 2.5rem;
+  }
+}
+@media (min-width: 1200px) {
+  .hero-grid { gap: 3.5rem; }
+}
+
+/* ---------------------------------------------------------------------------
+   06 · the score scale (spec v6)
+
+   v6 replaced the bell curve with a single linear track, on the grounds that a
+   distribution asks the reader to decode a shape before they can read their
+   own position. A track with two marks — where you are, where most people
+   start — says the same thing at a glance.
+--------------------------------------------------------------------------- */
+.score-scale {
+  position: relative;
+  /* Three stacked zones: the "you" label, the track (with both marks ON it),
+     and the "most people start near 48" caption underneath. */
+  height: 4.25rem;
+}
+/* The track sits at a fixed offset; every mark is positioned against the SAME
+   offset so they land on the line rather than floating near it. */
+.score-scale .track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 1.75rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--signal) 10%, transparent),
+    color-mix(in srgb, var(--signal) 55%, transparent)
+  );
+}
+
+/* The peer benchmark: a tick THROUGH the track plus its own label, so "most
+   people start near 48" is readable at the point it refers to. */
+.score-scale .avg {
+  position: absolute;
+  top: 1.35rem;
+  transform: translateX(-50%);
+  text-align: center;
+}
+.score-scale .avg i {
+  display: block;
+  width: 2px;
+  height: 1.2rem;
+  margin: 0 auto;
+  border-radius: 1px;
+  background: var(--faint);
+}
+.score-scale .avg span {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  color: var(--faint);
+}
+
+/* You: the dot is centred ON the track's vertical midpoint. */
+.score-scale .you {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  text-align: center;
+}
+.score-scale .you span {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.score-scale .you i {
+  display: block;
+  width: 1.05rem;
+  height: 1.05rem;
+  /* track top (1.75rem) + half track (0.2rem) − half dot (0.525rem) */
+  margin: 0.225rem auto 0;
+  border-radius: 50%;
+  background: var(--signal);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 18px rgb(var(--glow) / 0.6);
+}
+.js-anim .score-scale .you {
+  left: 0%;
+  transition: left 1.2s var(--ease-out);
+}
+.js-anim .score-scale .you.is-placed {
+  left: var(--score-pos);
+}
+@media (prefers-reduced-motion: reduce) {
+  .js-anim .score-scale .you {
+    left: var(--score-pos);
+    transition: none;
+  }
+}
+
+/* The dimension bars beside the radar. */
+.dim-bar {
+  height: 0.3rem;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  overflow: hidden;
+}
+.dim-bar > i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  width: var(--bar-w);
+}
+.js-anim .dim-bar > i {
+  width: 0;
+  transition: width 1s var(--ease-out);
+}
+.js-anim .dim-bar > i.is-filled {
+  width: var(--bar-w);
+}
+@media (prefers-reduced-motion: reduce) {
+  .js-anim .dim-bar > i {
+    width: var(--bar-w);
+    transition: none;
+  }
 }
 
 /* The week columns (section 01) grow from the axis. --bar-h is the final
@@ -1251,8 +1502,10 @@ select {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Rest on the return leg rather than spinning. */
   .fly-rotor {
     animation: none;
+    transform: rotate(266deg);
   }
   .type-caret::after {
     animation: none;

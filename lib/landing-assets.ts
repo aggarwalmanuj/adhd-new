@@ -21,6 +21,8 @@ export type WalkthroughFrame = LandingImage & {
   n: string;
   /** Step title. */
   title: string;
+  /** Short label for the tab rail — must stay short enough to fit a pill. */
+  tab: string;
   /** Duration / kind, e.g. "30 seconds". */
   meta: string;
   /** Caption clause 1 — what the visitor actually does on this screen. */
@@ -33,17 +35,19 @@ export const WALKTHROUGH_FRAMES: WalkthroughFrame[] = [
   {
     n: "01",
     title: "Tell us who this is for",
+    tab: "Who it’s for",
     meta: "30 seconds",
     src: "/take/audience.png",
     width: 1880,
     height: 892,
     alt: "The entry screen: a short form for your first name and email, then a choice between an individual or an organisation reading.",
     what: "Your first name and the email your result is sent to.",
-    why: "Your answers stay private and the score is yours to keep. Free, with no credit card.",
+    why: "Your answers stay private and the score is yours to keep.",
   },
   {
     n: "02",
     title: "Pick one moment",
+    tab: "One moment",
     meta: "In your own words",
     src: "/take/question.png",
     width: 1888,
@@ -55,6 +59,7 @@ export const WALKTHROUGH_FRAMES: WalkthroughFrame[] = [
   {
     n: "03",
     title: "Watch it reflect back",
+    tab: "Reflect back",
     meta: "As you go",
     src: "/take/beat.png",
     width: 1879,
@@ -66,6 +71,7 @@ export const WALKTHROUGH_FRAMES: WalkthroughFrame[] = [
   {
     n: "04",
     title: "Receive your score",
+    tab: "Your score",
     meta: "Instant",
     src: "/take/reportsummary.png",
     width: 1792,
@@ -77,6 +83,7 @@ export const WALKTHROUGH_FRAMES: WalkthroughFrame[] = [
   {
     n: "05",
     title: "Go deeper, if you choose",
+    tab: "Go deeper",
     meta: "Optional",
     src: "/take/reportpdf.png",
     width: 988,
