@@ -132,13 +132,16 @@ export const PHOTO_LIVING: PhotoSlot = {
 };
 
 /** 02 · right panel, "the version you want".
- *  Meeting.jpg was rejected: it is a business meeting, and this caption is
- *  about having your EVENING back, not about another work conversation. */
+ *
+ *  A tall portrait (4480x6720) dropped into a 4:3 landscape panel, so the
+ *  crop matters: `object-position` is set to the top third in page.tsx so the
+ *  frame keeps his face and the daylight window rather than centring on the
+ *  sofa. A default centre crop cut his head off. */
 export const PHOTO_WANTED: PhotoSlot = {
-  src: null,
-  needs:
-    "Daylight, laptop closed or out of frame — someone genuinely off the clock. A walk, a meal, time with someone. Landscape 4:3. Must read as personal time, not a workplace.",
-  alt: "Daylight, laptop closed, present with other people.",
+  src: "/images/wanted.avif",
+  alt: "Leaning back from the desk in daylight, hands behind head, unhurried.",
+  width: 4480,
+  height: 6720,
 };
 
 /** 04 · full-bleed breather background.

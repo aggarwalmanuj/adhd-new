@@ -666,6 +666,9 @@ export default function Home() {
                 slot={PHOTO_WANTED}
                 ratio="4 / 3"
                 sizes="(min-width: 768px) 46vw, 100vw"
+                // Portrait source in a landscape frame: bias the crop upward
+                // so it keeps the face and the window, not the sofa.
+                focus="50% 22%"
               >
                 <PhotoOverlay badge="The version you want">
                   <p className="font-serif text-xl leading-snug text-ink">

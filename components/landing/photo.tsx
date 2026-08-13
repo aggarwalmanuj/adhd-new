@@ -31,6 +31,14 @@ export function Photo({
    * brief is still readable in lib/landing-assets.ts.
    */
   quietPlaceholder = false,
+  /**
+   * CSS object-position for the image, e.g. "50% 25%".
+   *
+   * Needed whenever a portrait file lands in a landscape frame: the default
+   * centre crop takes the middle of a tall photo, which is usually a torso
+   * rather than a face.
+   */
+  focus,
 }: {
   slot: PhotoSlot;
   ratio?: string;
@@ -39,6 +47,7 @@ export function Photo({
   children?: React.ReactNode;
   priority?: boolean;
   quietPlaceholder?: boolean;
+  focus?: string;
 }) {
   const empty = slot.src === null;
 
@@ -76,6 +85,7 @@ export function Photo({
           priority={priority}
           loading={priority ? undefined : "lazy"}
           className="object-cover"
+          style={focus ? { objectPosition: focus } : undefined}
         />
       )}
       {children}
