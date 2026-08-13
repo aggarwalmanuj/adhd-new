@@ -1239,21 +1239,35 @@ export default function Home() {
           <Reveal delay={300}>
             <div className="mt-16 border-t border-line pt-10">
               <p className="eyebrow mb-8 text-center">Prior professional work</p>
+              {/* Cells are h-11, not Parents' h-7. These are mixed shapes — a
+                  wide IBM wordmark beside a square Microsoft mark and a round
+                  UN emblem — and object-contain fits each to its SHORTEST
+                  dimension, so a 28px box left the square ones tiny. 44px lets
+                  every mark read while keeping the row optically level. */}
               <ul className="grid list-none grid-cols-2 items-center justify-items-center gap-x-10 gap-y-8 sm:grid-cols-5 sm:gap-x-12">
                 {CRED_LOGOS.map((logo) => (
-                  <li key={logo.src} className="relative h-7 w-full">
+                  <li key={logo.src} className="relative h-11 w-full">
                     <Image
                       src={logo.src}
                       alt={logo.alt}
                       fill
                       loading="lazy"
-                      sizes="(min-width: 640px) 120px, 100px"
-                      // These are DARK-inked logos on transparent PNGs, so
-                      // Parents' plain `grayscale` leaves them almost invisible
-                      // on the navy ground. `brightness-0 invert` flattens each
-                      // to pure white first, then opacity does the recessing —
-                      // same visual weight as Parents, but legible here.
-                      className="object-contain opacity-55 brightness-0 invert transition-opacity duration-700 hover:opacity-90"
+                      sizes="(min-width: 640px) 140px, 110px"
+                      // Shown in their own colours, deliberately.
+                      //
+                      // The previous `brightness-0 invert` assumed every file
+                      // was dark line-art on transparency. Three of the five
+                      // are not: Microsoft is four colour squares with no
+                      // wordmark, T-Mobile is a white T knocked out of a
+                      // magenta tile, Pearson is a white P knocked out of a
+                      // blue one. Flattening those to white erases the mark
+                      // and leaves a solid block — which is exactly what was
+                      // rendering.
+                      //
+                      // A slight brightness lift keeps them from sinking into
+                      // the navy; opacity does the recessing so they read as
+                      // supporting evidence rather than five loud brand marks.
+                      className="object-contain opacity-70 brightness-110 transition-opacity duration-700 hover:opacity-100"
                     />
                   </li>
                 ))}
