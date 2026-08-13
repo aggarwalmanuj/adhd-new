@@ -142,10 +142,18 @@ const HERO_CHECKLIST = [
   "The next step that would prove something different",
 ];
 
+/** The three credibility lines under the hero CTA.
+ *
+ *  `short` is what phones show: the full sentences wrap to five lines at
+ *  375px and push the CTA off the fold, which is the one thing the v7 hero
+ *  layout exists to prevent. Desktop has the room for the full versions. */
 const HERO_CRED = [
-  "Built on AI Merge · published in the Mensa Research Journal",
-  "Four patents held by the creator",
-  "Reflective tool · not a diagnosis",
+  {
+    short: "Mensa Research Journal",
+    full: "Built on AI Merge · published in the Mensa Research Journal",
+  },
+  { short: "4 patents", full: "Four patents held by the creator" },
+  { short: "Not a diagnosis", full: "Reflective tool · not a diagnosis" },
 ];
 
 const WEEK = [
@@ -426,6 +434,28 @@ export default function Home() {
                     labelShort="Get My Free Score"
                     className="items-center lg:items-start"
                   />
+
+                  {/* Credibility sits directly under the CTA microcopy, inside
+                      the first screen. It is the answer to "why should I trust
+                      this?" — which a visitor asks at the moment they look at
+                      the button, not several scrolls later. `immediate` and no
+                      reveal delay, because anything above the fold must paint
+                      from the HTML rather than wait on the observer. */}
+                  <ul className="hero-cred mt-3 flex list-none flex-wrap justify-center gap-x-2 gap-y-0.5 text-center text-[0.75rem] leading-snug text-faint lg:mt-4 lg:flex-col lg:gap-y-1 lg:text-left lg:text-[0.8rem]">
+                    {HERO_CRED.map((item, i) => (
+                      <li key={item.full} className="flex items-center gap-2">
+                        {/* Separator only between items, and only while they
+                            share a line (phones). Hidden once the list stacks. */}
+                        {i > 0 && (
+                          <span aria-hidden className="text-faint/50 lg:hidden">
+                            ·
+                          </span>
+                        )}
+                        <span className="lg:hidden">{item.short}</span>
+                        <span className="hidden lg:inline">{item.full}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </Reveal>
               </div>
 
@@ -437,7 +467,7 @@ export default function Home() {
                   this sits below the fold by design. */}
               <div className="hero-extras">
                 <Reveal delay={280}>
-                  <div className="rounded-xl border border-line bg-surface p-5 sm:p-7">
+                  <div className="mb-12 rounded-xl border border-line bg-surface p-5 sm:p-7">
                     <p className="mx-auto max-w-[60ch] text-center text-ink lg:mx-0 lg:text-left">
                       The{" "}
                       <strong className="font-medium">ADHD Belief Score</strong>{" "}
@@ -458,13 +488,6 @@ export default function Home() {
                   </div>
                 </Reveal>
 
-                <Reveal delay={320}>
-                  <ul className="mt-5 flex list-none flex-wrap justify-center gap-x-6 gap-y-1.5 pb-12 text-center text-[0.8rem] text-faint lg:justify-start lg:text-left">
-                    {HERO_CRED.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </Reveal>
               </div>
             </div>
           </div>
