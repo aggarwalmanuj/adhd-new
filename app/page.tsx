@@ -796,11 +796,19 @@ export default function Home() {
             slot={PHOTO_BREATHER}
             sizes="100vw"
             quietPlaceholder
-            className="!rounded-none !border-x-0 min-h-[62vh]"
+            // Full-bleed band. Height is viewport-relative so the photo reads
+            // as a pause in the page rather than a card, with a floor so it
+            // never collapses on a short window.
+            className="!rounded-none !border-x-0 h-[62vh] max-h-[38rem] min-h-[24rem]"
           >
             <span
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-b from-bg/90 via-bg/70 to-bg/95"
+              // Scrim tuned so the photograph still reads AS a photograph.
+              // At 90/70/95 it was so heavy the image was barely visible and
+              // the section looked like flat navy. This keeps the top and
+              // bottom dark enough to seat the band into the page, and lets
+              // the middle — where the light actually falls — come through.
+              className="absolute inset-0 bg-gradient-to-b from-bg/85 via-bg/45 to-bg/90"
             />
           </Photo>
           <div className="absolute inset-0 mx-auto flex w-full max-w-3xl flex-col justify-center px-5 text-center sm:px-8">
@@ -1314,11 +1322,16 @@ export default function Home() {
             slot={PHOTO_CLOSING}
             sizes="100vw"
             quietPlaceholder
-            className="!rounded-none !border-x-0 min-h-[70vh]"
+            className="!rounded-none !border-x-0 h-[70vh] max-h-[42rem] min-h-[28rem]"
           >
             <span
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-b from-bg/90 via-bg/70 to-bg/95"
+              // Scrim tuned so the photograph still reads AS a photograph.
+              // At 90/70/95 it was so heavy the image was barely visible and
+              // the section looked like flat navy. This keeps the top and
+              // bottom dark enough to seat the band into the page, and lets
+              // the middle — where the light actually falls — come through.
+              className="absolute inset-0 bg-gradient-to-b from-bg/85 via-bg/45 to-bg/90"
             />
           </Photo>
           <div className="absolute inset-0 mx-auto flex w-full max-w-3xl flex-col justify-center px-5 py-12 sm:px-8">

@@ -145,13 +145,16 @@ export const PHOTO_WANTED: PhotoSlot = {
 };
 
 /** 04 · full-bleed breather background.
- *  HeroSection.jpg was rejected: it is a man rubbing his eyes in distress, and
- *  this section is the one calm beat on the page. */
+ *
+ *  Morning light raking across a wall, one mug, one frame. It earns the slot
+ *  by what it leaves out: no people, no screens, no office. The left two
+ *  thirds is empty wall, which is where the headline sits — a busier image
+ *  would fight the words it exists to support. */
 export const PHOTO_BREATHER: PhotoSlot = {
-  src: null,
-  needs:
-    "Morning light on a quiet, uncluttered desk — no person, or a person at ease. Wide landscape (≥1900px) since it runs full-bleed behind text. Calm and unhurried, the opposite of deadline pressure.",
-  alt: "Morning light on a quiet desk, the day not yet decided.",
+  src: "/images/breather.jpg",
+  alt: "Morning light falling across a wall above a desk with a mug and a picture frame.",
+  width: 5040,
+  height: 3360,
 };
 
 /** Closing · full-bleed background.
