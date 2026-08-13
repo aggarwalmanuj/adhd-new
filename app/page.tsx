@@ -796,6 +796,12 @@ export default function Home() {
             slot={PHOTO_BREATHER}
             sizes="100vw"
             quietPlaceholder
+            // A 3:2 photo in a much wider band, so most of its height is
+            // cropped away. Biasing the crop DOWN keeps the table, the mug and
+            // the frame in shot — a centre crop landed on bare wall and cut
+            // the objects off at the bottom edge, which left nothing to
+            // recognise the picture by.
+            focus="50% 68%"
             // Full-bleed band. Height is viewport-relative so the photo reads
             // as a pause in the page rather than a card, with a floor so it
             // never collapses on a short window.

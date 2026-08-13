@@ -158,13 +158,19 @@ export const PHOTO_BREATHER: PhotoSlot = {
 };
 
 /** Closing · full-bleed background.
- *  Hero.jpg was rejected for the same reason: it shows despair, and the
- *  closing line is about agency. */
+ *
+ *  An open blank notebook, pen resting on it, coffee poured, daylight and
+ *  greenery through the window. It carries the closing line — "You decide who
+ *  opens it" — because nothing in it has started yet.
+ *
+ *  An earlier candidate had the same subject but was mostly shadow with
+ *  near-black corners; under the scrim it read as gloom rather than
+ *  possibility, which is the opposite of what this section argues. */
 export const PHOTO_CLOSING: PhotoSlot = {
-  src: null,
-  needs:
-    "A workspace at the START of a day — open notebook, first light, nothing begun yet. Wide landscape (≥1900px). Should feel like possibility, not exhaustion.",
-  alt: "A workspace at the start of the day.",
+  src: "/images/closing.avif",
+  alt: "An open blank notebook and a cup of coffee on a windowsill in morning light.",
+  width: 4634,
+  height: 3082,
 };
 
 /**
