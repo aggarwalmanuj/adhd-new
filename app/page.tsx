@@ -135,27 +135,6 @@ function Lede({ children }: { children: React.ReactNode }) {
 
 /* ---------------------------------- data --------------------------------- */
 
-const HERO_CHECKLIST = [
-  "Your score out of 100, and how it compares",
-  "Four dimensions behind the number",
-  "The one moment your own answers keep circling",
-  "The next step that would prove something different",
-];
-
-/** The three credibility lines under the hero CTA.
- *
- *  `short` is what phones show: the full sentences wrap to five lines at
- *  375px and push the CTA off the fold, which is the one thing the v7 hero
- *  layout exists to prevent. Desktop has the room for the full versions. */
-const HERO_CRED = [
-  {
-    short: "Mensa Research Journal",
-    full: "Built on AI Merge · published in the Mensa Research Journal",
-  },
-  { short: "4 patents", full: "Four patents held by the creator" },
-  { short: "Not a diagnosis", full: "Reflective tool · not a diagnosis" },
-];
-
 const WEEK = [
   { when: "Monday", what: "You know exactly what needs doing. You even want to do it.", peak: false },
   { when: "Tuesday", what: "Something smaller gets finished instead. It was easier to start.", peak: false },
@@ -394,103 +373,79 @@ export default function Home() {
             one line of sub-copy, then the video and the CTA at full column
             width. Nothing sits beside the headline, so the h1 gets the whole
             measure and the video is never competing with it for the fold. */}
-        {/* ============================ HERO (spec v7) ============================
-            Two columns from 900px — copy + CTA left, video right, one eyeful.
-            Below that, a budgeted stack: headline → video → CTA, with the
-            explainer and checklist pushed below the fold. See .hero-grid in
-            globals.css for the measurements this is based on. */}
+        {/* ============================ HERO ============================
+            Parents' hero layout exactly: ONE centred column — chip, headline,
+            promise, proof line — then the video at full column width with the
+            CTA BELOW it.
+
+            The two-column v7 arrangement (copy left, video right) is gone.
+            Parents' order is the verified one: the headline gets the whole
+            measure instead of half of it, and the video is the widest thing
+            on the screen rather than a panel beside the type. */}
         <section id="hero" className="relative overflow-hidden">
+          {/* One large soft orb centred behind the headline. Capped at 100vw
+              in CSS so it can never add document width on a narrow phone. */}
           <div className="spotlight-hero" aria-hidden />
 
-          <div className="relative mx-auto w-full max-w-7xl px-5 sm:px-10 lg:px-16">
-            <div className="hero-grid">
-              <div className="hero-copy">
-                <Reveal immediate className="hero-chip">
-                  <p className="cred-chip">
-                    For adults with ADHD · free, no card
-                  </p>
-                </Reveal>
+          <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-5 pt-6 text-center sm:px-8 sm:pb-10 sm:pt-16">
+            <Reveal immediate>
+              <p className="cred-chip">
+                AI Merge · Free ADHD Belief Score
+              </p>
+            </Reveal>
 
-                <Reveal immediate className="hero-head">
-                  <h1 id="hero-headline" className="text-display">
-                    You don’t want your ADHD fixed.{" "}
-                    <span className="text-emphasis">
-                      You want to finish the thing you started.
-                    </span>
-                  </h1>
-                </Reveal>
+            <Reveal immediate>
+              <h1 id="hero-headline" className="text-display mt-5 sm:mt-8">
+                You don’t want your ADHD fixed.{" "}
+                <span className="text-emphasis">
+                  You want to finish the thing you started.
+                </span>
+              </h1>
+            </Reveal>
 
-                <Reveal immediate className="hero-sub">
-                  <p className="text-body-lg text-muted">
-                    A free 10-minute reflection. One ADHD moment, five
-                    questions, your score on screen.
-                  </p>
-                </Reveal>
+            <Reveal immediate>
+              {/* The promise: what it is, what it costs, and the moment it
+                  applies to — the one the reader is already thinking about
+                  after the headline. */}
+              <p className="mt-4 max-w-2xl text-balance text-[16px] leading-[1.65] text-muted sm:mt-6 sm:text-body-lg sm:leading-[1.75]">
+                Take the free 5-question ADHD Belief Score to uncover a hidden
+                belief that may be shaping how you respond in the very moments
+                you most want to start.
+              </p>
+            </Reveal>
 
-                <Reveal immediate className="hero-cta">
-                  <CtaBlock
-                    location="hero"
-                    label="Get My Free ADHD Belief Score"
-                    labelShort="Get My Free Score"
-                    className="items-center lg:items-start"
-                  />
-
-                  {/* Credibility sits directly under the CTA microcopy, inside
-                      the first screen. It is the answer to "why should I trust
-                      this?" — which a visitor asks at the moment they look at
-                      the button, not several scrolls later. `immediate` and no
-                      reveal delay, because anything above the fold must paint
-                      from the HTML rather than wait on the observer. */}
-                  <ul className="hero-cred mt-3 flex list-none flex-wrap justify-center gap-x-2 gap-y-0.5 text-center text-[0.75rem] leading-snug text-faint lg:mt-4 lg:flex-col lg:gap-y-1 lg:text-left lg:text-[0.8rem]">
-                    {HERO_CRED.map((item, i) => (
-                      <li key={item.full} className="flex items-center gap-2">
-                        {/* Separator only between items, and only while they
-                            share a line (phones). Hidden once the list stacks. */}
-                        {i > 0 && (
-                          <span aria-hidden className="text-faint/50 lg:hidden">
-                            ·
-                          </span>
-                        )}
-                        <span className="lg:hidden">{item.short}</span>
-                        <span className="hidden lg:inline">{item.full}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </Reveal>
-              </div>
-
-              <Reveal immediate className="hero-video">
-                <VslPlayer />
-              </Reveal>
-
-              {/* Everything that is NOT headline, video or button. On a phone
-                  this sits below the fold by design. */}
-              <div className="hero-extras">
-                <Reveal delay={280}>
-                  <div className="mb-12 rounded-xl border border-line bg-surface p-5 sm:p-7">
-                    <p className="mx-auto max-w-[60ch] text-center text-ink lg:mx-0 lg:text-left">
-                      The{" "}
-                      <strong className="font-medium">ADHD Belief Score</strong>{" "}
-                      asks you to describe one ADHD moment that keeps
-                      repeating, then shows you what that moment has quietly
-                      taught you to believe about yourself.
-                    </p>
-                    <ul className="mt-4 grid list-none gap-3 border-t border-line pt-4 text-left sm:grid-cols-2 sm:gap-x-8">
-                      {HERO_CHECKLIST.map((item) => (
-                        <li key={item} className="flex items-start gap-3">
-                          <CheckDot />
-                          <span className="text-[0.95rem] text-muted">
-                            {item}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </Reveal>
-
-              </div>
-            </div>
+            <Reveal immediate>
+              {/* Proof line. Hidden on phones, where it would push the video
+                  and the button off the first screen. */}
+              <p className="mt-4 hidden max-w-2xl text-balance text-[15px] leading-[1.7] text-faint sm:block">
+                Built on AI Merge, a personalised methodology published in the{" "}
+                <span className="text-muted">Mensa Research Journal</span>.
+              </p>
+            </Reveal>
           </div>
+
+          {/* Video, then CTA beneath it — Parents' order. */}
+          <div className="mx-auto w-full max-w-4xl px-5 sm:px-8">
+            <Reveal immediate>
+              <VslPlayer />
+            </Reveal>
+            <Reveal immediate>
+              <CtaBlock
+                location="hero"
+                label="Get My Free ADHD Belief Score"
+                labelShort="Get My Free Score"
+                align="center"
+                className="mt-8"
+              />
+            </Reveal>
+          </div>
+
+          <Reveal delay={320}>
+            <p className="mx-auto mt-8 max-w-4xl px-5 pb-16 text-center text-sm text-faint sm:px-8">
+              Four patents held by the creator · a reflective tool, not a
+              diagnosis.
+            </p>
+          </Reveal>
         </section>
 
         {/* ==================== 01 · THE WEEK YOU ALREADY KNOW ==================== */}
